@@ -1,0 +1,17 @@
+{
+  "pages": {
+    "/design-guidelines/page": [
+      "static/chunks/ff1a16fafef87110.js",
+      "static/chunks/6a7993b07cb97bb3.js",
+      "static/chunks/9328922d8995c48e.css",
+      "static/chunks/a76df6d50f0959ef.js",
+      "static/chunks/d01c5ab5ae2b0cab.js",
+      "static/chunks/6503eb96a04fa6db.js",
+      "static/chunks/db704ab2a0d20cdf.js",
+      "static/chunks/55561b3eda5d087a.js",
+      "static/chunks/50f9503f16d44625.js",
+      "static/chunks/0656f51f27ce398d.js",
+      "static/chunks/turbopack-ae7acd533fb85729.js"
+    ]
+  }
+}

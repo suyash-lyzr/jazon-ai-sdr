@@ -1,0 +1,17 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/conversations/page": "/conversations",
+  "/crm-sync/page": "/crm-sync",
+  "/dashboard/page": "/dashboard",
+  "/design-guidelines/dashboard/page": "/design-guidelines/dashboard",
+  "/design-guidelines/page": "/design-guidelines",
+  "/favicon.ico/route": "/favicon.ico",
+  "/leads/page": "/leads",
+  "/learning/page": "/learning",
+  "/meetings/page": "/meetings",
+  "/outreach/page": "/outreach",
+  "/page": "/",
+  "/qualification/page": "/qualification",
+  "/research/page": "/research",
+  "/settings/page": "/settings"
+}
