@@ -64,11 +64,6 @@ const data = {
       icon: IconMessage,
     },
     {
-      title: "Qualification",
-      url: "/qualification",
-      icon: IconTarget,
-    },
-    {
       title: "Meetings & Handoffs",
       url: "/meetings",
       icon: IconCalendar,
@@ -92,6 +87,11 @@ const data = {
     },
   ],
   navAI: [
+    {
+      title: "Qualification",
+      url: "/qualification",
+      icon: IconTarget,
+    },
     {
       title: "Workflow",
       url: "/workflow",
