@@ -627,6 +627,10 @@
     visibility: hidden;
   }
 
+  .visible {
+    visibility: visible;
+  }
+
   .sr-only {
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
@@ -1636,6 +1640,10 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
+  .grid-cols-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
   .grid-cols-6 {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
@@ -2024,6 +2032,16 @@
     }
   }
 
+  .border-chart-2\/30 {
+    border-color: var(--chart-2);
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .border-chart-2\/30 {
+      border-color: color-mix(in oklab, var(--chart-2) 30%, transparent);
+    }
+  }
+
   .border-chart-4\/20 {
     border-color: var(--chart-4);
   }
@@ -2034,6 +2052,10 @@
     }
   }
 
+  .border-destructive {
+    border-color: var(--destructive);
+  }
+
   .border-destructive\/20 {
     border-color: var(--destructive);
   }
@@ -2041,6 +2063,16 @@
   @supports (color: color-mix(in lab, red, red)) {
     .border-destructive\/20 {
       border-color: color-mix(in oklab, var(--destructive) 20%, transparent);
+    }
+  }
+
+  .border-destructive\/30 {
+    border-color: var(--destructive);
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .border-destructive\/30 {
+      border-color: color-mix(in oklab, var(--destructive) 30%, transparent);
     }
   }
 
@@ -2108,6 +2140,16 @@
     background-color: var(--background);
   }
 
+  .bg-background\/50 {
+    background-color: var(--background);
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-background\/50 {
+      background-color: color-mix(in oklab, var(--background) 50%, transparent);
+    }
+  }
+
   .bg-black\/50 {
     background-color: rgba(0, 0, 0, .5);
   }
@@ -2147,6 +2189,16 @@
   @supports (color: color-mix(in lab, red, red)) {
     .bg-chart-2\/10 {
       background-color: color-mix(in oklab, var(--chart-2) 10%, transparent);
+    }
+  }
+
+  .bg-chart-2\/20 {
+    background-color: var(--chart-2);
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-chart-2\/20 {
+      background-color: color-mix(in oklab, var(--chart-2) 20%, transparent);
     }
   }
 
@@ -2411,6 +2463,10 @@
 
   .p-4 {
     padding: calc(var(--spacing) * 4);
+  }
+
+  .p-5 {
+    padding: calc(var(--spacing) * 5);
   }
 
   .p-6 {
@@ -3447,6 +3503,12 @@
       .hover\:bg-accent\/50:hover {
         background-color: color-mix(in oklab, var(--accent) 50%, transparent);
       }
+    }
+  }
+
+  @media (hover: hover) {
+    .hover\:bg-chart-2:hover {
+      background-color: var(--chart-2);
     }
   }
 
