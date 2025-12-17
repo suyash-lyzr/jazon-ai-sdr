@@ -45,7 +45,14 @@ import {
   TrendingUp,
   Target,
   Activity,
-  Zap
+  Zap,
+  Database,
+  Search,
+  Send,
+  Eye,
+  Ban,
+  Calendar,
+  FileText
 } from "lucide-react"
 
 export default function OutreachPage() {
@@ -111,83 +118,242 @@ export default function OutreachPage() {
     return "Research in progress"
   }
 
-  // Generate full activity timeline (messages + system events)
-  const activityTimeline = useMemo(() => {
-    const timeline: Array<{
+  // Generate full audit trail - lead-specific, immutable timeline with strict chronological ordering
+  const fullAuditTrail = useMemo(() => {
+    if (!selectedLead) return []
+
+    type AuditEvent = {
       id: string
-      type: "message" | "system"
+      eventType: "lifecycle" | "research" | "outreach" | "engagement" | "decision" | "guardrail" | "outcome"
       timestamp: string
-      channel?: string
-      direction?: string
-      subject?: string
-      content?: string
-      summary?: string
-      duration?: string
-      outcome?: string
-      systemAction?: string
-      aiGenerated?: boolean
-    }> = []
+      sortOrder: number // Explicit sort order for strict chronological ordering
+      actor: "AI" | "System" | "Human"
+      title: string
+      description: string
+      metadata?: Record<string, any>
+      badge?: string
+      icon?: any
+    }
 
-    // Add conversations
-    conversations.forEach(msg => {
-      timeline.push({
-        id: msg.id,
-        type: "message",
-        timestamp: msg.timestamp,
-        channel: msg.channel,
-        direction: msg.direction,
-        subject: msg.subject,
-        content: msg.content,
-        summary: msg.summary,
-        duration: msg.duration,
-        outcome: msg.outcome,
-        aiGenerated: msg.direction === "outbound",
-      })
+    const events: AuditEvent[] = []
+    let sortCounter = 1
+
+    // A. Lead Lifecycle Events (ALWAYS FIRST)
+    events.push({
+      id: `${selectedLead.id}-ingestion`,
+      eventType: "lifecycle",
+      timestamp: selectedLead.ingestedAt || "7 days ago",
+      sortOrder: sortCounter++,
+      actor: "System",
+      title: `Lead ingested from ${selectedLead.source || "Unknown source"}`,
+      description: selectedLead.originTrigger || `Lead entered Jazon via ${selectedLead.source}. Initial data sync completed.`,
+      metadata: {
+        source: selectedLead.source,
+        importedBy: selectedLead.importedBy,
+        workspace: "Production Workspace",
+      },
+      badge: "Lead Ingestion",
     })
 
-    // Add system events based on lead stage
-    if (selectedLead?.stage === "Qualification" && selectedLead.channel.includes("Voice")) {
-      timeline.push({
-        id: "sys-voice",
-        type: "system",
+    // B. AI Research & ICP Decisions
+    events.push({
+      id: `${selectedLead.id}-research`,
+      eventType: "research",
+      timestamp: "6 days ago",
+      sortOrder: sortCounter++,
+      actor: "AI",
+      title: "ICP analysis completed",
+      description: `Lead evaluated with ICP score ${selectedLead.icpScore}. ${selectedLead.icpScore >= 85 ? "High fit" : selectedLead.icpScore >= 70 ? "Medium fit" : "Low fit"} determined based on company size, industry, tech stack, and persona.`,
+      metadata: {
+        icpScore: selectedLead.icpScore,
+        fitCategory: selectedLead.icpScore >= 85 ? "High" : selectedLead.icpScore >= 70 ? "Medium" : "Low",
+        dataSources: ["LinkedIn", "CRM", "Perplexity"],
+        confidence: selectedLead.icpScore >= 70 ? "High" : "Medium",
+      },
+      badge: "AI Research",
+    })
+
+    if (selectedLead.triggers && selectedLead.triggers.length > 0) {
+      events.push({
+        id: `${selectedLead.id}-triggers`,
+        eventType: "research",
+        timestamp: "6 days ago",
+        sortOrder: sortCounter++,
+        actor: "AI",
+        title: `${selectedLead.triggers.length} buying signal(s) detected`,
+        description: selectedLead.triggers.join(". ") + ".",
+        metadata: {
+          triggerCount: selectedLead.triggers.length,
+          signals: selectedLead.triggers,
+        },
+        badge: "Trigger Detection",
+      })
+    }
+
+    // C. Outreach Actions (if lead has active or past outreach)
+    if (selectedLead.stage !== "Research") {
+      // Only start outreach if not disqualified at research stage
+      if (selectedLead.stage !== "Disqualified" || selectedLead.icpScore >= 60) {
+        events.push({
+          id: `${selectedLead.id}-outreach-start`,
+          eventType: "outreach",
+          timestamp: "5 days ago",
+          sortOrder: sortCounter++,
+          actor: "AI",
+          title: "Outreach strategy initiated",
+          description: `Multi-channel sequence started based on ICP score ${selectedLead.icpScore}. Initial channel: Email. Strategy includes up to 8 touches across Email, LinkedIn, and conditional Voice.`,
+          metadata: {
+            channelStrategy: ["Email", "LinkedIn", "Voice"],
+            icpScore: selectedLead.icpScore,
+            complianceChecks: ["GDPR", "CAN-SPAM", "Business hours"],
+          },
+          badge: "Outreach Start",
+        })
+
+        // Add message events (sorted by their actual timestamps)
+        conversations.forEach((msg) => {
+          events.push({
+            id: msg.id,
+            eventType: msg.direction === "outbound" ? "outreach" : "engagement",
+            timestamp: msg.timestamp,
+            sortOrder: sortCounter++,
+            actor: msg.direction === "outbound" ? "AI" : "Human",
+            title: msg.subject || `${msg.channel} ${msg.direction}`,
+            description: msg.summary || msg.content || `${msg.channel} message ${msg.direction}`,
+            metadata: {
+              channel: msg.channel,
+              direction: msg.direction,
+              outcome: msg.outcome,
+              duration: msg.duration,
+              aiGenerated: msg.direction === "outbound",
+            },
+            badge: msg.direction === "outbound" ? "Outreach Action" : "Engagement Event",
+          })
+        })
+      }
+    }
+
+    // D. Guardrails & Compliance (in chronological position)
+    if (selectedLead.stage === "Engaged" || selectedLead.stage === "Qualification") {
+      events.push({
+        id: `${selectedLead.id}-compliance-check`,
+        eventType: "guardrail",
+        timestamp: "3 days ago",
+        sortOrder: sortCounter++,
+        actor: "System",
+        title: "Weekend outreach blocked",
+        description: "Scheduled email deferred to Monday to respect business hours compliance rule.",
+        metadata: {
+          guardrailName: "No weekend outreach",
+          triggerCondition: "Saturday send scheduled",
+          actionTaken: "Deferred to Monday 9:00 AM",
+          systemConfirmation: "Compliance rule enforced",
+        },
+        badge: "Compliance",
+      })
+    }
+
+    // E. AI Decisions & Escalations (in chronological position)
+    if (selectedLead.stage === "Qualification" && selectedLead.channel.includes("Voice")) {
+      events.push({
+        id: `${selectedLead.id}-voice-escalation`,
+        eventType: "decision",
         timestamp: "2 hours ago",
-        systemAction: "Voice escalation triggered",
-        content: `ICP score ${selectedLead.icpScore} and engagement signals met escalation threshold`,
+        sortOrder: sortCounter++,
+        actor: "AI",
+        title: "Voice escalation approved",
+        description: `High engagement on previous channels + ICP score ${selectedLead.icpScore} warranted personal touch. Voice escalation guardrails passed.`,
+        metadata: {
+          icpScore: selectedLead.icpScore,
+          rulesTriggered: ["ICP ≥ 80", "Engagement on 2+ channels"],
+          rulesPassed: ["Max touches not exceeded", "Voice escalation allowed"],
+          humanApprovalRequired: false,
+          confidence: "High",
+        },
+        badge: "AI Decision",
       })
     }
 
-    if (selectedLead?.stage === "Meeting Scheduled") {
-      timeline.push({
-        id: "sys-meeting",
-        type: "system",
+    // F. Final Outcome (ALWAYS LAST)
+    if (selectedLead.stage === "Meeting Scheduled") {
+      events.push({
+        id: `${selectedLead.id}-meeting`,
+        eventType: "outcome",
         timestamp: "1 hour ago",
-        systemAction: "AE handoff completed",
-        content: "Lead fully qualified, meeting booked, handoff pack prepared for AE team",
+        sortOrder: sortCounter++,
+        actor: "AI",
+        title: "Meeting booked",
+        description: "Lead fully qualified via BANT analysis. Meeting scheduled and calendar invite sent.",
+        metadata: {
+          qualificationScore: 88,
+          bantConfirmed: ["Need", "Timeline", "Authority", "Budget"],
+        },
+        badge: "Outcome",
+      })
+
+      events.push({
+        id: `${selectedLead.id}-handoff`,
+        eventType: "outcome",
+        timestamp: "1 hour ago",
+        sortOrder: sortCounter++,
+        actor: "System",
+        title: "AE handoff completed",
+        description: "Handoff pack prepared with research summary, qualification notes, objections, and talk track. CRM updated.",
+        metadata: {
+          crmUpdated: true,
+          handoffPackGenerated: true,
+        },
+        badge: "Outcome",
       })
     }
 
-    if (selectedLead?.stage === "Disqualified") {
-      timeline.push({
-        id: "sys-disqual",
-        type: "system",
+    if (selectedLead.stage === "Disqualified") {
+      events.push({
+        id: `${selectedLead.id}-disqualify`,
+        eventType: "decision",
         timestamp: "1 week ago",
-        systemAction: "Disqualification applied",
-        content: "Low ICP score (45) - wrong market segment. Outreach automatically stopped.",
+        sortOrder: sortCounter++,
+        actor: "AI",
+        title: "Lead disqualified",
+        description: `ICP score ${selectedLead.icpScore} below threshold (60). Wrong market segment. Outreach stopped to save AE time.`,
+        metadata: {
+          icpScore: selectedLead.icpScore,
+          reason: "ICP mismatch",
+          confidence: "High",
+          rulesTriggered: ["ICP < 60"],
+        },
+        badge: "AI Decision",
+      })
+
+      events.push({
+        id: `${selectedLead.id}-stop`,
+        eventType: "outcome",
+        timestamp: "1 week ago",
+        sortOrder: sortCounter++,
+        actor: "System",
+        title: "Outreach stopped",
+        description: "All scheduled actions cancelled. Lead moved to disqualified status. CRM updated.",
+        metadata: {
+          crmUpdated: true,
+          outreachStopped: true,
+        },
+        badge: "Outcome",
       })
     }
 
-    // Sort by timestamp (most recent first for demo)
-    return timeline.sort((a, b) => {
-      // Simple sort - in production would parse actual timestamps
-      return 0
-    })
-  }, [conversations, selectedLead])
+    // STRICT CHRONOLOGICAL SORT: Oldest → Newest (using sortOrder as the single source of truth)
+    return events.sort((a, b) => a.sortOrder - b.sortOrder)
+  }, [selectedLead, conversations])
 
-  const executiveTimeline = activityTimeline.filter(item => 
-    item.type === "system" || 
-    item.channel === "voice" || 
-    (item.type === "message" && item.direction === "inbound")
-  )
+  // Executive timeline (filtered for key events)
+  const executiveTimeline = useMemo(() => {
+    return fullAuditTrail.filter(event => 
+      event.eventType === "outcome" || 
+      event.eventType === "decision" || 
+      (event.eventType === "outreach" && event.metadata?.channel === "voice") ||
+      (event.eventType === "engagement" && event.metadata?.direction === "inbound")
+    )
+  }, [fullAuditTrail])
 
   return (
     <SidebarProvider
@@ -554,87 +720,212 @@ export default function OutreachPage() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    {(outreachStatus === "completed" || outreachStatus === "stopped") && (
-                      <div className="bg-muted/30 rounded-lg p-3 border border-border/50 mb-4">
-                        <p className="text-xs text-muted-foreground">
-                          Outreach is read-only for {outreachStatus === "completed" ? "completed" : "disqualified"} leads. Viewing historical activity only.
-                        </p>
+                    {/* Status Banner */}
+                    {outreachStatus === "completed" && viewMode === "full" && (
+                      <div className="bg-chart-2/10 rounded-lg p-3 border border-chart-2/30 mb-6">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-chart-2" />
+                          <p className="text-xs font-medium">
+                            Timeline locked for audit. All events are timestamped and cannot be modified.
+                          </p>
+                        </div>
                       </div>
                     )}
-                    
-                    <div className="space-y-4">
-                      {(viewMode === "full" ? activityTimeline : executiveTimeline).length > 0 ? (
-                        (viewMode === "full" ? activityTimeline : executiveTimeline).map((item) => (
-                          <div key={item.id} className="flex gap-3 pb-4 border-b last:border-0 last:pb-0">
-                            {/* Icon */}
-                            <div className={`p-2 rounded-lg shrink-0 h-fit ${
-                              item.type === "system" ? "bg-muted text-foreground" :
-                              item.channel === "email" ? "bg-primary/10 text-primary" :
-                              item.channel === "voice" ? "bg-chart-2/10 text-chart-2" :
-                              "bg-chart-3/10 text-chart-3"
-                            }`}>
-                              {item.type === "system" && <Zap className="w-4 h-4" />}
-                              {item.channel === "email" && <Mail className="w-4 h-4" />}
-                              {item.channel === "voice" && <Phone className="w-4 h-4" />}
-                              {item.channel === "linkedin" && <MessageSquare className="w-4 h-4" />}
-                            </div>
+                    {outreachStatus === "active" && viewMode === "full" && (
+                      <div className="bg-primary/10 rounded-lg p-3 border border-primary/20 mb-6">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                          <p className="text-xs font-medium">
+                            Outreach in progress. Events logged in real time as they occur.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    {outreachStatus === "stopped" && viewMode === "full" && (
+                      <div className="bg-destructive/10 rounded-lg p-3 border border-destructive/30 mb-6">
+                        <div className="flex items-center gap-2">
+                          <StopCircle className="w-4 h-4 text-destructive" />
+                          <p className="text-xs font-medium">
+                            Outreach stopped automatically. Timeline locked for audit.
+                          </p>
+                        </div>
+                      </div>
+                    )}
 
-                            {/* Content */}
-                            <div className="flex-1 space-y-2 min-w-0">
-                              <div className="flex items-start justify-between gap-2">
-                                <div className="min-w-0">
-                                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                    {item.type === "system" ? (
-                                      <>
-                                        <Badge variant="outline" className="text-xs">System Event</Badge>
-                                        <span className="text-sm font-medium">{item.systemAction}</span>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <Badge variant="outline" className="text-xs">
-                                          {item.channel} • {item.direction}
-                                        </Badge>
-                                        {item.aiGenerated && (
-                                          <Badge variant="default" className="text-xs bg-primary/80">AI-generated</Badge>
-                                        )}
-                                        {item.subject && (
-                                          <p className="font-medium text-sm truncate">{item.subject}</p>
-                                        )}
-                                      </>
-                                    )}
-                                  </div>
-                                </div>
-                                <span className="text-xs text-muted-foreground shrink-0">{item.timestamp}</span>
+                    {viewMode === "executive" ? (
+                      /* Executive Summary View */
+                      <div className="space-y-4">
+                        {executiveTimeline.length > 0 ? (
+                          executiveTimeline.map((event) => (
+                            <div key={event.id} className="flex gap-3 pb-4 border-b last:border-0 last:pb-0">
+                              <div className={`p-2 rounded-lg shrink-0 h-fit ${
+                                event.eventType === "outcome" ? "bg-chart-2/10 text-chart-2" :
+                                event.eventType === "decision" ? "bg-primary/10 text-primary" :
+                                "bg-muted text-foreground"
+                              }`}>
+                                {event.eventType === "outcome" && <CheckCircle2 className="w-4 h-4" />}
+                                {event.eventType === "decision" && <Target className="w-4 h-4" />}
+                                {event.eventType === "outreach" && event.metadata?.channel === "voice" && <Phone className="w-4 h-4" />}
+                                {event.eventType === "engagement" && <MessageSquare className="w-4 h-4" />}
                               </div>
-
-                              {item.summary ? (
-                                <div className="bg-muted/30 rounded p-3 border border-border/30">
-                                  <p className="text-sm">{item.summary}</p>
-                                  {item.duration && (
-                                    <p className="text-xs text-muted-foreground mt-2">
-                                      Duration: {item.duration} • Outcome: {item.outcome}
-                                    </p>
-                                  )}
+                              <div className="flex-1 space-y-2 min-w-0">
+                                <div className="flex items-start justify-between gap-2">
+                                  <div className="min-w-0">
+                                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                      <Badge variant="outline" className="text-xs">{event.badge}</Badge>
+                                      <Badge variant="secondary" className="text-xs">{event.actor}</Badge>
+                                      <h4 className="font-medium text-sm">{event.title}</h4>
+                                    </div>
+                                  </div>
+                                  <span className="text-xs text-muted-foreground shrink-0">{event.timestamp}</span>
                                 </div>
-                              ) : item.content && (
-                                <p className="text-sm text-muted-foreground">{item.content}</p>
-                              )}
+                                <p className="text-sm text-muted-foreground leading-relaxed">{event.description}</p>
+                              </div>
                             </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-center py-8">
-                          <div className="flex flex-col items-center gap-3">
-                            <div className="p-4 rounded-full bg-muted">
-                              <Activity className="w-6 h-6 text-muted-foreground" />
-                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center py-8">
                             <p className="text-sm text-muted-foreground">
-                              No conversation history yet. Outreach will begin after ICP validation.
+                              No key events to display yet.
                             </p>
                           </div>
+                        )}
+                      </div>
+                    ) : (
+                      /* Full Audit Trail View */
+                      <div className="space-y-4">
+                        {/* Ordering clarity cue */}
+                        <div className="bg-muted/20 rounded-lg p-2 border border-border/30">
+                          <p className="text-xs text-center text-muted-foreground">
+                            Events shown in chronological order (oldest → newest)
+                          </p>
                         </div>
-                      )}
-                    </div>
+
+                        {fullAuditTrail.length > 0 ? (
+                          fullAuditTrail.map((event) => {
+                            // Event type styling
+                            const getEventColor = (type: string) => {
+                              switch (type) {
+                                case "lifecycle": return "bg-muted/50 border-border text-foreground"
+                                case "research": return "bg-primary/5 border-primary/20 text-primary"
+                                case "outreach": return "bg-chart-3/5 border-chart-3/20 text-chart-3"
+                                case "engagement": return "bg-chart-2/5 border-chart-2/20 text-chart-2"
+                                case "decision": return "bg-primary/10 border-primary/30 text-primary"
+                                case "guardrail": return "bg-chart-4/5 border-chart-4/20 text-chart-4"
+                                case "outcome": return "bg-chart-2/10 border-chart-2/30 text-chart-2"
+                                default: return "bg-muted border-border text-foreground"
+                              }
+                            }
+
+                            const getEventIcon = (type: string) => {
+                              switch (type) {
+                                case "lifecycle": return <Database className="w-5 h-5" />
+                                case "research": return <Search className="w-5 h-5" />
+                                case "outreach": return <Send className="w-5 h-5" />
+                                case "engagement": return <Eye className="w-5 h-5" />
+                                case "decision": return <Target className="w-5 h-5" />
+                                case "guardrail": return <Shield className="w-5 h-5" />
+                                case "outcome": return <CheckCircle2 className="w-5 h-5" />
+                                default: return <Activity className="w-5 h-5" />
+                              }
+                            }
+
+                            return (
+                              <div key={event.id} className="relative">
+                                {/* Vertical timeline connector */}
+                                <div className="absolute left-6 top-14 bottom-0 w-px bg-border" />
+                                
+                                <div className="flex gap-4">
+                                  {/* Icon */}
+                                  <div className={`p-3 rounded-lg shrink-0 border ${getEventColor(event.eventType)}`}>
+                                    {getEventIcon(event.eventType)}
+                                  </div>
+
+                                  {/* Content Card */}
+                                  <div className="flex-1 min-w-0">
+                                    <div className="bg-card border rounded-lg p-4">
+                                      {/* Header */}
+                                      <div className="flex items-start justify-between gap-4 mb-3">
+                                        <div className="flex-1">
+                                          <div className="flex items-center gap-2 mb-2 flex-wrap">
+                                            <Badge variant="outline" className="text-xs">
+                                              {event.badge}
+                                            </Badge>
+                                            <Badge 
+                                              variant={
+                                                event.actor === "AI" ? "default" : 
+                                                event.actor === "Human" ? "secondary" : 
+                                                "outline"
+                                              } 
+                                              className="text-xs"
+                                            >
+                                              {event.actor}
+                                            </Badge>
+                                          </div>
+                                          <h4 className="font-semibold text-sm">{event.title}</h4>
+                                        </div>
+                                        <span className="text-xs text-muted-foreground shrink-0">
+                                          {event.timestamp}
+                                        </span>
+                                      </div>
+
+                                      {/* Description */}
+                                      <p className="text-sm text-foreground leading-relaxed mb-3">
+                                        {event.description}
+                                      </p>
+
+                                      {/* Metadata */}
+                                      {event.metadata && Object.keys(event.metadata).length > 0 && (
+                                        <div className="bg-muted/30 rounded-lg p-3 border border-border/30">
+                                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+                                            Event Details
+                                          </p>
+                                          <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                                            {Object.entries(event.metadata).map(([key, value]) => (
+                                              <div key={key}>
+                                                <span className="text-xs text-muted-foreground capitalize">
+                                                  {key.replace(/([A-Z])/g, ' $1').trim()}:
+                                                </span>{" "}
+                                                <span className="text-xs font-medium">
+                                                  {Array.isArray(value) ? value.join(", ") : 
+                                                   typeof value === "boolean" ? (value ? "Yes" : "No") :
+                                                   String(value)}
+                                                </span>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          })
+                        ) : (
+                          <div className="text-center py-12">
+                            <div className="flex flex-col items-center gap-4">
+                              <div className="p-4 rounded-full bg-muted">
+                                <FileText className="w-8 h-8 text-muted-foreground" />
+                              </div>
+                              <div>
+                                <h4 className="font-semibold mb-1">No audit trail available</h4>
+                                <p className="text-sm text-muted-foreground">
+                                  This lead is still in research phase. Full audit trail will be available once outreach begins.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Demo disclaimer */}
+                        <div className="mt-6 pt-4 border-t border-border/50">
+                          <p className="text-xs text-center text-muted-foreground">
+                            This is an immutable audit log. All events are timestamped and cannot be modified.
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
 

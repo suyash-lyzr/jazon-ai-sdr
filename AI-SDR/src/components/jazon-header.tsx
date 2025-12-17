@@ -1,42 +1,19 @@
 "use client"
 
-import { Bell, ChevronDown } from "lucide-react"
+import { Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
 
 export function JazonHeader() {
   return (
     <header className="flex h-12 shrink-0 items-center gap-2 border-b bg-card px-4">
-      <div className="flex flex-1 items-center justify-between">
-        <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="gap-2">
-                <span className="text-sm font-medium">Production Workspace</span>
-                <ChevronDown className="h-4 w-4 text-muted-foreground" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuLabel>Workspaces</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                Production Workspace
-                <Badge variant="secondary" className="ml-2">Active</Badge>
-              </DropdownMenuItem>
-              <DropdownMenuItem>Development Workspace</DropdownMenuItem>
-              <DropdownMenuItem>Sandbox Workspace</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        
+      <div className="flex flex-1 items-center justify-end">
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
