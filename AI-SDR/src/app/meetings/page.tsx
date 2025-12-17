@@ -28,6 +28,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import {
@@ -47,6 +58,14 @@ import {
   DollarSign,
   Target,
   TrendingUp,
+  Video,
+  Users,
+  ExternalLink,
+  ChevronDown,
+  CalendarCheck,
+  ListChecks,
+  MessageSquare,
+  Zap,
 } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
@@ -72,6 +91,7 @@ export default function MeetingsPage() {
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null)
   const [controlDialogOpen, setControlDialogOpen] = useState<string | null>(null)
   const [controlNote, setControlNote] = useState("")
+  const [isAgendaOpen, setIsAgendaOpen] = useState(false)
 
   // Default to first lead with a meeting
   const defaultLead = useMemo(() => {
@@ -338,6 +358,83 @@ export default function MeetingsPage() {
     console.log(`Action logged: ${action} for lead ${selectedLead?.id}`)
   }
 
+  // Generate meeting details
+  const getMeetingDetails = () => {
+    if (!selectedLead || !meeting) return null
+
+    return {
+      title: `Sales Automation Discovery Call – ${selectedLead.company}`,
+      dateTime: meeting.scheduledFor || "Tomorrow, 2:00 – 2:30 PM (IST)",
+      duration: "30 minutes",
+      meetingType: "Discovery / Qualification",
+      status: meeting.status === "upcoming" ? "Scheduled" : meeting.status === "completed" ? "Completed" : "Canceled",
+      participants: [
+        {
+          name: selectedLead.name,
+          role: `${selectedLead.title} – ${selectedLead.company}`,
+          type: "prospect",
+        },
+        {
+          name: handoffStatus.assignedAE || "Sarah Mitchell",
+          role: "Assigned AE",
+          type: "ae",
+        },
+        {
+          name: "Jazon AI SDR",
+          role: "Auto-scheduler",
+          type: "ai",
+        },
+      ],
+      calendarIntegration: {
+        provider: "Google Calendar",
+        status: "Connected – Demo",
+        inviteSent: true,
+        conferencing: "Google Meet (auto-generated link)",
+        meetLink: "https://meet.google.com/abc-defg-hij",
+      },
+    }
+  }
+
+  const meetingDetails = getMeetingDetails()
+
+  // Generate AI agenda
+  const getMeetingAgenda = () => {
+    if (!selectedLead) return []
+
+    return [
+      `Introduce Jazon AI SDR and qualification approach`,
+      `Understand ${selectedLead.company}'s sales automation initiative`,
+      `Validate integration requirements and security expectations`,
+      `Align on next steps and evaluation timeline`,
+    ]
+  }
+
+  const meetingAgenda = getMeetingAgenda()
+
+  // Generate meeting notes (for completed meetings)
+  const getMeetingNotes = () => {
+    if (!meeting || meeting.status !== "completed") return null
+
+    return {
+      summary: `${selectedLead?.name} confirmed active RFP evaluation. Budget approved at $400K with expansion potential. Primary concerns around explainability and integration effort. Strong alignment with enterprise sales automation goals.`,
+      keyDecisions: [
+        "Proceed to technical evaluation with IT team",
+        "Schedule security review with CISO",
+        "Share ROI calculator and case studies",
+      ],
+      openQuestions: [
+        "Integration timeline with existing Salesforce instance",
+        "Data residency requirements for APAC region",
+      ],
+      objections: [
+        "Concern about AI transparency in customer-facing calls",
+        "Need for SOC 2 Type II certification confirmation",
+      ],
+    }
+  }
+
+  const meetingNotes = getMeetingNotes()
+
   return (
     <SidebarProvider
       style={
@@ -475,11 +572,14 @@ export default function MeetingsPage() {
                   <Card className="border-destructive/20 bg-destructive/5">
                     <CardContent className="pt-6">
                       <div className="flex items-start gap-3">
-                        <AlertCircle className="w-5 h-5 text-destructive mt-0.5" />
+                        <Ban className="w-5 h-5 text-destructive mt-0.5" />
                         <div>
-                          <h3 className="font-semibold text-sm mb-1">Lead Disqualified</h3>
-                          <p className="text-sm text-muted-foreground">
-                            This lead has been disqualified. Handoff actions are disabled.
+                          <h3 className="font-semibold text-sm mb-1">Meeting not scheduled due to early disqualification</h3>
+                          <p className="text-sm text-muted-foreground mb-2">
+                            This lead was disqualified during the qualification process. Scheduling is blocked.
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Disqualification reason: Low ICP score or BANT criteria not met.
                           </p>
                         </div>
                       </div>
@@ -490,16 +590,25 @@ export default function MeetingsPage() {
                 {!meeting && selectedLead.stage !== "Disqualified" && (
                   <Card className="border-chart-4/20 bg-chart-4/5">
                     <CardContent className="pt-6">
-                      <div className="flex items-start gap-3">
-                        <Clock className="w-5 h-5 text-chart-4 mt-0.5" />
-                        <div>
-                          <h3 className="font-semibold text-sm mb-1">
-                            Waiting for meeting confirmation
-                          </h3>
-                          <p className="text-sm text-muted-foreground">
-                            Lead is qualified but meeting has not been scheduled yet.
-                          </p>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex items-start gap-3">
+                          <Clock className="w-5 h-5 text-chart-4 mt-0.5" />
+                          <div>
+                            <h3 className="font-semibold text-sm mb-1">
+                              Meeting not scheduled yet
+                            </h3>
+                            <p className="text-sm text-muted-foreground mb-2">
+                              Lead is qualified but awaiting prospect response for scheduling.
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Reason: Prospect has not confirmed availability after qualification call.
+                            </p>
+                          </div>
                         </div>
+                        <Button variant="outline" size="sm" disabled className="shrink-0">
+                          <Calendar className="w-4 h-4 mr-2" />
+                          Schedule when ready
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -520,6 +629,283 @@ export default function MeetingsPage() {
                       </div>
                     </CardContent>
                   </Card>
+                )}
+
+                {/* Meeting Details Section */}
+                {meeting && meetingDetails && (
+                  <Card>
+                    <CardHeader>
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <CardTitle className="text-xl flex items-center gap-2">
+                            <Calendar className="w-5 h-5" />
+                            Meeting Details
+                          </CardTitle>
+                          <CardDescription className="mt-1">
+                            Auto-scheduled by AI SDR using calendar availability and qualification confidence
+                          </CardDescription>
+                        </div>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Badge variant="outline" className="gap-1.5 cursor-help">
+                                <Zap className="w-3 h-3" />
+                                Calendar-Aware AI
+                              </Badge>
+                            </TooltipTrigger>
+                            <TooltipContent side="left" className="max-w-xs">
+                              <p className="text-sm">
+                                Jazon schedules meetings only after ICP, intent, and compliance checks are satisfied. No cold scheduling.
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      {/* Two Column Layout */}
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {/* Left Column - Meeting Info */}
+                        <div className="space-y-4">
+                          <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                            Meeting Information
+                          </h4>
+                          <div className="space-y-3">
+                            <div className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg">
+                              <FileText className="w-4 h-4 text-muted-foreground mt-0.5" />
+                              <div className="flex-1">
+                                <p className="text-xs text-muted-foreground">Meeting Title</p>
+                                <p className="text-sm font-medium">{meetingDetails.title}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg">
+                              <Clock className="w-4 h-4 text-muted-foreground mt-0.5" />
+                              <div className="flex-1">
+                                <p className="text-xs text-muted-foreground">Date & Time</p>
+                                <p className="text-sm font-medium">{meetingDetails.dateTime}</p>
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div className="p-3 bg-muted/30 rounded-lg">
+                                <p className="text-xs text-muted-foreground">Duration</p>
+                                <p className="text-sm font-medium">{meetingDetails.duration}</p>
+                              </div>
+                              <div className="p-3 bg-muted/30 rounded-lg">
+                                <p className="text-xs text-muted-foreground">Meeting Type</p>
+                                <p className="text-sm font-medium">{meetingDetails.meetingType}</p>
+                              </div>
+                            </div>
+                            <div className="p-3 bg-muted/30 rounded-lg">
+                              <p className="text-xs text-muted-foreground mb-1">Meeting Status</p>
+                              <Badge
+                                variant={
+                                  meetingDetails.status === "Scheduled"
+                                    ? "default"
+                                    : meetingDetails.status === "Completed"
+                                    ? "secondary"
+                                    : "destructive"
+                                }
+                              >
+                                {meetingDetails.status}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right Column - Participants & Calendar */}
+                        <div className="space-y-4">
+                          <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                            Participants & Calendar
+                          </h4>
+                          <div className="space-y-3">
+                            {/* Participants */}
+                            <div className="p-3 bg-muted/30 rounded-lg">
+                              <div className="flex items-center gap-2 mb-3">
+                                <Users className="w-4 h-4 text-muted-foreground" />
+                                <p className="text-xs text-muted-foreground">Participants</p>
+                              </div>
+                              <div className="space-y-2">
+                                {meetingDetails.participants.map((participant, idx) => (
+                                  <div key={idx} className="flex items-center gap-3">
+                                    <Avatar className="h-7 w-7">
+                                      <AvatarFallback className="text-xs">
+                                        {participant.type === "ai" ? (
+                                          <Sparkles className="w-3 h-3" />
+                                        ) : (
+                                          participant.name
+                                            .split(" ")
+                                            .map((n) => n[0])
+                                            .join("")
+                                        )}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                      <p className="text-sm font-medium">{participant.name}</p>
+                                      <p className="text-xs text-muted-foreground">{participant.role}</p>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Calendar Integration */}
+                            <div className="p-3 bg-muted/30 rounded-lg">
+                              <div className="flex items-center gap-2 mb-3">
+                                <CalendarCheck className="w-4 h-4 text-muted-foreground" />
+                                <p className="text-xs text-muted-foreground">Calendar Integration</p>
+                              </div>
+                              <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-sm">Provider</span>
+                                  <Badge variant="outline" className="text-xs">
+                                    {meetingDetails.calendarIntegration.provider} ({meetingDetails.calendarIntegration.status})
+                                  </Badge>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                  <span className="text-sm">Calendar Invite</span>
+                                  <span className="text-sm text-chart-2 flex items-center gap-1">
+                                    <CheckCircle2 className="w-3.5 h-3.5" />
+                                    Sent
+                                  </span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                  <span className="text-sm">Conferencing</span>
+                                  <span className="text-sm flex items-center gap-1">
+                                    <Video className="w-3.5 h-3.5 text-muted-foreground" />
+                                    Google Meet
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Meeting Agenda - Collapsible */}
+                      <Collapsible open={isAgendaOpen} onOpenChange={setIsAgendaOpen}>
+                        <CollapsibleTrigger asChild>
+                          <Button variant="ghost" className="w-full justify-between p-3 h-auto bg-muted/30 hover:bg-muted/50">
+                            <div className="flex items-center gap-2">
+                              <ListChecks className="w-4 h-4 text-muted-foreground" />
+                              <span className="text-sm font-medium">Agenda (AI-Generated)</span>
+                              <Badge variant="secondary" className="text-xs">
+                                {meetingAgenda.length} items
+                              </Badge>
+                            </div>
+                            <ChevronDown
+                              className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
+                                isAgendaOpen ? "rotate-180" : ""
+                              }`}
+                            />
+                          </Button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="pt-3">
+                          <div className="p-4 bg-muted/20 rounded-lg border border-border/50">
+                            <ol className="space-y-2 list-decimal list-inside">
+                              {meetingAgenda.map((item, idx) => (
+                                <li key={idx} className="text-sm text-foreground">
+                                  {item}
+                                </li>
+                              ))}
+                            </ol>
+                            <p className="text-xs text-muted-foreground mt-4 pt-3 border-t border-border/50">
+                              Agenda generated dynamically from ICP research, conversation signals, and qualification gaps.
+                            </p>
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+
+                      {/* Helper text */}
+                      <p className="text-xs text-muted-foreground italic">
+                        In production, Jazon uses connected calendars to find mutual availability and schedule meetings automatically.
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Meeting Notes - Only for Completed Meetings */}
+                {meeting?.status === "completed" && meetingNotes && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-xl flex items-center gap-2">
+                        <MessageSquare className="w-5 h-5" />
+                        Meeting Notes & Outcomes
+                      </CardTitle>
+                      <CardDescription>
+                        AI-generated summary from the completed call
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      {/* Summary */}
+                      <div>
+                        <h4 className="text-sm font-semibold mb-2">Summary</h4>
+                        <p className="text-sm text-muted-foreground leading-relaxed bg-muted/30 p-4 rounded-lg">
+                          {meetingNotes.summary}
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Key Decisions */}
+                        <div className="p-4 bg-chart-2/5 border border-chart-2/20 rounded-lg">
+                          <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-chart-2" />
+                            Key Decisions
+                          </h4>
+                          <ul className="space-y-2">
+                            {meetingNotes.keyDecisions.map((decision, idx) => (
+                              <li key={idx} className="text-sm flex items-start gap-2">
+                                <span className="text-chart-2 mt-0.5">•</span>
+                                <span>{decision}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        {/* Objections Surfaced */}
+                        <div className="p-4 bg-chart-4/5 border border-chart-4/20 rounded-lg">
+                          <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
+                            <AlertCircle className="w-4 h-4 text-chart-4" />
+                            Objections Surfaced
+                          </h4>
+                          <ul className="space-y-2">
+                            {meetingNotes.objections.map((objection, idx) => (
+                              <li key={idx} className="text-sm flex items-start gap-2">
+                                <span className="text-chart-4 mt-0.5">•</span>
+                                <span>{objection}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+
+                      {/* Open Questions */}
+                      <div className="p-4 bg-muted/30 rounded-lg">
+                        <h4 className="text-sm font-semibold mb-3">Open Questions</h4>
+                        <ul className="space-y-2">
+                          {meetingNotes.openQuestions.map((question, idx) => (
+                            <li key={idx} className="text-sm flex items-start gap-2">
+                              <span className="text-primary mt-0.5">?</span>
+                              <span>{question}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Divider connecting to handoff sections */}
+                {meeting && (
+                  <div className="relative py-4">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-border/50" />
+                    </div>
+                    <div className="relative flex justify-center">
+                      <span className="bg-background px-4 text-xs text-muted-foreground">
+                        The sections below use this meeting context to generate AE-ready handoff intelligence
+                      </span>
+                    </div>
+                  </div>
                 )}
 
                 {/* Primary Handoff Card */}
