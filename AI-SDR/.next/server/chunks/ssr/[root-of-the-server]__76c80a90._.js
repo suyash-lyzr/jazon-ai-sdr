@@ -298,6 +298,70 @@ const mockConversations = {
                 "Internal IT approval process timeline"
             ]
         }
+    ],
+    L002: [
+        {
+            id: "M101",
+            channel: "email",
+            direction: "outbound",
+            timestamp: "6 days ago",
+            subject: "Scaling SDR operations at Deloitte",
+            content: "Hi Marcus, saw Deloitte is hiring 20+ SDRs. Our AI SDR platform helps enterprises scale qualification without linear headcount growth..."
+        },
+        {
+            id: "M102",
+            channel: "email",
+            direction: "outbound",
+            timestamp: "4 days ago",
+            subject: "Re: Scaling SDR operations at Deloitte",
+            content: "Following up on my previous message. Would love to show you how we've helped similar professional services firms..."
+        },
+        {
+            id: "M103",
+            channel: "linkedin",
+            direction: "outbound",
+            timestamp: "2 days ago",
+            content: "Marcus, I noticed your recent post about sales automation. Our platform might be a good fit for Deloitte's expansion plans."
+        }
+    ],
+    L003: [
+        {
+            id: "M201",
+            channel: "email",
+            direction: "outbound",
+            timestamp: "3 days ago",
+            subject: "AI transformation at NTT Data",
+            content: "Hi Lisa, NTT Data's AI transformation initiative caught our attention. We help IT services firms automate initial sales qualification..."
+        },
+        {
+            id: "M202",
+            channel: "email",
+            direction: "inbound",
+            timestamp: "2 days ago",
+            subject: "Re: AI transformation at NTT Data",
+            content: "Thanks for reaching out. We're actively evaluating solutions. Can you send more information about integration capabilities?"
+        },
+        {
+            id: "M203",
+            channel: "linkedin",
+            direction: "outbound",
+            timestamp: "1 day ago",
+            content: "Lisa, following up on your email. I've prepared a custom integration overview for NTT Data's Salesforce instance."
+        },
+        {
+            id: "M204",
+            channel: "voice",
+            direction: "outbound",
+            timestamp: "5 hours ago",
+            duration: "22 minutes",
+            outcome: "Qualified",
+            summary: "Lisa confirmed RFP published for sales automation. Budget: $400K allocated, potential for $600K expansion. Decision timeline: End of Q1. She owns budget, CRO approval is formality. Key concern: Explainability and integration experience.",
+            objections: [
+                "Previous vendor had poor integration experience",
+                "Needs explainability for compliance",
+                "Wants case studies from similar-sized services firms"
+            ]
+        }
     ]
 };
 const mockMeetings = [
