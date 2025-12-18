@@ -26,7 +26,8 @@ import {
 } from "@/components/ui/select";
 import { useJazonApp } from "@/context/jazon-app-context";
 import { Lead } from "@/lib/mock-data";
-import { Upload, Database, Building2, Settings2, Loader2 } from "lucide-react";
+import { Upload, Database, Building2, Settings2, Loader2, Mic } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 const csvFields = ["name", "email", "company", "title", "phone"] as const;
 
@@ -75,6 +76,17 @@ export default function SetupPage() {
   const [hubspotStatus, setHubspotStatus] = useState<
     "disconnected" | "connecting" | "connected"
   >("disconnected");
+
+  // Voice Agent Script state
+  const [voiceScript, setVoiceScript] = useState({
+    opening: "",
+    qualificationQuestions: "",
+    objectionHandling: "",
+    disqualificationRules: "",
+    escalationCriteria: "",
+    complianceDisclaimer: "",
+  });
+  const [allowImprovisation, setAllowImprovisation] = useState(false);
 
   const handleCsvUpload = (file: File) => {
     const reader = new FileReader();
@@ -859,6 +871,171 @@ export default function SetupPage() {
                       These instructions are surfaced in Outreach Engine,
                       Qualification reasoning, and Workflow for explainability.
                     </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-2">
+                        <Mic className="w-4 h-4" />
+                        <div>
+                          <CardTitle>Voice Agent Script</CardTitle>
+                          <CardDescription className="mt-1">
+                            Define exactly what the AI voice agent is allowed to say
+                            during live calls
+                          </CardDescription>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="default" className="text-xs">
+                          Active
+                        </Badge>
+                        <Button size="sm" variant="outline">
+                          Save Script
+                        </Button>
+                        <Button size="sm" variant="ghost">
+                          Reset to Default (Demo)
+                        </Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Opening Statement</Label>
+                      <Textarea
+                        rows={4}
+                        placeholder={`Hi {{first_name}}, this is Jazon calling on behalf of {{company_name}}. The reason for my call is to understand how you're currently handling {{pain_point}} and see if it makes sense to explore a conversation further.`}
+                        value={voiceScript.opening}
+                        onChange={(e) =>
+                          setVoiceScript((prev) => ({
+                            ...prev,
+                            opening: e.target.value,
+                          }))
+                        }
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Use variables: {"{"}first_name{"}"}, {"{"}company_name
+                        {"}"}, {"{"}pain_point{"}"}
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Qualification Questions</Label>
+                      <Textarea
+                        rows={5}
+                        placeholder={`- How are you currently handling inbound lead qualification?\n- What tools are you using today?\n- Are you evaluating alternatives this quarter?`}
+                        value={voiceScript.qualificationQuestions}
+                        onChange={(e) =>
+                          setVoiceScript((prev) => ({
+                            ...prev,
+                            qualificationQuestions: e.target.value,
+                          }))
+                        }
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        List key questions to uncover Budget, Authority, Need, and
+                        Timeline
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Objection Handling Guidelines</Label>
+                      <Textarea
+                        rows={4}
+                        placeholder={`If the prospect raises concerns about AI accuracy, explain explainability, audit logs, and human override. Do not argue. Offer examples.`}
+                        value={voiceScript.objectionHandling}
+                        onChange={(e) =>
+                          setVoiceScript((prev) => ({
+                            ...prev,
+                            objectionHandling: e.target.value,
+                          }))
+                        }
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Specify how the AI should respond to common objections
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Disqualification Rules</Label>
+                      <Textarea
+                        rows={3}
+                        placeholder={`Politely exit the call if budget is clearly below $X or authority is not reachable.`}
+                        value={voiceScript.disqualificationRules}
+                        onChange={(e) =>
+                          setVoiceScript((prev) => ({
+                            ...prev,
+                            disqualificationRules: e.target.value,
+                          }))
+                        }
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Define clear conditions for ending a call early
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Escalation to AE Criteria</Label>
+                      <Textarea
+                        rows={3}
+                        placeholder={`Escalate only when Budget + Authority + Timeline are verbally confirmed.`}
+                        value={voiceScript.escalationCriteria}
+                        onChange={(e) =>
+                          setVoiceScript((prev) => ({
+                            ...prev,
+                            escalationCriteria: e.target.value,
+                          }))
+                        }
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Specify requirements for AE handoff after voice call
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Compliance & Safety Disclaimer</Label>
+                      <Textarea
+                        rows={3}
+                        placeholder={`This call may be recorded for quality and training purposes. Follow regional compliance rules.`}
+                        value={voiceScript.complianceDisclaimer}
+                        onChange={(e) =>
+                          setVoiceScript((prev) => ({
+                            ...prev,
+                            complianceDisclaimer: e.target.value,
+                          }))
+                        }
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Add required legal or regulatory disclosures
+                      </p>
+                    </div>
+
+                    <div className="border-t pt-4">
+                      <p className="text-xs text-muted-foreground mb-4">
+                        This script is followed verbatim by the AI voice agent and
+                        is logged for audit purposes.
+                      </p>
+
+                      <div className="flex items-start gap-3">
+                        <Switch
+                          checked={allowImprovisation}
+                          onCheckedChange={setAllowImprovisation}
+                          id="improvisation-toggle"
+                        />
+                        <div className="flex-1">
+                          <Label
+                            htmlFor="improvisation-toggle"
+                            className="text-sm font-medium cursor-pointer"
+                          >
+                            Allow limited AI improvisation within script boundaries
+                          </Label>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            AI may paraphrase but will not change intent or claims.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
