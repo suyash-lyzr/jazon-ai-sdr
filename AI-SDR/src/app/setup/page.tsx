@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/select";
 import { useJazonApp } from "@/context/jazon-app-context";
 import { Lead } from "@/lib/mock-data";
-import { Upload, Database, Building2, Settings2, Loader2, Mic } from "lucide-react";
+import { Upload, Database, Building2, Settings2, Loader2, Mic, Search } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 
 const csvFields = ["name", "email", "company", "title", "phone"] as const;
@@ -87,6 +87,11 @@ export default function SetupPage() {
     complianceDisclaimer: "",
   });
   const [allowImprovisation, setAllowImprovisation] = useState(false);
+
+  // Apollo configuration state
+  const [apolloEnabled, setApolloEnabled] = useState(false);
+  const [apolloWorkspace, setApolloWorkspace] = useState("enterprise-sales-ops-q1");
+  const [apolloAutoIngest, setApolloAutoIngest] = useState(true);
 
   const handleCsvUpload = (file: File) => {
     const reader = new FileReader();
@@ -360,6 +365,118 @@ export default function SetupPage() {
                       </CardContent>
                     </Card>
                   </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <h2 className="text-sm font-semibold text-foreground">
+                      Outbound Lead Sources
+                    </h2>
+                    <p className="text-xs text-muted-foreground">
+                      Connect Apollo.io to automatically pull high-intent outbound leads
+                    </p>
+                  </div>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Search className="w-4 h-4" />
+                        Apollo.io
+                      </CardTitle>
+                      <CardDescription>
+                        Read-only connection for outbound lead sourcing
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border border-border/30">
+                        <div className="flex items-center gap-3">
+                          <Switch
+                            checked={apolloEnabled}
+                            onCheckedChange={setApolloEnabled}
+                            id="apollo-enabled"
+                          />
+                          <div>
+                            <Label htmlFor="apollo-enabled" className="text-sm font-medium cursor-pointer">
+                              Enable Apollo for outbound leads
+                            </Label>
+                            <p className="text-xs text-muted-foreground">
+                              {apolloEnabled ? "Apollo leads will be auto-ingested and enriched" : "Apollo integration is disabled"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {apolloEnabled && (
+                        <>
+                          <div className="space-y-2">
+                            <Label>Select Apollo Workspace / Lists</Label>
+                            <Select
+                              value={apolloWorkspace}
+                              onValueChange={setApolloWorkspace}
+                            >
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="us-mid-market">US Mid-Market RevOps Leaders</SelectItem>
+                                <SelectItem value="enterprise-sales-ops-q1">Enterprise Sales Ops – Q1</SelectItem>
+                                <SelectItem value="saas-decision-makers">SaaS Decision Makers</SelectItem>
+                                <SelectItem value="fortune-500-revops">Fortune 500 Revenue Operations</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <p className="text-xs text-muted-foreground">
+                              Jazon will pull leads from this Apollo list for analysis and outreach
+                            </p>
+                          </div>
+
+                          <div className="flex items-start gap-3 p-3 bg-muted/20 rounded-lg border border-border/30">
+                            <Switch
+                              checked={apolloAutoIngest}
+                              onCheckedChange={setApolloAutoIngest}
+                              id="apollo-auto-ingest"
+                            />
+                            <div className="flex-1">
+                              <Label htmlFor="apollo-auto-ingest" className="text-sm font-medium cursor-pointer">
+                                Auto-ingest new leads daily
+                              </Label>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                Jazon will automatically sync new leads from the selected Apollo list every 24 hours
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
+                            <p className="text-sm text-foreground mb-2 font-medium">How it works:</p>
+                            <ul className="space-y-1.5 text-xs text-muted-foreground">
+                              <li className="flex items-start gap-2">
+                                <span className="text-primary mt-0.5">•</span>
+                                <span>Jazon pulls leads from selected Apollo lists</span>
+                              </li>
+                              <li className="flex items-start gap-2">
+                                <span className="text-primary mt-0.5">•</span>
+                                <span>Automatically enriches with ICP scoring and trigger detection</span>
+                              </li>
+                              <li className="flex items-start gap-2">
+                                <span className="text-primary mt-0.5">•</span>
+                                <span>Routes qualified leads through the Outreach Engine</span>
+                              </li>
+                              <li className="flex items-start gap-2">
+                                <span className="text-primary mt-0.5">•</span>
+                                <span><strong>All outreach is executed by Jazon</strong> (not Apollo sequences)</span>
+                              </li>
+                            </ul>
+                          </div>
+                        </>
+                      )}
+
+                      {!apolloEnabled && (
+                        <div className="text-center py-6">
+                          <p className="text-sm text-muted-foreground">
+                            Enable Apollo to start ingesting outbound leads from your saved lists
+                          </p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
                 </div>
 
                 <div className="space-y-4">

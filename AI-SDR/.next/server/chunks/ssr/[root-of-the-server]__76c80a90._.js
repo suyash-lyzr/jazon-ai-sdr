@@ -143,6 +143,89 @@ const mockLeads = [
         ingestedAt: "2 weeks ago",
         importedBy: "AE Team",
         originTrigger: "Manually added from referral"
+    },
+    {
+        id: "L006",
+        name: "Robert Mitchell",
+        email: "r.mitchell@pwc.com",
+        company: "PwC",
+        title: "Sales Operations Lead",
+        icpScore: 88,
+        stage: "Engaged",
+        channel: "Email → LinkedIn",
+        status: "Active",
+        lastContact: "1 day ago",
+        aiRecommendation: "Continue nurturing - high intent signals",
+        industry: "Professional Services",
+        companySize: "10,000+ employees",
+        triggers: [
+            "Evaluating sales automation",
+            "Recent LinkedIn engagement",
+            "RevOps hiring"
+        ],
+        source: "Apollo",
+        ingestedAt: "5 days ago",
+        importedBy: "Outbound Sync",
+        originTrigger: "Apollo list: Enterprise Sales Ops – Q1",
+        sourceMetadata: {
+            apolloListName: "Enterprise Sales Ops – Q1",
+            apolloPersonId: "APL-5f3a8b9c"
+        }
+    },
+    {
+        id: "L007",
+        name: "Jennifer Taylor",
+        email: "j.taylor@thoughtworks.com",
+        company: "Thoughtworks",
+        title: "VP of Business Development",
+        icpScore: 82,
+        stage: "Research",
+        channel: "Email",
+        status: "Active",
+        lastContact: "Not contacted yet",
+        aiRecommendation: "Strong fit - initiate outreach sequence",
+        industry: "Technology Consulting",
+        companySize: "5,000-10,000 employees",
+        triggers: [
+            "Sales process optimization",
+            "Hiring SDR team"
+        ],
+        source: "Apollo",
+        ingestedAt: "2 days ago",
+        importedBy: "Outbound Sync",
+        originTrigger: "Apollo list: US Mid-Market RevOps Leaders",
+        sourceMetadata: {
+            apolloListName: "US Mid-Market RevOps Leaders",
+            apolloPersonId: "APL-7d2c9a1f"
+        }
+    },
+    {
+        id: "L008",
+        name: "Michael Thompson",
+        email: "m.thompson@cognizant.com",
+        company: "Cognizant",
+        title: "Chief Revenue Officer",
+        icpScore: 96,
+        stage: "Qualification",
+        channel: "Email → Voice",
+        status: "High Priority",
+        lastContact: "6 hours ago",
+        aiRecommendation: "Voice call scheduled - prepare for BANT",
+        industry: "IT Services",
+        companySize: "10,000+ employees",
+        triggers: [
+            "Active vendor evaluation",
+            "Budget allocated",
+            "Q1 decision timeline"
+        ],
+        source: "Apollo",
+        ingestedAt: "4 days ago",
+        importedBy: "Outbound Sync",
+        originTrigger: "Apollo list: Enterprise Sales Ops – Q1",
+        sourceMetadata: {
+            apolloListName: "Enterprise Sales Ops – Q1",
+            apolloPersonId: "APL-9e4f7b2a"
+        }
     }
 ];
 const mockDecisionFeed = [

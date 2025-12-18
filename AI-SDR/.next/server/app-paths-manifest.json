@@ -1,13 +1,15 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/conversations/page": "app/conversations/page.js",
   "/crm-sync/page": "app/crm-sync/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/integrations/page": "app/integrations/page.js",
+  "/leads/outbound/page": "app/leads/outbound/page.js",
   "/leads/page": "app/leads/page.js",
-  "/meetings/page": "app/meetings/page.js",
+  "/learning/page": "app/learning/page.js",
   "/outreach/page": "app/outreach/page.js",
   "/page": "app/page.js",
+  "/qualification/page": "app/qualification/page.js",
   "/research/page": "app/research/page.js",
-  "/setup/page": "app/setup/page.js"
+  "/setup/page": "app/setup/page.js",
+  "/workflow/page": "app/workflow/page.js"
 }

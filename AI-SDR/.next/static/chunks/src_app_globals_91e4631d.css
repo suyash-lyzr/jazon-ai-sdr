@@ -2073,6 +2073,16 @@
     }
   }
 
+  .border-chart-3\/30 {
+    border-color: var(--chart-3);
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .border-chart-3\/30 {
+      border-color: color-mix(in oklab, var(--chart-3) 30%, transparent);
+    }
+  }
+
   .border-chart-4\/20 {
     border-color: var(--chart-4);
   }
@@ -3255,6 +3265,10 @@
   .group-data-\[side\=right\]\:border-l:is(:where(.group)[data-side="right"] *) {
     border-left-style: var(--tw-border-style);
     border-left-width: 1px;
+  }
+
+  .group-data-\[state\=open\]\:rotate-90:is(:where(.group)[data-state="open"] *) {
+    rotate: 90deg;
   }
 
   .group-data-\[state\=open\]\:rotate-180:is(:where(.group)[data-state="open"] *) {
@@ -4799,6 +4813,12 @@
   @media (min-width: 40rem) {
     .sm\:max-w-lg {
       max-width: var(--container-lg);
+    }
+  }
+
+  @media (min-width: 40rem) {
+    .sm\:max-w-md {
+      max-width: var(--container-md);
     }
   }
 

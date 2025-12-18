@@ -28,7 +28,18 @@ import {
   CheckCircle2,
   Circle,
   ExternalLink,
+  X,
 } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 interface Integration {
   id: string
@@ -41,6 +52,14 @@ interface Integration {
 
 const integrations: Integration[] = [
   // Lead Sources
+  {
+    id: "apollo",
+    name: "Apollo.io",
+    permissions: "Read-only",
+    usedFor: "Outbound lead sourcing from saved lists and campaigns",
+    icon: Search,
+    category: "lead-sources",
+  },
   {
     id: "salesforce",
     name: "Salesforce",
@@ -151,11 +170,30 @@ export default function IntegrationsPage() {
     return initial
   })
 
+  const [apolloModalOpen, setApolloModalOpen] = useState(false)
+  const [apolloApiKey, setApolloApiKey] = useState("")
+
   const handleConnect = (id: string) => {
+    // Apollo requires a modal with API key input
+    if (id === "apollo") {
+      setApolloModalOpen(true)
+      return
+    }
+    
     setConnectionStates((prev) => ({ ...prev, [id]: "connecting" }))
     setTimeout(() => {
       setConnectionStates((prev) => ({ ...prev, [id]: "connected" }))
     }, 1500)
+  }
+
+  const handleApolloConnect = () => {
+    setApolloModalOpen(false)
+    setConnectionStates((prev) => ({ ...prev, apollo: "connecting" }))
+    
+    setTimeout(() => {
+      setConnectionStates((prev) => ({ ...prev, apollo: "connected" }))
+      setApolloApiKey("")
+    }, 2500)
   }
 
   // Calculate connection stats
@@ -433,6 +471,55 @@ export default function IntegrationsPage() {
           </div>
         </div>
       </SidebarInset>
+
+      {/* Apollo Connection Modal */}
+      <Dialog open={apolloModalOpen} onOpenChange={setApolloModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Connect Apollo.io</DialogTitle>
+            <DialogDescription>
+              Jazon connects to Apollo using read-only API access to ingest outbound leads from saved lists.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="apollo-api-key">Apollo API Key</Label>
+              <Input
+                id="apollo-api-key"
+                type="password"
+                placeholder="Enter your Apollo API key..."
+                value={apolloApiKey}
+                onChange={(e) => setApolloApiKey(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Your API key is used for read-only access to people data, company data, and saved lists only.
+              </p>
+            </div>
+            <div className="bg-muted/30 rounded-lg p-3 border border-border/30">
+              <p className="text-xs font-medium text-foreground mb-1">What Jazon can access:</p>
+              <ul className="space-y-1 text-xs text-muted-foreground">
+                <li>• Saved lists and sequences (read-only)</li>
+                <li>• People and company profile data (read-only)</li>
+                <li>• Contact information for enrichment (read-only)</li>
+              </ul>
+              <p className="text-xs font-medium text-foreground mt-2 mb-1">What Jazon cannot do:</p>
+              <ul className="space-y-1 text-xs text-muted-foreground">
+                <li>• Send emails via Apollo</li>
+                <li>• Modify sequences or campaigns</li>
+                <li>• Access your usage credits</li>
+              </ul>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setApolloModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleApolloConnect} disabled={!apolloApiKey.trim()}>
+              Connect
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </SidebarProvider>
   )
 }

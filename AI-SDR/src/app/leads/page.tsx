@@ -50,12 +50,15 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { mockConversations, mockQualificationData, mockMeetings } from "@/lib/mock-data"
 import { useJazonApp } from "@/context/jazon-app-context"
-import { Search, Filter, ArrowUpDown, Mail, Phone, MessageSquare, Clock, CheckCircle2, AlertCircle, Plus, Database, Upload, HelpCircle } from "lucide-react"
+import { Search, Filter, ArrowUpDown, Mail, Phone, MessageSquare, Clock, CheckCircle2, AlertCircle, Plus, Database, Upload, HelpCircle, Sparkles } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export default function LeadsPage() {
   const { leads } = useJazonApp()
+  const router = useRouter()
   const [selectedLead, setSelectedLead] = useState<string | null>(null)
   const [filterStage, setFilterStage] = useState<string>("all")
+  const [filterSource, setFilterSource] = useState<string>("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [addLeadsOpen, setAddLeadsOpen] = useState(false)
 
@@ -72,9 +75,10 @@ export default function LeadsPage() {
           lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           lead.company.toLowerCase().includes(searchQuery.toLowerCase())
         const matchesStage = filterStage === "all" || lead.stage === filterStage
-        return matchesSearch && matchesStage
+        const matchesSource = filterSource === "all" || lead.source?.toLowerCase() === filterSource.toLowerCase()
+        return matchesSearch && matchesStage && matchesSource
       }),
-    [leads, searchQuery, filterStage],
+    [leads, searchQuery, filterStage, filterSource],
   )
 
   const getIcpScoreColor = (score: number) => {
@@ -181,9 +185,32 @@ export default function LeadsPage() {
                         <SelectItem value="Disqualified">Disqualified</SelectItem>
                       </SelectContent>
                     </Select>
+                    <Select value={filterSource} onValueChange={setFilterSource}>
+                      <SelectTrigger className="w-[180px]">
+                        <Database className="w-4 h-4 mr-2" />
+                        <SelectValue placeholder="Filter by source" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Sources</SelectItem>
+                        <SelectItem value="apollo">Apollo</SelectItem>
+                        <SelectItem value="salesforce">Salesforce</SelectItem>
+                        <SelectItem value="hubspot">HubSpot</SelectItem>
+                        <SelectItem value="csv">CSV</SelectItem>
+                        <SelectItem value="manual">Manual</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary">{filteredLeads.length} leads</Badge>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-2"
+                      onClick={() => router.push("/leads/outbound")}
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      Find Outbound Leads
+                    </Button>
                     <Dialog open={addLeadsOpen} onOpenChange={setAddLeadsOpen}>
                       <DialogTrigger asChild>
                         <Button variant="outline" size="sm" className="gap-2">
@@ -337,9 +364,23 @@ export default function LeadsPage() {
                             </Tooltip>
                           </TableCell>
                           <TableCell>
-                            <span className="text-sm">
-                              {lead.source || "Unknown"}
-                            </span>
+                            <div className="flex items-center gap-1.5">
+                              {lead.source === "Apollo" && <Search className="w-3.5 h-3.5 text-chart-3" />}
+                              {lead.source === "Salesforce" && <Database className="w-3.5 h-3.5 text-primary" />}
+                              {lead.source === "HubSpot" && <Database className="w-3.5 h-3.5 text-chart-2" />}
+                              {lead.source === "CSV" && <Upload className="w-3.5 h-3.5 text-muted-foreground" />}
+                              <Badge 
+                                variant="outline" 
+                                className={`text-xs ${
+                                  lead.source === "Apollo" ? "border-chart-3/30 bg-chart-3/5 text-chart-3" :
+                                  lead.source === "Salesforce" ? "border-primary/30 bg-primary/5" :
+                                  lead.source === "HubSpot" ? "border-chart-2/30 bg-chart-2/5 text-chart-2" :
+                                  ""
+                                }`}
+                              >
+                                {lead.source || "Unknown"}
+                              </Badge>
+                            </div>
                           </TableCell>
                           <TableCell>
                             <span className="text-sm text-muted-foreground">
@@ -404,6 +445,47 @@ export default function LeadsPage() {
               </SheetHeader>
 
               <div className="mt-6 space-y-6 px-4 md:px-6">
+                {/* Lead Source Context (Apollo-specific) */}
+                {lead.source === "Apollo" && lead.sourceMetadata?.apolloListName && (
+                  <Card className="border-chart-3/30 bg-chart-3/5">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm flex items-center gap-2">
+                        <Search className="w-4 h-4" />
+                        Lead Source
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1">Source</p>
+                          <div className="flex items-center gap-1.5">
+                            <Badge variant="outline" className="text-xs border-chart-3/30 bg-chart-3/10 text-chart-3">
+                              Apollo.io
+                            </Badge>
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1">List Name</p>
+                          <p className="text-sm font-medium">{lead.sourceMetadata.apolloListName}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1">Imported Via</p>
+                          <p className="text-sm font-medium">Outbound Ingestion</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1">Last Synced</p>
+                          <p className="text-sm font-medium">{lead.ingestedAt || "Unknown"}</p>
+                        </div>
+                      </div>
+                      <div className="mt-3 pt-3 border-t border-border/30">
+                        <p className="text-xs text-muted-foreground">
+                          This lead was sourced from Apollo and enriched by Jazon before outreach. All messaging is executed by Jazon (not Apollo sequences).
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
                 {/* Current AI Decision - Most Prominent */}
                 <Card className="border-primary/30 bg-primary/5 shadow-sm">
                   <CardHeader>
