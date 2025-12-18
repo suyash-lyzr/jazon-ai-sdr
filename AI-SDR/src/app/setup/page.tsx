@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { JazonSidebar } from "@/components/jazon-sidebar";
-import { JazonHeader } from "@/components/jazon-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import {
   Card,
@@ -210,7 +209,6 @@ export default function SetupPage() {
     >
       <JazonSidebar variant="inset" />
       <SidebarInset>
-        <JazonHeader />
         <div className="flex flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 p-4 md:gap-6 md:p-6">
             <div className="flex flex-col gap-2">
@@ -240,16 +238,16 @@ export default function SetupPage() {
                     </p>
                   </div>
                   <div className="grid gap-4 md:grid-cols-2">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <Database className="w-4 h-4" />
-                          Salesforce
-                        </CardTitle>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Database className="w-4 h-4" />
+                        Salesforce
+                      </CardTitle>
                         <CardDescription>
                           Demo connection for enterprise CRM lead sync.
                         </CardDescription>
-                      </CardHeader>
+                    </CardHeader>
                       <CardContent className="space-y-3">
                         <div className="flex items-center justify-between">
                           {salesforceStatus === "disconnected" && (
@@ -275,7 +273,7 @@ export default function SetupPage() {
                           )}
                           {salesforceStatus === "connected" && (
                             <>
-                              <Badge variant="default">Connected (Demo)</Badge>
+                      <Badge variant="default">Connected (Demo)</Badge>
                               <span className="text-xs text-muted-foreground">
                                 Last synced just now
                               </span>
@@ -301,19 +299,19 @@ export default function SetupPage() {
                           <p>• Next best action and AI recommendations</p>
                           <p>• Logged activities for outreach and follow-up</p>
                         </div>
-                      </CardContent>
-                    </Card>
+                    </CardContent>
+                  </Card>
 
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <Database className="w-4 h-4" />
-                          HubSpot
-                        </CardTitle>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Database className="w-4 h-4" />
+                        HubSpot
+                      </CardTitle>
                         <CardDescription>
                           Demo connection for marketing and lifecycle leads.
                         </CardDescription>
-                      </CardHeader>
+                    </CardHeader>
                       <CardContent className="space-y-3">
                         <div className="flex items-center justify-between">
                           {hubspotStatus === "disconnected" && (
@@ -339,7 +337,7 @@ export default function SetupPage() {
                           )}
                           {hubspotStatus === "connected" && (
                             <>
-                              <Badge variant="default">Connected (Demo)</Badge>
+                      <Badge variant="default">Connected (Demo)</Badge>
                               <span className="text-xs text-muted-foreground">
                                 Last synced just now
                               </span>
@@ -372,7 +370,7 @@ export default function SetupPage() {
                     <h2 className="text-sm font-semibold text-foreground">
                       Outbound Lead Sources
                     </h2>
-                    <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-muted-foreground">
                       Connect Apollo.io to automatically pull high-intent outbound leads
                     </p>
                   </div>

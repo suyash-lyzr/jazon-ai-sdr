@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from "react"
 import { JazonSidebar } from "@/components/jazon-sidebar"
-import { JazonHeader } from "@/components/jazon-header"
 import {
   SidebarInset,
   SidebarProvider,
@@ -145,10 +144,9 @@ export default function LeadsPage() {
       }
     >
       <JazonSidebar variant="inset" />
-      <SidebarInset>
-        <JazonHeader />
-        <div className="flex flex-1 flex-col">
-          <div className="flex flex-1 flex-col gap-4 p-4 md:gap-6 md:p-6">
+      <SidebarInset className="!overflow-x-hidden !max-w-full">
+        <div className="flex flex-1 flex-col overflow-hidden w-full max-w-full">
+          <div className="flex flex-1 flex-col gap-4 p-4 md:gap-6 md:p-6 overflow-y-auto overflow-x-hidden w-full">
             {/* Page Header */}
             <div className="flex flex-col gap-2">
               <h1 className="text-3xl font-semibold text-foreground">Leads</h1>
@@ -158,10 +156,10 @@ export default function LeadsPage() {
             </div>
 
             {/* Filters */}
-            <Card>
+            <Card className="w-full">
               <CardContent className="pt-6">
-                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                  <div className="flex flex-1 gap-2">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between w-full">
+                  <div className="flex flex-1 gap-2 min-w-0">
                     <div className="relative flex-1 max-w-sm">
                       <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                       <Input
@@ -200,12 +198,12 @@ export default function LeadsPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary">{filteredLeads.length} leads</Badge>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <Badge variant="secondary" className="whitespace-nowrap">{filteredLeads.length} leads</Badge>
                     <Button
-                      variant="outline"
+                      variant="default"
                       size="sm"
-                      className="gap-2"
+                      className="gap-2 whitespace-nowrap bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
                       onClick={() => router.push("/leads/outbound")}
                     >
                       <Sparkles className="w-4 h-4" />
@@ -213,7 +211,7 @@ export default function LeadsPage() {
                     </Button>
                     <Dialog open={addLeadsOpen} onOpenChange={setAddLeadsOpen}>
                       <DialogTrigger asChild>
-                        <Button variant="outline" size="sm" className="gap-2">
+                        <Button variant="outline" size="sm" className="gap-2 whitespace-nowrap">
                           <Plus className="w-4 h-4" />
                           Add Leads
                         </Button>
@@ -271,16 +269,17 @@ export default function LeadsPage() {
             </Card>
 
             {/* Leads Table */}
-            <Card>
+            <Card className="w-full overflow-hidden">
               <CardHeader>
                 <CardTitle>All Leads</CardTitle>
                 <CardDescription>
                   Click any lead to drill down into AI decision reasoning and evidence
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <TooltipProvider>
-                  <Table>
+              <CardContent className="p-0 w-full overflow-hidden">
+                <div className="overflow-x-auto w-full pl-4" style={{ maxWidth: "calc(100vw - var(--sidebar-width) - 2rem)" }}>
+                  <TooltipProvider>
+                    <Table className="min-w-max">
                     <TableHeader>
                       <TableRow>
                         <TableHead>Lead</TableHead>
@@ -426,8 +425,9 @@ export default function LeadsPage() {
                         </TableRow>
                       ))}
                     </TableBody>
-                  </Table>
-                </TooltipProvider>
+                    </Table>
+                  </TooltipProvider>
+                </div>
               </CardContent>
             </Card>
           </div>

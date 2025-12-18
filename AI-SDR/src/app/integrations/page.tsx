@@ -3,7 +3,6 @@
 import { useState, useMemo } from "react"
 import Link from "next/link"
 import { JazonSidebar } from "@/components/jazon-sidebar"
-import { JazonHeader } from "@/components/jazon-header"
 import {
   SidebarInset,
   SidebarProvider,
@@ -280,7 +279,6 @@ export default function IntegrationsPage() {
     >
       <JazonSidebar variant="inset" />
       <SidebarInset>
-        <JazonHeader />
         <div className="flex flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-6 p-4 md:gap-8 md:p-6">
             {/* Page Header */}

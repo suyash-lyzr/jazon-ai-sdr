@@ -1409,12 +1409,20 @@
     width: 1px;
   }
 
+  .\!max-w-full {
+    max-width: 100% !important;
+  }
+
   .max-w-\(--skeleton-width\) {
     max-width: var(--skeleton-width);
   }
 
   .max-w-\[calc\(100\%-2rem\)\] {
     max-width: calc(100% - 2rem);
+  }
+
+  .max-w-full {
+    max-width: 100%;
   }
 
   .max-w-max {
@@ -1471,6 +1479,14 @@
 
   .min-w-\[var\(--radix-select-trigger-width\)\] {
     min-width: var(--radix-select-trigger-width);
+  }
+
+  .min-w-full {
+    min-width: 100%;
+  }
+
+  .min-w-max {
+    min-width: max-content;
   }
 
   .flex-1 {
@@ -1895,6 +1911,10 @@
     overflow: hidden;
   }
 
+  .\!overflow-x-hidden {
+    overflow-x: hidden !important;
+  }
+
   .overflow-x-auto {
     overflow-x: auto;
   }
@@ -1905,6 +1925,10 @@
 
   .overflow-y-auto {
     overflow-y: auto;
+  }
+
+  .overflow-y-visible {
+    overflow-y: visible;
   }
 
   .rounded {
