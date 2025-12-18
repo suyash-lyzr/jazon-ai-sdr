@@ -932,6 +932,10 @@
     margin-right: calc(var(--spacing) * 1);
   }
 
+  .mr-1\.5 {
+    margin-right: calc(var(--spacing) * 1.5);
+  }
+
   .mr-2 {
     margin-right: calc(var(--spacing) * 2);
   }
@@ -2307,6 +2311,16 @@
 
   .bg-muted-foreground {
     background-color: var(--muted-foreground);
+  }
+
+  .bg-muted-foreground\/30 {
+    background-color: var(--muted-foreground);
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-muted-foreground\/30 {
+      background-color: color-mix(in oklab, var(--muted-foreground) 30%, transparent);
+    }
   }
 
   .bg-muted\/20 {
