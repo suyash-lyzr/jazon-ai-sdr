@@ -261,7 +261,14 @@ const mockConversations = {
             direction: "outbound",
             timestamp: "5 days ago",
             subject: "AI-powered sales qualification for Accenture",
-            content: "Hi Sarah, noticed Accenture is expanding the sales operations team. We help enterprises like yours automate initial qualification..."
+            content: "Hi Sarah, noticed Accenture is expanding the sales operations team. We help enterprises like yours automate initial qualification...",
+            body: "Hi Sarah,\n\nI noticed **Accenture** is expanding the **sales operations team** by 40% in Q1.\n\nWe help enterprises like yours automate initial qualification so your SDR team can focus on high-value conversations instead of manual outreach.\n\nOur AI SDR platform:\n• Automatically qualifies leads using BANT criteria\n• Engages prospects across email, LinkedIn, and voice\n• Hands off ready-to-close opportunities to your AE team\n\nWould you be open to a 15-minute conversation about how we've helped companies like **Deloitte** and **NTT Data** scale their SDR operations?\n\nBest,\nJazon AI SDR",
+            personalizationTokens: [
+                "company",
+                "hiring signals",
+                "role"
+            ],
+            aiGenerated: true
         },
         {
             id: "M002",
@@ -269,14 +276,22 @@ const mockConversations = {
             direction: "inbound",
             timestamp: "4 days ago",
             subject: "Re: AI-powered sales qualification for Accenture",
-            content: "Interesting timing. We're actually evaluating solutions in this space. Can you share more about how it integrates with Salesforce?"
+            content: "Interesting timing. We're actually evaluating solutions in this space. Can you share more about how it integrates with Salesforce?",
+            body: "Interesting timing. We're actually evaluating solutions in this space. Can you share more about how it integrates with Salesforce?\n\nWe need something that can handle our complex sales workflows and integrate with our existing tech stack.\n\nThanks,\nSarah"
         },
         {
             id: "M003",
             channel: "linkedin",
             direction: "outbound",
             timestamp: "3 days ago",
-            content: "Thanks for the response, Sarah. Our Salesforce integration is bi-directional and handles..."
+            content: "Thanks for the response, Sarah. Our Salesforce integration is bi-directional and handles...",
+            body: "Thanks for the response, Sarah! Our **Salesforce integration** is bi-directional and handles:\n\n✓ Lead enrichment + scoring\n✓ Activity logging\n✓ Opportunity creation\n✓ Custom field mapping\n\nPerfect for **professional services** firms with complex workflows like Accenture.\n\nWould you like me to send over a technical overview specific to your Salesforce instance?",
+            personalizationTokens: [
+                "company",
+                "industry",
+                "tech stack"
+            ],
+            aiGenerated: true
         },
         {
             id: "M004",
@@ -290,7 +305,9 @@ const mockConversations = {
                 "Integration complexity with existing tech stack",
                 "Data privacy concerns for client information",
                 "Internal IT approval process timeline"
-            ]
+            ],
+            scriptUsed: '**Opening:**\nHi Sarah, this is Jazon AI calling about sales automation for Accenture. Do you have 15 minutes?\n\n**Discovery:**\n- What\'s driving your SDR expansion in Q1?\n- How are you currently handling qualification?\n- What integration requirements do you have?\n\n**Qualification Questions:**\n- Budget: "What\'s allocated for this initiative?"\n- Authority: "Who else is involved in the decision?"\n- Timeline: "When are you looking to make a decision?"\n\n**Objection Handling:**\n- Integration: "Our Salesforce connector is pre-built for enterprise deployments"\n- Security: "SOC 2 Type II certified, full audit trail"\n\n**Next Steps:**\n- Schedule demo with technical team\n- Share security documentation\n- Provide ROI calculator',
+            aiGenerated: true
         }
     ],
     L002: [
@@ -300,22 +317,41 @@ const mockConversations = {
             direction: "outbound",
             timestamp: "6 days ago",
             subject: "Scaling SDR operations at Deloitte",
-            content: "Hi Marcus, saw Deloitte is hiring 20+ SDRs. Our AI SDR platform helps enterprises scale qualification without linear headcount growth..."
+            content: "Hi Marcus, saw Deloitte is hiring 20+ SDRs. Our AI SDR platform helps enterprises scale qualification without linear headcount growth...",
+            body: "Hi Marcus,\n\nI saw **Deloitte** is hiring 20+ SDRs across North America.\n\nInstead of scaling linearly with headcount, what if you could 3x qualification capacity with AI?\n\nOur platform:\n• Automates qualification across email, LinkedIn, voice\n• Hands off only sales-ready opportunities to your team\n• Proven results: 60% faster ramp time for new SDRs\n\nInterested in a quick call?",
+            personalizationTokens: [
+                "company",
+                "hiring signals"
+            ],
+            aiGenerated: true
         },
         {
             id: "M102",
             channel: "email",
             direction: "outbound",
             timestamp: "4 days ago",
-            subject: "Re: Scaling SDR operations at Deloitte",
-            content: "Following up on my previous message. Would love to show you how we've helped similar professional services firms..."
+            subject: "Case study: How Accenture scaled SDR operations",
+            content: "Following up on my previous message. Would love to show you how we've helped similar professional services firms...",
+            body: "Marcus,\n\nFollowing up on my previous note about scaling SDR operations.\n\nThought you might find this helpful: **Accenture** recently used our platform to scale from 12 to 50 SDRs without proportional headcount growth.\n\nKey results:\n• 60% reduction in SDR ramp time\n• 40% increase in qualified pipeline\n• 80% of routine qualification automated\n\nWould you like me to send the full case study?",
+            personalizationTokens: [
+                "competitor case study",
+                "industry"
+            ],
+            aiGenerated: true
         },
         {
             id: "M103",
             channel: "linkedin",
             direction: "outbound",
             timestamp: "2 days ago",
-            content: "Marcus, I noticed your recent post about sales automation. Our platform might be a good fit for Deloitte's expansion plans."
+            content: "Marcus, I noticed your recent post about sales automation. Our platform might be a good fit for Deloitte's expansion plans.",
+            body: "Marcus, I noticed your recent post about **sales automation**.\n\nOur AI SDR platform might be a perfect fit for **Deloitte's** expansion plans — especially if you're evaluating ways to scale qualification without proportional headcount.\n\nHappy to share how we've helped similar **consulting firms** achieve 3x qualification capacity.\n\nInterested in connecting?",
+            personalizationTokens: [
+                "social signal",
+                "company",
+                "industry"
+            ],
+            aiGenerated: true
         }
     ],
     L003: [
@@ -325,7 +361,14 @@ const mockConversations = {
             direction: "outbound",
             timestamp: "3 days ago",
             subject: "AI transformation at NTT Data",
-            content: "Hi Lisa, NTT Data's AI transformation initiative caught our attention. We help IT services firms automate initial sales qualification..."
+            content: "Hi Lisa, NTT Data's AI transformation initiative caught our attention. We help IT services firms automate initial sales qualification...",
+            body: 'Hi Lisa,\n\n**NTT Data\'s** AI transformation initiative caught our attention.\n\nWe help **IT services firms** automate initial sales qualification so your team can focus on high-value client conversations.\n\nRelevant for your RFP:\n• Transparent AI decision-making (no "black box")\n• Pre-built Salesforce connector for enterprise deployments\n• Case studies from similar-sized services firms\n\nOpen to a brief call this week?',
+            personalizationTokens: [
+                "company",
+                "AI initiative",
+                "RFP signal"
+            ],
+            aiGenerated: true
         },
         {
             id: "M202",
@@ -333,14 +376,22 @@ const mockConversations = {
             direction: "inbound",
             timestamp: "2 days ago",
             subject: "Re: AI transformation at NTT Data",
-            content: "Thanks for reaching out. We're actively evaluating solutions. Can you send more information about integration capabilities?"
+            content: "Thanks for reaching out. We're actively evaluating solutions. Can you send more information about integration capabilities?",
+            body: "Thanks for reaching out.\n\nWe're actively evaluating solutions as part of our Q1 planning. Can you send more information about integration capabilities and security compliance?\n\nWe need something that integrates cleanly with Salesforce and doesn't require extensive customization.\n\nBest,\nLisa"
         },
         {
             id: "M203",
             channel: "linkedin",
             direction: "outbound",
             timestamp: "1 day ago",
-            content: "Lisa, following up on your email. I've prepared a custom integration overview for NTT Data's Salesforce instance."
+            content: "Lisa, following up on your email. I've prepared a custom integration overview for NTT Data's Salesforce instance.",
+            body: "Lisa, following up on your email.\n\nI've prepared a custom integration overview for **NTT Data's Salesforce instance**.\n\nCovers:\n• Bi-directional sync architecture\n• SOC 2 compliance details\n• Similar IT services firm deployments\n\nShould I send it over, or would a quick call work better?",
+            personalizationTokens: [
+                "company",
+                "tech stack",
+                "security concerns"
+            ],
+            aiGenerated: true
         },
         {
             id: "M204",
@@ -354,7 +405,9 @@ const mockConversations = {
                 "Previous vendor had poor integration experience",
                 "Needs explainability for compliance",
                 "Wants case studies from similar-sized services firms"
-            ]
+            ],
+            scriptUsed: '**Opening:**\nHi Lisa, thanks for taking the time. I wanted to dive deeper into NTT Data\'s sales automation needs.\n\n**Discovery:**\n- Tell me about the RFP timeline\n- What went wrong with the previous vendor?\n- What are your top 3 requirements?\n\n**Qualification:**\n- Budget: Confirmed $400K allocated\n- Authority: Lisa owns budget, CRO approval is formality\n- Timeline: Decision by end of Q1\n\n**Address Objections:**\n- Integration: "We have a proven track record with Salesforce Enterprise"\n- Explainability: "Every AI decision is transparent and auditable"\n- Case studies: "I\'ll share 3 IT services firm examples"\n\n**Close:**\nSchedule technical demo with integration team',
+            aiGenerated: true
         }
     ]
 };

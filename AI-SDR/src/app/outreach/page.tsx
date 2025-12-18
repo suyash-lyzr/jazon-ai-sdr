@@ -52,7 +52,9 @@ import {
   Eye,
   Ban,
   Calendar,
-  FileText
+  FileText,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react"
 
 export default function OutreachPage() {
@@ -63,6 +65,7 @@ export default function OutreachPage() {
   const [controlDialogOpen, setControlDialogOpen] = useState<string | null>(null)
   const [overrideReason, setOverrideReason] = useState("")
   const [viewMode, setViewMode] = useState<"executive" | "full">("executive")
+  const [expandedMessageContent, setExpandedMessageContent] = useState<Set<string>>(new Set())
 
   // Default to first lead with active outreach
   const defaultLead = useMemo(() => {
@@ -87,6 +90,16 @@ export default function OutreachPage() {
       setControlDialogOpen(null)
       setOverrideReason("")
     }, 800)
+  }
+
+  const toggleMessageContent = (messageId: string) => {
+    const newExpanded = new Set(expandedMessageContent)
+    if (newExpanded.has(messageId)) {
+      newExpanded.delete(messageId)
+    } else {
+      newExpanded.add(messageId)
+    }
+    setExpandedMessageContent(newExpanded)
   }
 
   // Determine outreach status for selected lead
@@ -894,6 +907,106 @@ export default function OutreachPage() {
                                               </div>
                                             ))}
                                           </div>
+                                        </div>
+                                      )}
+
+                                      {/* View Message Content (for outreach/engagement events) */}
+                                      {(event.eventType === "outreach" || event.eventType === "engagement") && 
+                                       event.metadata?.channel && 
+                                       (() => {
+                                         const message = conversations.find(m => m.id === event.id)
+                                         return message?.body || message?.scriptUsed
+                                       })() && (
+                                        <div className="mt-3">
+                                          <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => toggleMessageContent(event.id)}
+                                            className="text-xs w-full justify-start"
+                                          >
+                                            <Eye className="w-3 h-3 mr-2" />
+                                            {expandedMessageContent.has(event.id) ? "Hide" : "View"} Message Content
+                                            {expandedMessageContent.has(event.id) ? (
+                                              <ChevronUp className="w-3 h-3 ml-auto" />
+                                            ) : (
+                                              <ChevronDown className="w-3 h-3 ml-auto" />
+                                            )}
+                                          </Button>
+                                          
+                                          {expandedMessageContent.has(event.id) && (() => {
+                                            const message = conversations.find(m => m.id === event.id)
+                                            if (!message) return null
+                                            
+                                            return (
+                                              <div className="mt-3 bg-background rounded-lg p-4 border border-primary/20 space-y-3">
+                                                <div className="flex items-center gap-2">
+                                                  <Badge variant="outline" className="text-xs">
+                                                    {message.channel === "email" ? "Email Content" : 
+                                                     message.channel === "linkedin" ? "LinkedIn Message" : 
+                                                     message.channel === "voice" ? "Voice Call" :
+                                                     "Message Content"}
+                                                  </Badge>
+                                                  {message.aiGenerated && (
+                                                    <Badge variant="outline" className="text-xs bg-primary/5 border-primary/20">
+                                                      AI-generated
+                                                    </Badge>
+                                                  )}
+                                                </div>
+                                                
+                                                {message.subject && (
+                                                  <div>
+                                                    <p className="text-xs font-medium text-muted-foreground mb-1">Subject</p>
+                                                    <p className="text-sm font-medium">{message.subject}</p>
+                                                  </div>
+                                                )}
+                                                
+                                                {message.body && (
+                                                  <div>
+                                                    <p className="text-xs font-medium text-muted-foreground mb-2">
+                                                      {message.channel === "email" ? "Email Body" :
+                                                       message.channel === "linkedin" ? "LinkedIn Message" :
+                                                       "Message Content"}
+                                                    </p>
+                                                    <div className="bg-muted/30 rounded-lg p-4 border border-border/30">
+                                                      <pre className="text-sm whitespace-pre-wrap text-foreground leading-relaxed font-sans">
+{message.body}
+                                                      </pre>
+                                                    </div>
+                                                  </div>
+                                                )}
+                                                
+                                                {message.scriptUsed && (
+                                                  <div>
+                                                    <p className="text-xs font-medium text-muted-foreground mb-2">
+                                                      Voice Call Script (AI-Generated)
+                                                    </p>
+                                                    <div className="bg-muted/30 rounded-lg p-4 border border-border/30">
+                                                      <pre className="text-xs font-mono whitespace-pre-wrap text-foreground leading-relaxed">
+{message.scriptUsed}
+                                                      </pre>
+                                                    </div>
+                                                  </div>
+                                                )}
+                                                
+                                                {message.personalizationTokens && message.personalizationTokens.length > 0 && (
+                                                  <div>
+                                                    <p className="text-xs font-medium text-muted-foreground mb-2">Personalization Tokens</p>
+                                                    <div className="flex flex-wrap gap-2">
+                                                      {message.personalizationTokens.map((token, tidx) => (
+                                                        <Badge key={tidx} variant="outline" className="text-xs">
+                                                          {token}
+                                                        </Badge>
+                                                      ))}
+                                                    </div>
+                                                  </div>
+                                                )}
+                                                
+                                                <div className="pt-2 border-t text-xs text-muted-foreground">
+                                                  This shows the exact content sent to the lead for full transparency and auditability.
+                                                </div>
+                                              </div>
+                                            )
+                                          })()}
                                         </div>
                                       )}
                                     </div>

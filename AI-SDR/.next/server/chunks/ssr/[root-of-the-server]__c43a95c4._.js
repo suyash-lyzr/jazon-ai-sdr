@@ -2945,6 +2945,8 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$up$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronUp$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/chevron-up.js [app-ssr] (ecmascript) <export default as ChevronUp>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$info$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Info$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/info.js [app-ssr] (ecmascript) <export default as Info>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$sparkles$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Sparkles$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/sparkles.js [app-ssr] (ecmascript) <export default as Sparkles>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$eye$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Eye$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/eye.js [app-ssr] (ecmascript) <export default as Eye>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$file$2d$text$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__FileText$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/file-text.js [app-ssr] (ecmascript) <export default as FileText>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/select.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tooltip$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/tooltip.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$collapsible$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/collapsible.tsx [app-ssr] (ecmascript)");
@@ -2970,6 +2972,7 @@ function ConversationsPage() {
     const [selectedLeadId, setSelectedLeadId] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [expandedMessages, setExpandedMessages] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(new Set());
     const [expandedAIInsights, setExpandedAIInsights] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(new Set());
+    const [expandedMessageContent, setExpandedMessageContent] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(new Set());
     // Default to first lead with conversations
     const defaultLead = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useMemo"])(()=>{
         if (leads.length === 0) return null;
@@ -3111,6 +3114,15 @@ function ConversationsPage() {
         }
         setExpandedAIInsights(newExpanded);
     };
+    const toggleMessageContent = (messageId)=>{
+        const newExpanded = new Set(expandedMessageContent);
+        if (newExpanded.has(messageId)) {
+            newExpanded.delete(messageId);
+        } else {
+            newExpanded.add(messageId);
+        }
+        setExpandedMessageContent(newExpanded);
+    };
     // Calculate engagement rate
     const engagementRate = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useMemo"])(()=>{
         if (conversations.length === 0) return 0;
@@ -3130,14 +3142,14 @@ function ConversationsPage() {
                 variant: "inset"
             }, void 0, false, {
                 fileName: "[project]/src/app/conversations/page.tsx",
-                lineNumber: 235,
+                lineNumber: 249,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$sidebar$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SidebarInset"], {
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$jazon$2d$header$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["JazonHeader"], {}, void 0, false, {
                         fileName: "[project]/src/app/conversations/page.tsx",
-                        lineNumber: 237,
+                        lineNumber: 251,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3156,7 +3168,7 @@ function ConversationsPage() {
                                                     children: "Conversations"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                    lineNumber: 243,
+                                                    lineNumber: 257,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3164,13 +3176,13 @@ function ConversationsPage() {
                                                     children: "Unified communication view across all channels"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                    lineNumber: 244,
+                                                    lineNumber: 258,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                            lineNumber: 242,
+                                            lineNumber: 256,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3181,7 +3193,7 @@ function ConversationsPage() {
                                                     children: "Lead:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                    lineNumber: 249,
+                                                    lineNumber: 263,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Select"], {
@@ -3194,12 +3206,12 @@ function ConversationsPage() {
                                                                 placeholder: "Choose a lead"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                lineNumber: 255,
+                                                                lineNumber: 269,
                                                                 columnNumber: 21
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                            lineNumber: 254,
+                                                            lineNumber: 268,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -3213,7 +3225,7 @@ function ConversationsPage() {
                                                                                 children: lead.name
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                lineNumber: 263,
+                                                                                lineNumber: 277,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3224,7 +3236,7 @@ function ConversationsPage() {
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                lineNumber: 264,
+                                                                                lineNumber: 278,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -3236,7 +3248,7 @@ function ConversationsPage() {
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                lineNumber: 265,
+                                                                                lineNumber: 279,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -3245,41 +3257,41 @@ function ConversationsPage() {
                                                                                 children: lead.stage
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                lineNumber: 268,
+                                                                                lineNumber: 282,
                                                                                 columnNumber: 29
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                                        lineNumber: 262,
+                                                                        lineNumber: 276,
                                                                         columnNumber: 27
                                                                     }, this)
                                                                 }, lead.id, false, {
                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                    lineNumber: 261,
+                                                                    lineNumber: 275,
                                                                     columnNumber: 25
                                                                 }, this))
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                            lineNumber: 257,
+                                                            lineNumber: 271,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                    lineNumber: 250,
+                                                    lineNumber: 264,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                            lineNumber: 248,
+                                            lineNumber: 262,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                    lineNumber: 241,
+                                    lineNumber: 255,
                                     columnNumber: 13
                                 }, this),
                                 selectedLead && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3294,7 +3306,7 @@ function ConversationsPage() {
                                                         children: "Current Stage"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                        lineNumber: 284,
+                                                        lineNumber: 298,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3302,13 +3314,13 @@ function ConversationsPage() {
                                                         children: selectedLead.stage
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                        lineNumber: 287,
+                                                        lineNumber: 301,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                lineNumber: 283,
+                                                lineNumber: 297,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3318,7 +3330,7 @@ function ConversationsPage() {
                                                         children: "AI Conversation Status"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                        lineNumber: 290,
+                                                        lineNumber: 304,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3326,13 +3338,13 @@ function ConversationsPage() {
                                                         children: conversationContext.status
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                        lineNumber: 293,
+                                                        lineNumber: 307,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                lineNumber: 289,
+                                                lineNumber: 303,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3342,7 +3354,7 @@ function ConversationsPage() {
                                                         children: "Last Meaningful Signal"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                        lineNumber: 296,
+                                                        lineNumber: 310,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3350,13 +3362,13 @@ function ConversationsPage() {
                                                         children: conversationContext.lastSignal
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                        lineNumber: 299,
+                                                        lineNumber: 313,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                lineNumber: 295,
+                                                lineNumber: 309,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3366,7 +3378,7 @@ function ConversationsPage() {
                                                         children: "Conversation Health"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                        lineNumber: 302,
+                                                        lineNumber: 316,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -3375,24 +3387,24 @@ function ConversationsPage() {
                                                         children: conversationContext.health === "positive" ? "Positive" : conversationContext.health === "stalled" ? "Stalled" : "Neutral"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                        lineNumber: 305,
+                                                        lineNumber: 319,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                lineNumber: 301,
+                                                lineNumber: 315,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                        lineNumber: 282,
+                                        lineNumber: 296,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                    lineNumber: 281,
+                                    lineNumber: 295,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -3403,20 +3415,20 @@ function ConversationsPage() {
                                                     children: "Conversation Timeline"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                    lineNumber: 329,
+                                                    lineNumber: 343,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardDescription"], {
                                                     children: "Chronological view of all interactions across email, LinkedIn, and voice"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                    lineNumber: 330,
+                                                    lineNumber: 344,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                            lineNumber: 328,
+                                            lineNumber: 342,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -3428,21 +3440,21 @@ function ConversationsPage() {
                                                             className: "h-4 w-4"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                            lineNumber: 337,
+                                                            lineNumber: 351,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDescription"], {
                                                             className: "text-xs",
-                                                            children: "This is a read-only conversation log. Messaging actions and strategy controls are managed in the Outreach Engine."
+                                                            children: "This timeline shows the exact messages exchanged across channels. Messaging actions and strategy controls are managed in the Outreach Engine."
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                            lineNumber: 338,
+                                                            lineNumber: 352,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                    lineNumber: 336,
+                                                    lineNumber: 350,
                                                     columnNumber: 17
                                                 }, this),
                                                 conversations.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3452,12 +3464,12 @@ function ConversationsPage() {
                                                         children: "No conversations yet"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                        lineNumber: 346,
+                                                        lineNumber: 359,
                                                         columnNumber: 21
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                    lineNumber: 345,
+                                                    lineNumber: 358,
                                                     columnNumber: 19
                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     className: "space-y-8",
@@ -3470,7 +3482,7 @@ function ConversationsPage() {
                                                                             className: "h-px flex-1 bg-border"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                                            lineNumber: 354,
+                                                                            lineNumber: 367,
                                                                             columnNumber: 27
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3478,20 +3490,20 @@ function ConversationsPage() {
                                                                             children: bucket
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                                            lineNumber: 355,
+                                                                            lineNumber: 368,
                                                                             columnNumber: 27
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                             className: "h-px flex-1 bg-border"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                                            lineNumber: 358,
+                                                                            lineNumber: 371,
                                                                             columnNumber: 27
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                    lineNumber: 353,
+                                                                    lineNumber: 366,
                                                                     columnNumber: 25
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3503,7 +3515,7 @@ function ConversationsPage() {
                                                                                     className: "absolute left-[22px] top-12 bottom-0 w-px bg-border"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                    lineNumber: 367,
+                                                                                    lineNumber: 380,
                                                                                     columnNumber: 33
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3516,27 +3528,27 @@ function ConversationsPage() {
                                                                                                     className: "w-5 h-5"
                                                                                                 }, void 0, false, {
                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                    lineNumber: 381,
+                                                                                                    lineNumber: 394,
                                                                                                     columnNumber: 63
                                                                                                 }, this),
                                                                                                 msg.channel === "voice" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$phone$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Phone$3e$__["Phone"], {
                                                                                                     className: "w-5 h-5"
                                                                                                 }, void 0, false, {
                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                    lineNumber: 382,
+                                                                                                    lineNumber: 395,
                                                                                                     columnNumber: 63
                                                                                                 }, this),
                                                                                                 msg.channel === "linkedin" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$message$2d$square$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__MessageSquare$3e$__["MessageSquare"], {
                                                                                                     className: "w-5 h-5"
                                                                                                 }, void 0, false, {
                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                    lineNumber: 384,
+                                                                                                    lineNumber: 397,
                                                                                                     columnNumber: 37
                                                                                                 }, this)
                                                                                             ]
                                                                                         }, void 0, true, {
                                                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                            lineNumber: 372,
+                                                                                            lineNumber: 385,
                                                                                             columnNumber: 33
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3554,7 +3566,7 @@ function ConversationsPage() {
                                                                                                                     children: msg.channel
                                                                                                                 }, void 0, false, {
                                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                    lineNumber: 392,
+                                                                                                                    lineNumber: 405,
                                                                                                                     columnNumber: 39
                                                                                                                 }, this),
                                                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -3563,13 +3575,13 @@ function ConversationsPage() {
                                                                                                                     children: msg.direction
                                                                                                                 }, void 0, false, {
                                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                    lineNumber: 395,
+                                                                                                                    lineNumber: 408,
                                                                                                                     columnNumber: 39
                                                                                                                 }, this)
                                                                                                             ]
                                                                                                         }, void 0, true, {
                                                                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                            lineNumber: 391,
+                                                                                                            lineNumber: 404,
                                                                                                             columnNumber: 37
                                                                                                         }, this),
                                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3577,13 +3589,13 @@ function ConversationsPage() {
                                                                                                             children: msg.timestamp
                                                                                                         }, void 0, false, {
                                                                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                            lineNumber: 404,
+                                                                                                            lineNumber: 417,
                                                                                                             columnNumber: 37
                                                                                                         }, this)
                                                                                                     ]
                                                                                                 }, void 0, true, {
                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                    lineNumber: 390,
+                                                                                                    lineNumber: 403,
                                                                                                     columnNumber: 35
                                                                                                 }, this),
                                                                                                 msg.subject && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
@@ -3591,7 +3603,7 @@ function ConversationsPage() {
                                                                                                     children: msg.subject
                                                                                                 }, void 0, false, {
                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                    lineNumber: 410,
+                                                                                                    lineNumber: 423,
                                                                                                     columnNumber: 37
                                                                                                 }, this),
                                                                                                 msg.channel === "voice" && msg.summary ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3612,7 +3624,7 @@ function ConversationsPage() {
                                                                                                                                         children: "Duration"
                                                                                                                                     }, void 0, false, {
                                                                                                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                        lineNumber: 420,
+                                                                                                                                        lineNumber: 433,
                                                                                                                                         columnNumber: 47
                                                                                                                                     }, this),
                                                                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3620,13 +3632,13 @@ function ConversationsPage() {
                                                                                                                                         children: msg.duration
                                                                                                                                     }, void 0, false, {
                                                                                                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                        lineNumber: 423,
+                                                                                                                                        lineNumber: 436,
                                                                                                                                         columnNumber: 47
                                                                                                                                     }, this)
                                                                                                                                 ]
                                                                                                                             }, void 0, true, {
                                                                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                lineNumber: 419,
+                                                                                                                                lineNumber: 432,
                                                                                                                                 columnNumber: 45
                                                                                                                             }, this),
                                                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3636,7 +3648,7 @@ function ConversationsPage() {
                                                                                                                                         children: "Outcome"
                                                                                                                                     }, void 0, false, {
                                                                                                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                        lineNumber: 426,
+                                                                                                                                        lineNumber: 439,
                                                                                                                                         columnNumber: 47
                                                                                                                                     }, this),
                                                                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -3645,19 +3657,19 @@ function ConversationsPage() {
                                                                                                                                         children: msg.outcome
                                                                                                                                     }, void 0, false, {
                                                                                                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                        lineNumber: 429,
+                                                                                                                                        lineNumber: 442,
                                                                                                                                         columnNumber: 47
                                                                                                                                     }, this)
                                                                                                                                 ]
                                                                                                                             }, void 0, true, {
                                                                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                lineNumber: 425,
+                                                                                                                                lineNumber: 438,
                                                                                                                                 columnNumber: 45
                                                                                                                             }, this)
                                                                                                                         ]
                                                                                                                     }, void 0, true, {
                                                                                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                        lineNumber: 418,
+                                                                                                                        lineNumber: 431,
                                                                                                                         columnNumber: 43
                                                                                                                     }, this),
                                                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -3670,7 +3682,7 @@ function ConversationsPage() {
                                                                                                                                     className: "w-4 h-4 mr-1"
                                                                                                                                 }, void 0, false, {
                                                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                    lineNumber: 441,
+                                                                                                                                    lineNumber: 454,
                                                                                                                                     columnNumber: 49
                                                                                                                                 }, this),
                                                                                                                                 "Hide Details"
@@ -3681,7 +3693,7 @@ function ConversationsPage() {
                                                                                                                                     className: "w-4 h-4 mr-1"
                                                                                                                                 }, void 0, false, {
                                                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                    lineNumber: 446,
+                                                                                                                                    lineNumber: 459,
                                                                                                                                     columnNumber: 49
                                                                                                                                 }, this),
                                                                                                                                 "Show Details"
@@ -3689,208 +3701,257 @@ function ConversationsPage() {
                                                                                                                         }, void 0, true)
                                                                                                                     }, void 0, false, {
                                                                                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                        lineNumber: 434,
+                                                                                                                        lineNumber: 447,
                                                                                                                         columnNumber: 43
                                                                                                                     }, this)
                                                                                                                 ]
                                                                                                             }, void 0, true, {
                                                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                lineNumber: 417,
+                                                                                                                lineNumber: 430,
                                                                                                                 columnNumber: 41
                                                                                                             }, this),
                                                                                                             expandedMessages.has(msg.id) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                                                                 className: "pt-3 border-t space-y-4",
-                                                                                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                                                                    children: [
-                                                                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                                                                            className: "flex items-center gap-2 mb-2",
-                                                                                                                            children: [
-                                                                                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$sparkles$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Sparkles$3e$__["Sparkles"], {
-                                                                                                                                    className: "w-4 h-4 text-primary"
+                                                                                                                children: [
+                                                                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                                        children: [
+                                                                                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                                                className: "flex items-center gap-2 mb-2",
+                                                                                                                                children: [
+                                                                                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$sparkles$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Sparkles$3e$__["Sparkles"], {
+                                                                                                                                        className: "w-4 h-4 text-primary"
+                                                                                                                                    }, void 0, false, {
+                                                                                                                                        fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                        lineNumber: 471,
+                                                                                                                                        columnNumber: 49
+                                                                                                                                    }, this),
+                                                                                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                                                                                        className: "text-xs font-medium text-muted-foreground uppercase tracking-wide",
+                                                                                                                                        children: "AI Call Summary"
+                                                                                                                                    }, void 0, false, {
+                                                                                                                                        fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                        lineNumber: 472,
+                                                                                                                                        columnNumber: 49
+                                                                                                                                    }, this)
+                                                                                                                                ]
+                                                                                                                            }, void 0, true, {
+                                                                                                                                fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                lineNumber: 470,
+                                                                                                                                columnNumber: 47
+                                                                                                                            }, this),
+                                                                                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                                                className: "space-y-3",
+                                                                                                                                children: [
+                                                                                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                                                        children: [
+                                                                                                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                                                                                                className: "text-xs font-medium mb-1",
+                                                                                                                                                children: "Key Points Discussed"
+                                                                                                                                            }, void 0, false, {
+                                                                                                                                                fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                                lineNumber: 478,
+                                                                                                                                                columnNumber: 51
+                                                                                                                                            }, this),
+                                                                                                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                                                                                                className: "text-sm",
+                                                                                                                                                children: msg.summary
+                                                                                                                                            }, void 0, false, {
+                                                                                                                                                fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                                lineNumber: 481,
+                                                                                                                                                columnNumber: 51
+                                                                                                                                            }, this)
+                                                                                                                                        ]
+                                                                                                                                    }, void 0, true, {
+                                                                                                                                        fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                        lineNumber: 477,
+                                                                                                                                        columnNumber: 49
+                                                                                                                                    }, this),
+                                                                                                                                    msg.objections && msg.objections.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                                                        children: [
+                                                                                                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                                                                                                className: "text-xs font-medium mb-1",
+                                                                                                                                                children: "Objections Raised"
+                                                                                                                                            }, void 0, false, {
+                                                                                                                                                fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                                lineNumber: 485,
+                                                                                                                                                columnNumber: 53
+                                                                                                                                            }, this),
+                                                                                                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
+                                                                                                                                                className: "space-y-1.5",
+                                                                                                                                                children: msg.objections.map((objection, oidx)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
+                                                                                                                                                        className: "text-sm flex items-start gap-2",
+                                                                                                                                                        children: [
+                                                                                                                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                                                                                                                className: "text-destructive mt-0.5",
+                                                                                                                                                                children: "•"
+                                                                                                                                                            }, void 0, false, {
+                                                                                                                                                                fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                                                lineNumber: 494,
+                                                                                                                                                                columnNumber: 59
+                                                                                                                                                            }, this),
+                                                                                                                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                                                                                                                children: objection
+                                                                                                                                                            }, void 0, false, {
+                                                                                                                                                                fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                                                lineNumber: 497,
+                                                                                                                                                                columnNumber: 59
+                                                                                                                                                            }, this)
+                                                                                                                                                        ]
+                                                                                                                                                    }, oidx, true, {
+                                                                                                                                                        fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                                        lineNumber: 490,
+                                                                                                                                                        columnNumber: 57
+                                                                                                                                                    }, this))
+                                                                                                                                            }, void 0, false, {
+                                                                                                                                                fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                                lineNumber: 488,
+                                                                                                                                                columnNumber: 53
+                                                                                                                                            }, this)
+                                                                                                                                        ]
+                                                                                                                                    }, void 0, true, {
+                                                                                                                                        fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                        lineNumber: 484,
+                                                                                                                                        columnNumber: 51
+                                                                                                                                    }, this),
+                                                                                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                                                        children: [
+                                                                                                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                                                                                                className: "text-xs font-medium mb-1",
+                                                                                                                                                children: "Signals Detected"
+                                                                                                                                            }, void 0, false, {
+                                                                                                                                                fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                                lineNumber: 504,
+                                                                                                                                                columnNumber: 51
+                                                                                                                                            }, this),
+                                                                                                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                                                                className: "flex flex-wrap gap-2",
+                                                                                                                                                children: [
+                                                                                                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
+                                                                                                                                                        variant: "outline",
+                                                                                                                                                        className: "text-xs",
+                                                                                                                                                        children: "Budget: Confirmed"
+                                                                                                                                                    }, void 0, false, {
+                                                                                                                                                        fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                                        lineNumber: 508,
+                                                                                                                                                        columnNumber: 53
+                                                                                                                                                    }, this),
+                                                                                                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
+                                                                                                                                                        variant: "outline",
+                                                                                                                                                        className: "text-xs",
+                                                                                                                                                        children: "Authority: Economic buyer"
+                                                                                                                                                    }, void 0, false, {
+                                                                                                                                                        fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                                        lineNumber: 511,
+                                                                                                                                                        columnNumber: 53
+                                                                                                                                                    }, this),
+                                                                                                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
+                                                                                                                                                        variant: "outline",
+                                                                                                                                                        className: "text-xs",
+                                                                                                                                                        children: "Timeline: Q1"
+                                                                                                                                                    }, void 0, false, {
+                                                                                                                                                        fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                                        lineNumber: 514,
+                                                                                                                                                        columnNumber: 53
+                                                                                                                                                    }, this)
+                                                                                                                                                ]
+                                                                                                                                            }, void 0, true, {
+                                                                                                                                                fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                                lineNumber: 507,
+                                                                                                                                                columnNumber: 51
+                                                                                                                                            }, this)
+                                                                                                                                        ]
+                                                                                                                                    }, void 0, true, {
+                                                                                                                                        fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                        lineNumber: 503,
+                                                                                                                                        columnNumber: 49
+                                                                                                                                    }, this),
+                                                                                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                                                        children: [
+                                                                                                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                                                                                                className: "text-xs font-medium mb-1",
+                                                                                                                                                children: "Impact on Qualification Decision"
+                                                                                                                                            }, void 0, false, {
+                                                                                                                                                fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                                lineNumber: 520,
+                                                                                                                                                columnNumber: 51
+                                                                                                                                            }, this),
+                                                                                                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                                                                                                className: "text-sm text-muted-foreground",
+                                                                                                                                                children: "Voice call confirmed all BANT criteria. Lead qualified and escalated to AE handoff."
+                                                                                                                                            }, void 0, false, {
+                                                                                                                                                fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                                lineNumber: 523,
+                                                                                                                                                columnNumber: 51
+                                                                                                                                            }, this)
+                                                                                                                                        ]
+                                                                                                                                    }, void 0, true, {
+                                                                                                                                        fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                        lineNumber: 519,
+                                                                                                                                        columnNumber: 49
+                                                                                                                                    }, this)
+                                                                                                                                ]
+                                                                                                                            }, void 0, true, {
+                                                                                                                                fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                lineNumber: 476,
+                                                                                                                                columnNumber: 47
+                                                                                                                            }, this)
+                                                                                                                        ]
+                                                                                                                    }, void 0, true, {
+                                                                                                                        fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                        lineNumber: 469,
+                                                                                                                        columnNumber: 45
+                                                                                                                    }, this),
+                                                                                                                    msg.scriptUsed && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                                        children: [
+                                                                                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                                                className: "flex items-center gap-2 mb-2",
+                                                                                                                                children: [
+                                                                                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$file$2d$text$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__FileText$3e$__["FileText"], {
+                                                                                                                                        className: "w-4 h-4 text-primary"
+                                                                                                                                    }, void 0, false, {
+                                                                                                                                        fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                        lineNumber: 535,
+                                                                                                                                        columnNumber: 51
+                                                                                                                                    }, this),
+                                                                                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                                                                                        className: "text-xs font-medium text-muted-foreground uppercase tracking-wide",
+                                                                                                                                        children: "Script Used (AI-Generated)"
+                                                                                                                                    }, void 0, false, {
+                                                                                                                                        fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                        lineNumber: 536,
+                                                                                                                                        columnNumber: 51
+                                                                                                                                    }, this)
+                                                                                                                                ]
+                                                                                                                            }, void 0, true, {
+                                                                                                                                fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                lineNumber: 534,
+                                                                                                                                columnNumber: 49
+                                                                                                                            }, this),
+                                                                                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                                                className: "bg-background rounded-lg p-4 border border-border/30",
+                                                                                                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
+                                                                                                                                    className: "text-xs font-mono whitespace-pre-wrap text-foreground leading-relaxed",
+                                                                                                                                    children: msg.scriptUsed
                                                                                                                                 }, void 0, false, {
                                                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                    lineNumber: 458,
-                                                                                                                                    columnNumber: 49
-                                                                                                                                }, this),
-                                                                                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                                                                                                    className: "text-xs font-medium text-muted-foreground uppercase tracking-wide",
-                                                                                                                                    children: "AI Call Summary"
-                                                                                                                                }, void 0, false, {
-                                                                                                                                    fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                    lineNumber: 459,
-                                                                                                                                    columnNumber: 49
-                                                                                                                                }, this)
-                                                                                                                            ]
-                                                                                                                        }, void 0, true, {
-                                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                            lineNumber: 457,
-                                                                                                                            columnNumber: 47
-                                                                                                                        }, this),
-                                                                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                                                                            className: "space-y-3",
-                                                                                                                            children: [
-                                                                                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                                                                                    children: [
-                                                                                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                                                                                                            className: "text-xs font-medium mb-1",
-                                                                                                                                            children: "Key Points Discussed"
-                                                                                                                                        }, void 0, false, {
-                                                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                            lineNumber: 465,
-                                                                                                                                            columnNumber: 51
-                                                                                                                                        }, this),
-                                                                                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                                                                                                            className: "text-sm",
-                                                                                                                                            children: msg.summary
-                                                                                                                                        }, void 0, false, {
-                                                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                            lineNumber: 468,
-                                                                                                                                            columnNumber: 51
-                                                                                                                                        }, this)
-                                                                                                                                    ]
-                                                                                                                                }, void 0, true, {
-                                                                                                                                    fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                    lineNumber: 464,
-                                                                                                                                    columnNumber: 49
-                                                                                                                                }, this),
-                                                                                                                                msg.objections && msg.objections.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                                                                                    children: [
-                                                                                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                                                                                                            className: "text-xs font-medium mb-1",
-                                                                                                                                            children: "Objections Raised"
-                                                                                                                                        }, void 0, false, {
-                                                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                            lineNumber: 472,
-                                                                                                                                            columnNumber: 53
-                                                                                                                                        }, this),
-                                                                                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
-                                                                                                                                            className: "space-y-1.5",
-                                                                                                                                            children: msg.objections.map((objection, oidx)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
-                                                                                                                                                    className: "text-sm flex items-start gap-2",
-                                                                                                                                                    children: [
-                                                                                                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                                                                                                            className: "text-destructive mt-0.5",
-                                                                                                                                                            children: "•"
-                                                                                                                                                        }, void 0, false, {
-                                                                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                                            lineNumber: 481,
-                                                                                                                                                            columnNumber: 59
-                                                                                                                                                        }, this),
-                                                                                                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                                                                                                            children: objection
-                                                                                                                                                        }, void 0, false, {
-                                                                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                                            lineNumber: 484,
-                                                                                                                                                            columnNumber: 59
-                                                                                                                                                        }, this)
-                                                                                                                                                    ]
-                                                                                                                                                }, oidx, true, {
-                                                                                                                                                    fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                                    lineNumber: 477,
-                                                                                                                                                    columnNumber: 57
-                                                                                                                                                }, this))
-                                                                                                                                        }, void 0, false, {
-                                                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                            lineNumber: 475,
-                                                                                                                                            columnNumber: 53
-                                                                                                                                        }, this)
-                                                                                                                                    ]
-                                                                                                                                }, void 0, true, {
-                                                                                                                                    fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                    lineNumber: 471,
+                                                                                                                                    lineNumber: 541,
                                                                                                                                     columnNumber: 51
-                                                                                                                                }, this),
-                                                                                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                                                                                    children: [
-                                                                                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                                                                                                            className: "text-xs font-medium mb-1",
-                                                                                                                                            children: "Signals Detected"
-                                                                                                                                        }, void 0, false, {
-                                                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                            lineNumber: 491,
-                                                                                                                                            columnNumber: 51
-                                                                                                                                        }, this),
-                                                                                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                                                                                            className: "flex flex-wrap gap-2",
-                                                                                                                                            children: [
-                                                                                                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
-                                                                                                                                                    variant: "outline",
-                                                                                                                                                    className: "text-xs",
-                                                                                                                                                    children: "Budget: Confirmed"
-                                                                                                                                                }, void 0, false, {
-                                                                                                                                                    fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                                    lineNumber: 495,
-                                                                                                                                                    columnNumber: 53
-                                                                                                                                                }, this),
-                                                                                                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
-                                                                                                                                                    variant: "outline",
-                                                                                                                                                    className: "text-xs",
-                                                                                                                                                    children: "Authority: Economic buyer"
-                                                                                                                                                }, void 0, false, {
-                                                                                                                                                    fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                                    lineNumber: 498,
-                                                                                                                                                    columnNumber: 53
-                                                                                                                                                }, this),
-                                                                                                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
-                                                                                                                                                    variant: "outline",
-                                                                                                                                                    className: "text-xs",
-                                                                                                                                                    children: "Timeline: Q1"
-                                                                                                                                                }, void 0, false, {
-                                                                                                                                                    fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                                    lineNumber: 501,
-                                                                                                                                                    columnNumber: 53
-                                                                                                                                                }, this)
-                                                                                                                                            ]
-                                                                                                                                        }, void 0, true, {
-                                                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                            lineNumber: 494,
-                                                                                                                                            columnNumber: 51
-                                                                                                                                        }, this)
-                                                                                                                                    ]
-                                                                                                                                }, void 0, true, {
-                                                                                                                                    fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                    lineNumber: 490,
-                                                                                                                                    columnNumber: 49
-                                                                                                                                }, this),
-                                                                                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                                                                                    children: [
-                                                                                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                                                                                                            className: "text-xs font-medium mb-1",
-                                                                                                                                            children: "Impact on Qualification Decision"
-                                                                                                                                        }, void 0, false, {
-                                                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                            lineNumber: 507,
-                                                                                                                                            columnNumber: 51
-                                                                                                                                        }, this),
-                                                                                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                                                                                                            className: "text-sm text-muted-foreground",
-                                                                                                                                            children: "Voice call confirmed all BANT criteria. Lead qualified and escalated to AE handoff."
-                                                                                                                                        }, void 0, false, {
-                                                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                            lineNumber: 510,
-                                                                                                                                            columnNumber: 51
-                                                                                                                                        }, this)
-                                                                                                                                    ]
-                                                                                                                                }, void 0, true, {
-                                                                                                                                    fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                    lineNumber: 506,
-                                                                                                                                    columnNumber: 49
                                                                                                                                 }, this)
-                                                                                                                            ]
-                                                                                                                        }, void 0, true, {
-                                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                            lineNumber: 463,
-                                                                                                                            columnNumber: 47
-                                                                                                                        }, this)
-                                                                                                                    ]
-                                                                                                                }, void 0, true, {
-                                                                                                                    fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                    lineNumber: 456,
-                                                                                                                    columnNumber: 45
-                                                                                                                }, this)
-                                                                                                            }, void 0, false, {
+                                                                                                                            }, void 0, false, {
+                                                                                                                                fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                lineNumber: 540,
+                                                                                                                                columnNumber: 49
+                                                                                                                            }, this)
+                                                                                                                        ]
+                                                                                                                    }, void 0, true, {
+                                                                                                                        fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                        lineNumber: 533,
+                                                                                                                        columnNumber: 47
+                                                                                                                    }, this)
+                                                                                                                ]
+                                                                                                            }, void 0, true, {
                                                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                lineNumber: 454,
+                                                                                                                lineNumber: 467,
                                                                                                                 columnNumber: 43
                                                                                                             }, this),
                                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$collapsible$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Collapsible"], {
@@ -3908,7 +3969,7 @@ function ConversationsPage() {
                                                                                                                                     className: "w-3 h-3 mr-1"
                                                                                                                                 }, void 0, false, {
                                                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                    lineNumber: 531,
+                                                                                                                                    lineNumber: 561,
                                                                                                                                     columnNumber: 47
                                                                                                                                 }, this),
                                                                                                                                 "Why this interaction mattered",
@@ -3916,24 +3977,24 @@ function ConversationsPage() {
                                                                                                                                     className: "w-3 h-3 ml-auto"
                                                                                                                                 }, void 0, false, {
                                                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                    lineNumber: 534,
+                                                                                                                                    lineNumber: 564,
                                                                                                                                     columnNumber: 49
                                                                                                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$down$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronDown$3e$__["ChevronDown"], {
                                                                                                                                     className: "w-3 h-3 ml-auto"
                                                                                                                                 }, void 0, false, {
                                                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                    lineNumber: 536,
+                                                                                                                                    lineNumber: 566,
                                                                                                                                     columnNumber: 49
                                                                                                                                 }, this)
                                                                                                                             ]
                                                                                                                         }, void 0, true, {
                                                                                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                            lineNumber: 526,
+                                                                                                                            lineNumber: 556,
                                                                                                                             columnNumber: 45
                                                                                                                         }, this)
                                                                                                                     }, void 0, false, {
                                                                                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                        lineNumber: 525,
+                                                                                                                        lineNumber: 555,
                                                                                                                         columnNumber: 43
                                                                                                                     }, this),
                                                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$collapsible$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CollapsibleContent"], {
@@ -3945,7 +4006,7 @@ function ConversationsPage() {
                                                                                                                                     children: "AI Insight"
                                                                                                                                 }, void 0, false, {
                                                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                    lineNumber: 542,
+                                                                                                                                    lineNumber: 572,
                                                                                                                                     columnNumber: 47
                                                                                                                                 }, this),
                                                                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -3958,53 +4019,53 @@ function ConversationsPage() {
                                                                                                                                                     children: "•"
                                                                                                                                                 }, void 0, false, {
                                                                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                                    lineNumber: 548,
+                                                                                                                                                    lineNumber: 578,
                                                                                                                                                     columnNumber: 53
                                                                                                                                                 }, this),
                                                                                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                                                                                                     children: insight
                                                                                                                                                 }, void 0, false, {
                                                                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                                    lineNumber: 549,
+                                                                                                                                                    lineNumber: 579,
                                                                                                                                                     columnNumber: 53
                                                                                                                                                 }, this)
                                                                                                                                             ]
                                                                                                                                         }, iidx, true, {
                                                                                                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                            lineNumber: 547,
+                                                                                                                                            lineNumber: 577,
                                                                                                                                             columnNumber: 51
                                                                                                                                         }, this))
                                                                                                                                 }, void 0, false, {
                                                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                    lineNumber: 545,
+                                                                                                                                    lineNumber: 575,
                                                                                                                                     columnNumber: 47
                                                                                                                                 }, this)
                                                                                                                             ]
                                                                                                                         }, void 0, true, {
                                                                                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                            lineNumber: 541,
+                                                                                                                            lineNumber: 571,
                                                                                                                             columnNumber: 45
                                                                                                                         }, this)
                                                                                                                     }, void 0, false, {
                                                                                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                        lineNumber: 540,
+                                                                                                                        lineNumber: 570,
                                                                                                                         columnNumber: 43
                                                                                                                     }, this)
                                                                                                                 ]
                                                                                                             }, void 0, true, {
                                                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                lineNumber: 521,
+                                                                                                                lineNumber: 551,
                                                                                                                 columnNumber: 41
                                                                                                             }, this)
                                                                                                         ]
                                                                                                     }, void 0, true, {
                                                                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                        lineNumber: 416,
+                                                                                                        lineNumber: 429,
                                                                                                         columnNumber: 39
                                                                                                     }, this)
                                                                                                 }, void 0, false, {
                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                    lineNumber: 415,
+                                                                                                    lineNumber: 428,
                                                                                                     columnNumber: 37
                                                                                                 }, this) : /* Regular Message */ /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                                                     className: "space-y-3",
@@ -4016,13 +4077,194 @@ function ConversationsPage() {
                                                                                                                 children: msg.content
                                                                                                             }, void 0, false, {
                                                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                lineNumber: 562,
+                                                                                                                lineNumber: 592,
                                                                                                                 columnNumber: 41
                                                                                                             }, this)
                                                                                                         }, void 0, false, {
                                                                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                            lineNumber: 561,
+                                                                                                            lineNumber: 591,
                                                                                                             columnNumber: 39
+                                                                                                        }, this),
+                                                                                                        msg.body && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
+                                                                                                            variant: "ghost",
+                                                                                                            size: "sm",
+                                                                                                            onClick: ()=>toggleMessageContent(msg.id),
+                                                                                                            className: "w-full justify-start text-xs",
+                                                                                                            children: [
+                                                                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$eye$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Eye$3e$__["Eye"], {
+                                                                                                                    className: "w-3 h-3 mr-2"
+                                                                                                                }, void 0, false, {
+                                                                                                                    fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                    lineNumber: 603,
+                                                                                                                    columnNumber: 43
+                                                                                                                }, this),
+                                                                                                                expandedMessageContent.has(msg.id) ? "Hide" : "View",
+                                                                                                                " Full Message Content",
+                                                                                                                expandedMessageContent.has(msg.id) ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$up$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronUp$3e$__["ChevronUp"], {
+                                                                                                                    className: "w-3 h-3 ml-auto"
+                                                                                                                }, void 0, false, {
+                                                                                                                    fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                    lineNumber: 606,
+                                                                                                                    columnNumber: 45
+                                                                                                                }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$down$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronDown$3e$__["ChevronDown"], {
+                                                                                                                    className: "w-3 h-3 ml-auto"
+                                                                                                                }, void 0, false, {
+                                                                                                                    fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                    lineNumber: 608,
+                                                                                                                    columnNumber: 45
+                                                                                                                }, this)
+                                                                                                            ]
+                                                                                                        }, void 0, true, {
+                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                            lineNumber: 597,
+                                                                                                            columnNumber: 41
+                                                                                                        }, this),
+                                                                                                        expandedMessageContent.has(msg.id) && msg.body && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                            className: "bg-background rounded-lg p-4 border border-border/30 space-y-3",
+                                                                                                            children: [
+                                                                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                                    className: "flex items-center justify-between",
+                                                                                                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                                        className: "flex items-center gap-2",
+                                                                                                                        children: [
+                                                                                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
+                                                                                                                                variant: "outline",
+                                                                                                                                className: "text-xs",
+                                                                                                                                children: msg.channel === "email" ? "Email Content" : msg.channel === "linkedin" ? "LinkedIn Message" : "WhatsApp Message"
+                                                                                                                            }, void 0, false, {
+                                                                                                                                fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                lineNumber: 618,
+                                                                                                                                columnNumber: 47
+                                                                                                                            }, this),
+                                                                                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
+                                                                                                                                variant: "secondary",
+                                                                                                                                className: "text-xs",
+                                                                                                                                children: msg.direction
+                                                                                                                            }, void 0, false, {
+                                                                                                                                fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                lineNumber: 621,
+                                                                                                                                columnNumber: 47
+                                                                                                                            }, this),
+                                                                                                                            msg.aiGenerated && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
+                                                                                                                                variant: "outline",
+                                                                                                                                className: "text-xs bg-primary/5 border-primary/20",
+                                                                                                                                children: "AI-generated"
+                                                                                                                            }, void 0, false, {
+                                                                                                                                fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                lineNumber: 625,
+                                                                                                                                columnNumber: 49
+                                                                                                                            }, this)
+                                                                                                                        ]
+                                                                                                                    }, void 0, true, {
+                                                                                                                        fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                        lineNumber: 617,
+                                                                                                                        columnNumber: 45
+                                                                                                                    }, this)
+                                                                                                                }, void 0, false, {
+                                                                                                                    fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                    lineNumber: 616,
+                                                                                                                    columnNumber: 43
+                                                                                                                }, this),
+                                                                                                                msg.subject && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                                    children: [
+                                                                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                                                                            className: "text-xs font-medium text-muted-foreground mb-1",
+                                                                                                                            children: "Subject"
+                                                                                                                        }, void 0, false, {
+                                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                            lineNumber: 634,
+                                                                                                                            columnNumber: 47
+                                                                                                                        }, this),
+                                                                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                                                                            className: "text-sm font-medium",
+                                                                                                                            children: msg.subject
+                                                                                                                        }, void 0, false, {
+                                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                            lineNumber: 635,
+                                                                                                                            columnNumber: 47
+                                                                                                                        }, this)
+                                                                                                                    ]
+                                                                                                                }, void 0, true, {
+                                                                                                                    fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                    lineNumber: 633,
+                                                                                                                    columnNumber: 45
+                                                                                                                }, this),
+                                                                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                                    children: [
+                                                                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                                                                            className: "text-xs font-medium text-muted-foreground mb-2",
+                                                                                                                            children: "Message Body"
+                                                                                                                        }, void 0, false, {
+                                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                            lineNumber: 640,
+                                                                                                                            columnNumber: 45
+                                                                                                                        }, this),
+                                                                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                                            className: "bg-muted/30 rounded-lg p-4 border border-border/30",
+                                                                                                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
+                                                                                                                                className: "text-sm whitespace-pre-wrap text-foreground leading-relaxed font-sans",
+                                                                                                                                children: msg.body
+                                                                                                                            }, void 0, false, {
+                                                                                                                                fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                lineNumber: 642,
+                                                                                                                                columnNumber: 47
+                                                                                                                            }, this)
+                                                                                                                        }, void 0, false, {
+                                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                            lineNumber: 641,
+                                                                                                                            columnNumber: 45
+                                                                                                                        }, this)
+                                                                                                                    ]
+                                                                                                                }, void 0, true, {
+                                                                                                                    fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                    lineNumber: 639,
+                                                                                                                    columnNumber: 43
+                                                                                                                }, this),
+                                                                                                                msg.personalizationTokens && msg.personalizationTokens.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                                    children: [
+                                                                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                                                                            className: "text-xs font-medium text-muted-foreground mb-2",
+                                                                                                                            children: "Personalization Tokens Used"
+                                                                                                                        }, void 0, false, {
+                                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                            lineNumber: 650,
+                                                                                                                            columnNumber: 47
+                                                                                                                        }, this),
+                                                                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                                            className: "flex flex-wrap gap-2",
+                                                                                                                            children: msg.personalizationTokens.map((token, tidx)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
+                                                                                                                                    variant: "outline",
+                                                                                                                                    className: "text-xs",
+                                                                                                                                    children: token
+                                                                                                                                }, tidx, false, {
+                                                                                                                                    fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                                    lineNumber: 653,
+                                                                                                                                    columnNumber: 51
+                                                                                                                                }, this))
+                                                                                                                        }, void 0, false, {
+                                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                            lineNumber: 651,
+                                                                                                                            columnNumber: 47
+                                                                                                                        }, this)
+                                                                                                                    ]
+                                                                                                                }, void 0, true, {
+                                                                                                                    fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                    lineNumber: 649,
+                                                                                                                    columnNumber: 45
+                                                                                                                }, this),
+                                                                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                                                                    className: "pt-2 border-t text-xs text-muted-foreground",
+                                                                                                                    children: "This shows the exact content sent to the lead for full transparency and auditability."
+                                                                                                                }, void 0, false, {
+                                                                                                                    fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                                    lineNumber: 661,
+                                                                                                                    columnNumber: 43
+                                                                                                                }, this)
+                                                                                                            ]
+                                                                                                        }, void 0, true, {
+                                                                                                            fileName: "[project]/src/app/conversations/page.tsx",
+                                                                                                            lineNumber: 615,
+                                                                                                            columnNumber: 41
                                                                                                         }, this),
                                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$collapsible$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Collapsible"], {
                                                                                                             open: expandedAIInsights.has(msg.id),
@@ -4039,7 +4281,7 @@ function ConversationsPage() {
                                                                                                                                 className: "w-3 h-3 mr-1"
                                                                                                                             }, void 0, false, {
                                                                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                lineNumber: 576,
+                                                                                                                                lineNumber: 678,
                                                                                                                                 columnNumber: 45
                                                                                                                             }, this),
                                                                                                                             "Why this interaction mattered",
@@ -4047,24 +4289,24 @@ function ConversationsPage() {
                                                                                                                                 className: "w-3 h-3 ml-auto"
                                                                                                                             }, void 0, false, {
                                                                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                lineNumber: 579,
+                                                                                                                                lineNumber: 681,
                                                                                                                                 columnNumber: 47
                                                                                                                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$down$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronDown$3e$__["ChevronDown"], {
                                                                                                                                 className: "w-3 h-3 ml-auto"
                                                                                                                             }, void 0, false, {
                                                                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                lineNumber: 581,
+                                                                                                                                lineNumber: 683,
                                                                                                                                 columnNumber: 47
                                                                                                                             }, this)
                                                                                                                         ]
                                                                                                                     }, void 0, true, {
                                                                                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                        lineNumber: 571,
+                                                                                                                        lineNumber: 673,
                                                                                                                         columnNumber: 43
                                                                                                                     }, this)
                                                                                                                 }, void 0, false, {
                                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                    lineNumber: 570,
+                                                                                                                    lineNumber: 672,
                                                                                                                     columnNumber: 41
                                                                                                                 }, this),
                                                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$collapsible$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CollapsibleContent"], {
@@ -4076,7 +4318,7 @@ function ConversationsPage() {
                                                                                                                                 children: "AI Insight"
                                                                                                                             }, void 0, false, {
                                                                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                lineNumber: 587,
+                                                                                                                                lineNumber: 689,
                                                                                                                                 columnNumber: 45
                                                                                                                             }, this),
                                                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -4089,94 +4331,94 @@ function ConversationsPage() {
                                                                                                                                                 children: "•"
                                                                                                                                             }, void 0, false, {
                                                                                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                                lineNumber: 596,
+                                                                                                                                                lineNumber: 698,
                                                                                                                                                 columnNumber: 51
                                                                                                                                             }, this),
                                                                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                                                                                                 children: insight
                                                                                                                                             }, void 0, false, {
                                                                                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                                lineNumber: 597,
+                                                                                                                                                lineNumber: 699,
                                                                                                                                                 columnNumber: 51
                                                                                                                                             }, this)
                                                                                                                                         ]
                                                                                                                                     }, iidx, true, {
                                                                                                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                        lineNumber: 592,
+                                                                                                                                        lineNumber: 694,
                                                                                                                                         columnNumber: 49
                                                                                                                                     }, this))
                                                                                                                             }, void 0, false, {
                                                                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                                lineNumber: 590,
+                                                                                                                                lineNumber: 692,
                                                                                                                                 columnNumber: 45
                                                                                                                             }, this)
                                                                                                                         ]
                                                                                                                     }, void 0, true, {
                                                                                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                        lineNumber: 586,
+                                                                                                                        lineNumber: 688,
                                                                                                                         columnNumber: 43
                                                                                                                     }, this)
                                                                                                                 }, void 0, false, {
                                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                                    lineNumber: 585,
+                                                                                                                    lineNumber: 687,
                                                                                                                     columnNumber: 41
                                                                                                                 }, this)
                                                                                                             ]
                                                                                                         }, void 0, true, {
                                                                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                            lineNumber: 566,
+                                                                                                            lineNumber: 668,
                                                                                                             columnNumber: 39
                                                                                                         }, this)
                                                                                                     ]
                                                                                                 }, void 0, true, {
                                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                                    lineNumber: 560,
+                                                                                                    lineNumber: 590,
                                                                                                     columnNumber: 37
                                                                                                 }, this)
                                                                                             ]
                                                                                         }, void 0, true, {
                                                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                            lineNumber: 389,
+                                                                                            lineNumber: 402,
                                                                                             columnNumber: 33
                                                                                         }, this)
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                    lineNumber: 370,
+                                                                                    lineNumber: 383,
                                                                                     columnNumber: 31
                                                                                 }, this)
                                                                             ]
                                                                         }, msg.id, true, {
                                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                                            lineNumber: 364,
+                                                                            lineNumber: 377,
                                                                             columnNumber: 29
                                                                         }, this))
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                    lineNumber: 362,
+                                                                    lineNumber: 375,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             ]
                                                         }, bucket, true, {
                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                            lineNumber: 351,
+                                                            lineNumber: 364,
                                                             columnNumber: 23
                                                         }, this))
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                    lineNumber: 349,
+                                                    lineNumber: 362,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                            lineNumber: 334,
+                                            lineNumber: 348,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                    lineNumber: 327,
+                                    lineNumber: 341,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4191,12 +4433,12 @@ function ConversationsPage() {
                                                         children: "Channel Breakdown"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                        lineNumber: 622,
+                                                        lineNumber: 724,
                                                         columnNumber: 19
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                    lineNumber: 621,
+                                                    lineNumber: 723,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -4213,7 +4455,7 @@ function ConversationsPage() {
                                                                                 className: "w-4 h-4 text-primary"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                lineNumber: 628,
+                                                                                lineNumber: 730,
                                                                                 columnNumber: 25
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4221,13 +4463,13 @@ function ConversationsPage() {
                                                                                 children: "Email"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                lineNumber: 629,
+                                                                                lineNumber: 731,
                                                                                 columnNumber: 25
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                                        lineNumber: 627,
+                                                                        lineNumber: 729,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4235,13 +4477,13 @@ function ConversationsPage() {
                                                                         children: conversations.filter((c)=>c.channel === "email").length
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                                        lineNumber: 631,
+                                                                        lineNumber: 733,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                lineNumber: 626,
+                                                                lineNumber: 728,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4254,7 +4496,7 @@ function ConversationsPage() {
                                                                                 className: "w-4 h-4 text-chart-3"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                lineNumber: 637,
+                                                                                lineNumber: 739,
                                                                                 columnNumber: 25
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4262,13 +4504,13 @@ function ConversationsPage() {
                                                                                 children: "LinkedIn"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                lineNumber: 638,
+                                                                                lineNumber: 740,
                                                                                 columnNumber: 25
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                                        lineNumber: 636,
+                                                                        lineNumber: 738,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4276,13 +4518,13 @@ function ConversationsPage() {
                                                                         children: conversations.filter((c)=>c.channel === "linkedin").length
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                                        lineNumber: 640,
+                                                                        lineNumber: 742,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                lineNumber: 635,
+                                                                lineNumber: 737,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4295,7 +4537,7 @@ function ConversationsPage() {
                                                                                 className: "w-4 h-4 text-chart-2"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                lineNumber: 646,
+                                                                                lineNumber: 748,
                                                                                 columnNumber: 25
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4303,13 +4545,13 @@ function ConversationsPage() {
                                                                                 children: "Voice"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                lineNumber: 647,
+                                                                                lineNumber: 749,
                                                                                 columnNumber: 25
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                                        lineNumber: 645,
+                                                                        lineNumber: 747,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4317,30 +4559,30 @@ function ConversationsPage() {
                                                                         children: conversations.filter((c)=>c.channel === "voice").length
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                                        lineNumber: 649,
+                                                                        lineNumber: 751,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                lineNumber: 644,
+                                                                lineNumber: 746,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                        lineNumber: 625,
+                                                        lineNumber: 727,
                                                         columnNumber: 19
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                    lineNumber: 624,
+                                                    lineNumber: 726,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                            lineNumber: 620,
+                                            lineNumber: 722,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -4355,7 +4597,7 @@ function ConversationsPage() {
                                                                 children: "Engagement Rate"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                lineNumber: 660,
+                                                                lineNumber: 762,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tooltip$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TooltipProvider"], {
@@ -4367,12 +4609,12 @@ function ConversationsPage() {
                                                                                 className: "w-3 h-3 text-muted-foreground cursor-help"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                lineNumber: 664,
+                                                                                lineNumber: 766,
                                                                                 columnNumber: 27
                                                                             }, this)
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                                            lineNumber: 663,
+                                                                            lineNumber: 765,
                                                                             columnNumber: 25
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tooltip$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TooltipContent"], {
@@ -4382,34 +4624,34 @@ function ConversationsPage() {
                                                                                 children: "Engagement counts inbound responses (email replies, LinkedIn messages) within 7 days of outbound outreach. Voice calls are not included in this calculation."
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                                lineNumber: 667,
+                                                                                lineNumber: 769,
                                                                                 columnNumber: 27
                                                                             }, this)
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                                            lineNumber: 666,
+                                                                            lineNumber: 768,
                                                                             columnNumber: 25
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                                    lineNumber: 662,
+                                                                    lineNumber: 764,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/conversations/page.tsx",
-                                                                lineNumber: 661,
+                                                                lineNumber: 763,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                        lineNumber: 659,
+                                                        lineNumber: 761,
                                                         columnNumber: 19
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                    lineNumber: 658,
+                                                    lineNumber: 760,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -4422,7 +4664,7 @@ function ConversationsPage() {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                            lineNumber: 678,
+                                                            lineNumber: 780,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4436,19 +4678,19 @@ function ConversationsPage() {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                            lineNumber: 679,
+                                                            lineNumber: 781,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                    lineNumber: 677,
+                                                    lineNumber: 779,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                            lineNumber: 657,
+                                            lineNumber: 759,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -4460,12 +4702,12 @@ function ConversationsPage() {
                                                         children: "Voice Calls"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/conversations/page.tsx",
-                                                        lineNumber: 688,
+                                                        lineNumber: 790,
                                                         columnNumber: 19
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                    lineNumber: 687,
+                                                    lineNumber: 789,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -4475,7 +4717,7 @@ function ConversationsPage() {
                                                             children: conversations.filter((c)=>c.channel === "voice").length
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                            lineNumber: 691,
+                                                            lineNumber: 793,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4483,48 +4725,48 @@ function ConversationsPage() {
                                                             children: "Strategic qualification calls"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                                            lineNumber: 694,
+                                                            lineNumber: 796,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                                    lineNumber: 690,
+                                                    lineNumber: 792,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/conversations/page.tsx",
-                                            lineNumber: 686,
+                                            lineNumber: 788,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/conversations/page.tsx",
-                                    lineNumber: 619,
+                                    lineNumber: 721,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/conversations/page.tsx",
-                            lineNumber: 239,
+                            lineNumber: 253,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/conversations/page.tsx",
-                        lineNumber: 238,
+                        lineNumber: 252,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/conversations/page.tsx",
-                lineNumber: 236,
+                lineNumber: 250,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/conversations/page.tsx",
-        lineNumber: 227,
+        lineNumber: 241,
         columnNumber: 5
     }, this);
 }
