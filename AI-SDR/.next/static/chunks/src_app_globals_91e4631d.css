@@ -1481,10 +1481,6 @@
     min-width: var(--radix-select-trigger-width);
   }
 
-  .min-w-full {
-    min-width: 100%;
-  }
-
   .min-w-max {
     min-width: max-content;
   }
@@ -1925,10 +1921,6 @@
 
   .overflow-y-auto {
     overflow-y: auto;
-  }
-
-  .overflow-y-visible {
-    overflow-y: visible;
   }
 
   .rounded {
