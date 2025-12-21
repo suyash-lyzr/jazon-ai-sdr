@@ -60,6 +60,7 @@ export default function SetupPage() {
 
   const [csvPreview, setCsvPreview] = useState<string[][]>([]);
   const [csvHeaders, setCsvHeaders] = useState<string[]>([]);
+  const [csvFile, setCsvFile] = useState<File | null>(null);
   const [mapping, setMapping] = useState<MappingState>(defaultMapping);
   const [isImporting, setIsImporting] = useState(false);
   const [importMessage, setImportMessage] = useState<string | null>(null);
@@ -93,6 +94,9 @@ export default function SetupPage() {
   const [apolloAutoIngest, setApolloAutoIngest] = useState(true);
 
   const handleCsvUpload = (file: File) => {
+    // Store the file for later use
+    setCsvFile(file);
+    
     const reader = new FileReader();
     reader.onload = () => {
       const text = String(reader.result || "");
@@ -144,49 +148,81 @@ export default function SetupPage() {
     setUrlInput("");
   };
 
-  const handleImport = () => {
-    if (!csvPreview.length || !csvHeaders.length) return;
+  const handleImport = async () => {
+    if (!csvFile || !csvPreview.length || !csvHeaders.length) {
+      setImportMessage("Please upload a CSV file first.");
+      return;
+    }
+
     setIsImporting(true);
-    setImportMessage("Jazon analyzing uploaded leads…");
+    setImportMessage("Uploading and processing leads…");
 
-    setTimeout(() => {
-      const headerIndex = (field: string) =>
-        csvHeaders.findIndex((h) => h.toLowerCase() === field.toLowerCase());
+    try {
+      // Create FormData to send the original file and mapping
+      // The API will handle CSV parsing and field mapping
+      const formData = new FormData();
+      formData.append("file", csvFile);
+      formData.append("mapping", JSON.stringify(mapping));
 
-      const nameIdx = headerIndex(mapping.name);
-      const emailIdx = headerIndex(mapping.email);
-      const companyIdx = headerIndex(mapping.company);
-      const titleIdx = headerIndex(mapping.title);
-      const phoneIdx = headerIndex(mapping.phone);
+      console.log("📤 Sending CSV file to API:", csvFile.name);
+      console.log("🗺️ Field mapping:", mapping);
 
-      const newLeads: Lead[] = csvPreview.map((row, idx) => {
-        const baseId = 1000 + leads.length + idx + 1;
-        return {
-          id: `CSV-${baseId}`,
-          name: row[nameIdx] || `Imported Lead ${idx + 1}`,
-          email: row[emailIdx] || "unknown@example.com",
-          company: row[companyIdx] || "Unknown Company",
-          title: row[titleIdx] || "Unknown",
-          icpScore: 70,
-          stage: "Research",
-          channel: "Email",
-          status: "Active",
-          lastContact: "Not contacted yet",
-          aiRecommendation: "Validate ICP fit before outreach",
-          industry: "Unknown",
-          companySize: "Unknown",
-          triggers: ["Imported from CSV"],
-          source: "CSV",
-          ingestedAt: "Just now",
-          importedBy: "Demo User",
-          originTrigger: "CSV upload from Setup page",
-        };
+      // Call the API endpoint
+      const response = await fetch("/api/leads/upload", {
+        method: "POST",
+        body: formData,
       });
 
-      setLeads((prev) => [...prev, ...newLeads]);
+      console.log("📥 API Response status:", response.status);
+
+      const result = await response.json();
+      console.log("📥 API Response data:", result);
+
+      if (!response.ok) {
+        throw new Error(result.error || result.message || "Failed to import leads");
+      }
+
+      // Check if leads were actually created
+      if (!result.success) {
+        throw new Error(result.message || "Import failed");
+      }
+
+      // Success - show success message
+      const createdCount = result.summary?.created || result.leads?.length || 0;
+      const failedCount = result.summary?.failed || 0;
+
+      if (createdCount === 0) {
+        setImportMessage(
+          `No leads were imported. ${failedCount > 0 ? `${failedCount} failed.` : "Please check your CSV format."}`
+        );
+      } else {
+        const successMsg = `Successfully imported ${createdCount} lead${createdCount !== 1 ? "s" : ""} to database.${failedCount > 0 ? ` ${failedCount} failed.` : ""}`;
+        setImportMessage(successMsg);
+      }
+
+      // Log success to console
+      if (result.leads && result.leads.length > 0) {
+        console.log("✅ Leads saved to database:", result.leads);
+        result.leads.forEach((lead: any) => {
+          console.log(`  - ${lead.name} (${lead.company}) - ID: ${lead.id}`);
+        });
+      }
+
+      // Show errors if any
+      if (result.errors && result.errors.length > 0) {
+        console.warn("⚠️ Some leads failed to import:", result.errors);
+        result.errors.forEach((error: any) => {
+          console.warn(`  - Row ${error.row}: ${error.error}`);
+        });
+      }
+    } catch (error: any) {
+      console.error("❌ Import error:", error);
+      setImportMessage(
+        `Error: ${error.message || "Failed to import leads. Please check the browser console for details."}`
+      );
+    } finally {
       setIsImporting(false);
-      setImportMessage(`Imported ${newLeads.length} leads from CSV (demo).`);
-    }, 900);
+    }
   };
 
   const simulateConnect = (target: "salesforce" | "hubspot") => {
@@ -455,7 +491,7 @@ export default function SetupPage() {
                               </li>
                               <li className="flex items-start gap-2">
                                 <span className="text-primary mt-0.5">•</span>
-                                <span>Routes qualified leads through the Outreach Engine</span>
+                                <span>Routes qualified leads through the Outreach Campaign</span>
                               </li>
                               <li className="flex items-start gap-2">
                                 <span className="text-primary mt-0.5">•</span>
@@ -600,7 +636,7 @@ export default function SetupPage() {
                           >
                             {isImporting
                               ? "Importing leads…"
-                              : "Import Leads (Demo)"}
+                              : "Import Leads"}
                           </Button>
 
                           {importMessage && (
@@ -802,7 +838,7 @@ export default function SetupPage() {
                                   {doc.name}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                  {doc.type} • Used by Outreach Engine,
+                                  {doc.type} • Used by Outreach Campaign,
                                   Qualification &amp; AE handoff (demo)
                                 </p>
                               </div>
@@ -983,7 +1019,7 @@ export default function SetupPage() {
                     </div>
 
                     <p className="text-xs text-muted-foreground">
-                      These instructions are surfaced in Outreach Engine,
+                      These instructions are surfaced in Outreach Campaign,
                       Qualification reasoning, and Workflow for explainability.
                     </p>
                   </CardContent>

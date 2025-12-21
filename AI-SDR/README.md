@@ -67,7 +67,7 @@ AI-SDR/
 - **Trigger Detection**: Buying signals identification
 - **Scoring Breakdown**: Transparent ICP calculation
 
-### 4. Outreach Engine
+### 4. Outreach Campaign
 - **Multi-channel Strategy**: Email → LinkedIn → Voice escalation
 - **Message Personalization**: Annotated personalization elements
 - **Guardrails**: Safety controls and compliance

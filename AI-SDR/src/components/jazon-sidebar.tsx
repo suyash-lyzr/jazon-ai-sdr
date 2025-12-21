@@ -54,7 +54,7 @@ const data = {
       icon: IconSearch,
     },
     {
-      title: "Outreach Engine",
+      title: "Outreach Campaign",
       url: "/outreach",
       icon: IconRocket,
     },

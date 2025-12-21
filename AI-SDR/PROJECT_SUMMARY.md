@@ -23,7 +23,7 @@ AI-SDR/
 │   │   ├── page.tsx                    ✓ Dashboard
 │   │   ├── leads/page.tsx              ✓ Leads Management
 │   │   ├── research/page.tsx           ✓ Research & ICP
-│   │   ├── outreach/page.tsx           ✓ Outreach Engine
+│   │   ├── outreach/page.tsx           ✓ Outreach Campaign
 │   │   ├── conversations/page.tsx      ✓ Conversations
 │   │   ├── qualification/page.tsx      ✓ Qualification
 │   │   ├── meetings/page.tsx           ✓ Meetings & Handoffs
@@ -67,7 +67,7 @@ AI-SDR/
 - **Detected Triggers**: Buying signals with strength indicators
 - **Score Breakdown**: Weighted factors with transparent calculation
 
-### 4. Outreach Engine (/outreach)
+### 4. Outreach Campaign (/outreach)
 - **Channel Strategy**: Email → LinkedIn → Voice progression
 - **Message History**: All messages with personalization annotations
 - **Guardrails**: Safety controls (max touches, auto-stop conditions)
@@ -219,7 +219,7 @@ npm start
 - **Key Message**: Quality leads, saved AE time, higher conversion
 
 #### Revenue Operations
-- **Focus Pages**: Learning Loop, Research & ICP, Outreach Engine
+- **Focus Pages**: Learning Loop, Research & ICP, Outreach Campaign
 - **Highlights**: Continuous improvement, ICP transparency, strategy control
 - **Key Message**: Systematic optimization and scalability
 

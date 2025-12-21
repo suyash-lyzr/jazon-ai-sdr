@@ -1,0 +1,247 @@
+{
+  "name": "research_enrichment_output",
+  "strict": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "CompanyProfile": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "domain": { "type": "string" },
+          "website_url": { "type": "string" },
+          "linkedin_url": { "type": "string" },
+          "industry": { "type": "string" },
+          "company_size": {
+            "type": "object",
+            "properties": {
+              "employee_count": { "type": "number" },
+              "employee_count_confidence": {
+                "type": "string",
+                "enum": ["High", "Medium", "Low"]
+              },
+              "annual_revenue_usd": { "type": "number" },
+              "revenue_confidence": {
+                "type": "string",
+                "enum": ["High", "Medium", "Low"]
+              },
+              "is_public": { "type": "boolean" },
+              "ticker": { "type": "string" },
+              "exchange": { "type": "string" }
+            },
+            "required": [
+              "employee_count",
+              "employee_count_confidence",
+              "annual_revenue_usd",
+              "revenue_confidence",
+              "is_public",
+              "ticker",
+              "exchange"
+            ],
+            "additionalProperties": false
+          },
+          "headquarters": {
+            "type": "object",
+            "properties": {
+              "city": { "type": "string" },
+              "state_or_region": { "type": "string" },
+              "country": { "type": "string" },
+              "raw_address": { "type": "string" }
+            },
+            "required": ["city", "state_or_region", "country", "raw_address"],
+            "additionalProperties": false
+          },
+          "structure": { "type": "string" },
+          "sales_motion": { "type": "string" },
+          "technographics": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "category": { "type": "string" },
+                "confidence": {
+                  "type": "string",
+                  "enum": ["High", "Medium", "Low"]
+                },
+                "source": { "type": "string" }
+              },
+              "required": ["name", "category", "confidence", "source"],
+              "additionalProperties": false
+            }
+          },
+          "keywords": { "type": "array", "items": { "type": "string" } },
+          "confidence": { "type": "string", "enum": ["High", "Medium", "Low"] }
+        },
+        "required": [
+          "name",
+          "domain",
+          "website_url",
+          "linkedin_url",
+          "industry",
+          "company_size",
+          "headquarters",
+          "structure",
+          "sales_motion",
+          "technographics",
+          "keywords",
+          "confidence"
+        ],
+        "additionalProperties": false
+      },
+      "PersonaProfile": {
+        "type": "object",
+        "properties": {
+          "full_name": { "type": "string" },
+          "title": { "type": "string" },
+          "seniority": { "type": "string" },
+          "department": { "type": "string" },
+          "linkedin_url": { "type": "string" },
+          "email": { "type": "string" },
+          "location": {
+            "type": "object",
+            "properties": {
+              "city": { "type": "string" },
+              "state_or_region": { "type": "string" },
+              "country": { "type": "string" },
+              "time_zone": { "type": "string" }
+            },
+            "required": ["city", "state_or_region", "country", "time_zone"],
+            "additionalProperties": false
+          },
+          "reports_to": { "type": "string" },
+          "decision_authority": {
+            "type": "object",
+            "properties": {
+              "budget_owner_likelihood": {
+                "type": "string",
+                "enum": ["High", "Medium", "Low"]
+              },
+              "decision_maker_likelihood": {
+                "type": "string",
+                "enum": ["High", "Medium", "Low"]
+              },
+              "champion_likelihood": {
+                "type": "string",
+                "enum": ["High", "Medium", "Low"]
+              },
+              "rationale": { "type": "string" }
+            },
+            "required": [
+              "budget_owner_likelihood",
+              "decision_maker_likelihood",
+              "champion_likelihood",
+              "rationale"
+            ],
+            "additionalProperties": false
+          },
+          "responsibilities": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "pain_points": { "type": "array", "items": { "type": "string" } },
+          "confidence": { "type": "string", "enum": ["High", "Medium", "Low"] }
+        },
+        "required": [
+          "full_name",
+          "title",
+          "seniority",
+          "department",
+          "linkedin_url",
+          "email",
+          "location",
+          "reports_to",
+          "decision_authority",
+          "responsibilities",
+          "pain_points",
+          "confidence"
+        ],
+        "additionalProperties": false
+      },
+      "DetectedSignals": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "organizational",
+                "technical",
+                "financial",
+                "intent",
+                "engagement",
+                "persona_change",
+                "other"
+              ]
+            },
+            "signal": { "type": "string" },
+            "source": { "type": "string" },
+            "strength": { "type": "string", "enum": ["high", "medium", "low"] },
+            "recency": { "type": "string" },
+            "evidence": { "type": "array", "items": { "type": "string" } }
+          },
+          "required": [
+            "type",
+            "signal",
+            "source",
+            "strength",
+            "recency",
+            "evidence"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "ResearchMeta": {
+        "type": "object",
+        "properties": {
+          "requested_lead": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "title": { "type": "string" },
+              "company": { "type": "string" },
+              "email": { "type": "string" }
+            },
+            "required": ["name", "title", "company", "email"],
+            "additionalProperties": false
+          },
+          "research_timestamp_utc": { "type": "string" },
+          "tools_used": { "type": "array", "items": { "type": "string" } },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "source_name": { "type": "string" },
+                "url": { "type": "string" },
+                "accessed_at_utc": { "type": "string" }
+              },
+              "required": ["source_name", "url", "accessed_at_utc"],
+              "additionalProperties": false
+            }
+          },
+          "data_quality_warnings": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": [
+          "requested_lead",
+          "research_timestamp_utc",
+          "tools_used",
+          "citations",
+          "data_quality_warnings"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "CompanyProfile",
+      "PersonaProfile",
+      "DetectedSignals",
+      "ResearchMeta"
+    ],
+    "additionalProperties": false
+  }
+}

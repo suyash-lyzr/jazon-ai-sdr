@@ -383,7 +383,7 @@ export default function OutreachPage() {
             {/* Page Header with Lead Selector */}
             <div className="flex items-start justify-between gap-4">
               <div className="flex flex-col gap-2">
-                <h1 className="text-3xl font-semibold text-foreground">Outreach Engine</h1>
+                <h1 className="text-3xl font-semibold text-foreground">Outreach Campaign</h1>
                 <p className="text-sm text-muted-foreground">
                   Strategic, multi-channel engagement - not email blasting
                 </p>

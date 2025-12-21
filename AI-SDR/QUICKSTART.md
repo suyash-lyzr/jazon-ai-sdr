@@ -48,7 +48,7 @@ The application should now be running!
 1. **Dashboard** - Business impact overview with KPI cards and AI decision feed
 2. **Leads** - Complete lead database with detail drawers
 3. **Research & ICP** - Company analysis and ICP scoring
-4. **Outreach Engine** - Multi-channel strategy and message tracking
+4. **Outreach Campaign** - Multi-channel strategy and message tracking
 5. **Conversations** - Unified communication timeline
 6. **Qualification** - BANT framework with confidence scoring
 7. **Meetings & Handoffs** - AE-ready handoff packages
@@ -199,7 +199,7 @@ npm run lint
 ### For RevOps Leaders
 - Showcase **Learning Loop** for continuous improvement
 - Review **Research & ICP** for scoring transparency
-- Demonstrate **Outreach Engine** for strategy control
+- Demonstrate **Outreach Campaign** for strategy control
 
 ## Key Differentiators to Highlight
 

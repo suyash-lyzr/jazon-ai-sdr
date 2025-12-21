@@ -3330,6 +3330,7 @@ function SetupPage() {
     const { companyProfile, setCompanyProfile, agentInstructions, setAgentInstructions, setLeads, leads } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$context$2f$jazon$2d$app$2d$context$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useJazonApp"])();
     const [csvPreview, setCsvPreview] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
     const [csvHeaders, setCsvHeaders] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [csvFile, setCsvFile] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [mapping, setMapping] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(defaultMapping);
     const [isImporting, setIsImporting] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [importMessage, setImportMessage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
@@ -3354,6 +3355,8 @@ function SetupPage() {
     const [apolloWorkspace, setApolloWorkspace] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("enterprise-sales-ops-q1");
     const [apolloAutoIngest, setApolloAutoIngest] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
     const handleCsvUpload = (file)=>{
+        // Store the file for later use
+        setCsvFile(file);
         const reader = new FileReader();
         reader.onload = ()=>{
             const text = String(reader.result || "");
@@ -3398,49 +3401,66 @@ function SetupPage() {
             ]);
         setUrlInput("");
     };
-    const handleImport = ()=>{
-        if (!csvPreview.length || !csvHeaders.length) return;
+    const handleImport = async ()=>{
+        if (!csvFile || !csvPreview.length || !csvHeaders.length) {
+            setImportMessage("Please upload a CSV file first.");
+            return;
+        }
         setIsImporting(true);
-        setImportMessage("Jazon analyzing uploaded leads…");
-        setTimeout(()=>{
-            const headerIndex = (field)=>csvHeaders.findIndex((h)=>h.toLowerCase() === field.toLowerCase());
-            const nameIdx = headerIndex(mapping.name);
-            const emailIdx = headerIndex(mapping.email);
-            const companyIdx = headerIndex(mapping.company);
-            const titleIdx = headerIndex(mapping.title);
-            const phoneIdx = headerIndex(mapping.phone);
-            const newLeads = csvPreview.map((row, idx)=>{
-                const baseId = 1000 + leads.length + idx + 1;
-                return {
-                    id: "CSV-".concat(baseId),
-                    name: row[nameIdx] || "Imported Lead ".concat(idx + 1),
-                    email: row[emailIdx] || "unknown@example.com",
-                    company: row[companyIdx] || "Unknown Company",
-                    title: row[titleIdx] || "Unknown",
-                    icpScore: 70,
-                    stage: "Research",
-                    channel: "Email",
-                    status: "Active",
-                    lastContact: "Not contacted yet",
-                    aiRecommendation: "Validate ICP fit before outreach",
-                    industry: "Unknown",
-                    companySize: "Unknown",
-                    triggers: [
-                        "Imported from CSV"
-                    ],
-                    source: "CSV",
-                    ingestedAt: "Just now",
-                    importedBy: "Demo User",
-                    originTrigger: "CSV upload from Setup page"
-                };
+        setImportMessage("Uploading and processing leads…");
+        try {
+            var _result_summary, _result_leads, _result_summary1;
+            // Create FormData to send the original file and mapping
+            // The API will handle CSV parsing and field mapping
+            const formData = new FormData();
+            formData.append("file", csvFile);
+            formData.append("mapping", JSON.stringify(mapping));
+            console.log("📤 Sending CSV file to API:", csvFile.name);
+            console.log("🗺️ Field mapping:", mapping);
+            // Call the API endpoint
+            const response = await fetch("/api/leads/upload", {
+                method: "POST",
+                body: formData
             });
-            setLeads((prev)=>[
-                    ...prev,
-                    ...newLeads
-                ]);
+            console.log("📥 API Response status:", response.status);
+            const result = await response.json();
+            console.log("📥 API Response data:", result);
+            if (!response.ok) {
+                throw new Error(result.error || result.message || "Failed to import leads");
+            }
+            // Check if leads were actually created
+            if (!result.success) {
+                throw new Error(result.message || "Import failed");
+            }
+            // Success - show success message
+            const createdCount = ((_result_summary = result.summary) === null || _result_summary === void 0 ? void 0 : _result_summary.created) || ((_result_leads = result.leads) === null || _result_leads === void 0 ? void 0 : _result_leads.length) || 0;
+            const failedCount = ((_result_summary1 = result.summary) === null || _result_summary1 === void 0 ? void 0 : _result_summary1.failed) || 0;
+            if (createdCount === 0) {
+                setImportMessage("No leads were imported. ".concat(failedCount > 0 ? "".concat(failedCount, " failed.") : "Please check your CSV format."));
+            } else {
+                const successMsg = "Successfully imported ".concat(createdCount, " lead").concat(createdCount !== 1 ? "s" : "", " to database.").concat(failedCount > 0 ? " ".concat(failedCount, " failed.") : "");
+                setImportMessage(successMsg);
+            }
+            // Log success to console
+            if (result.leads && result.leads.length > 0) {
+                console.log("✅ Leads saved to database:", result.leads);
+                result.leads.forEach((lead)=>{
+                    console.log("  - ".concat(lead.name, " (").concat(lead.company, ") - ID: ").concat(lead.id));
+                });
+            }
+            // Show errors if any
+            if (result.errors && result.errors.length > 0) {
+                console.warn("⚠️ Some leads failed to import:", result.errors);
+                result.errors.forEach((error)=>{
+                    console.warn("  - Row ".concat(error.row, ": ").concat(error.error));
+                });
+            }
+        } catch (error) {
+            console.error("❌ Import error:", error);
+            setImportMessage("Error: ".concat(error.message || "Failed to import leads. Please check the browser console for details."));
+        } finally{
             setIsImporting(false);
-            setImportMessage("Imported ".concat(newLeads.length, " leads from CSV (demo)."));
-        }, 900);
+        }
     };
     const simulateConnect = (target)=>{
         const setStatus = target === "salesforce" ? setSalesforceStatus : setHubspotStatus;
@@ -3459,7 +3479,7 @@ function SetupPage() {
                 variant: "inset"
             }, void 0, false, {
                 fileName: "[project]/src/app/setup/page.tsx",
-                lineNumber: 210,
+                lineNumber: 246,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$sidebar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SidebarInset"], {
@@ -3476,7 +3496,7 @@ function SetupPage() {
                                         children: "Setup"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/setup/page.tsx",
-                                        lineNumber: 215,
+                                        lineNumber: 251,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3484,13 +3504,13 @@ function SetupPage() {
                                         children: "Configure lead sources, company context, and how Jazon behaves before going live."
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/setup/page.tsx",
-                                        lineNumber: 216,
+                                        lineNumber: 252,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/setup/page.tsx",
-                                lineNumber: 214,
+                                lineNumber: 250,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Tabs"], {
@@ -3504,7 +3524,7 @@ function SetupPage() {
                                                 children: "Lead Sources"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                lineNumber: 224,
+                                                lineNumber: 260,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TabsTrigger"], {
@@ -3512,7 +3532,7 @@ function SetupPage() {
                                                 children: "Company & Product"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                lineNumber: 225,
+                                                lineNumber: 261,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TabsTrigger"], {
@@ -3520,13 +3540,13 @@ function SetupPage() {
                                                 children: "Agent Instructions"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                lineNumber: 226,
+                                                lineNumber: 262,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/setup/page.tsx",
-                                        lineNumber: 223,
+                                        lineNumber: 259,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TabsContent"], {
@@ -3543,7 +3563,7 @@ function SetupPage() {
                                                                 children: "CRM & Lead Source Integrations"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 232,
+                                                                lineNumber: 268,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3551,13 +3571,13 @@ function SetupPage() {
                                                                 children: "Connect your primary systems of record. These connections power lead ingestion, enrichment, and CRM updates."
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 235,
+                                                                lineNumber: 271,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                        lineNumber: 231,
+                                                        lineNumber: 267,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3574,27 +3594,27 @@ function SetupPage() {
                                                                                         className: "w-4 h-4"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 244,
+                                                                                        lineNumber: 280,
                                                                                         columnNumber: 25
                                                                                     }, this),
                                                                                     "Salesforce"
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 243,
+                                                                                lineNumber: 279,
                                                                                 columnNumber: 23
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
                                                                                 children: "Demo connection for enterprise CRM lead sync."
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 247,
+                                                                                lineNumber: 283,
                                                                                 columnNumber: 25
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 242,
+                                                                        lineNumber: 278,
                                                                         columnNumber: 21
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -3610,7 +3630,7 @@ function SetupPage() {
                                                                                                 children: "Not connected"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 255,
+                                                                                                lineNumber: 291,
                                                                                                 columnNumber: 31
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -3619,7 +3639,7 @@ function SetupPage() {
                                                                                                 children: "Connect"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 256,
+                                                                                                lineNumber: 292,
                                                                                                 columnNumber: 31
                                                                                             }, this)
                                                                                         ]
@@ -3632,7 +3652,7 @@ function SetupPage() {
                                                                                                     className: "w-4 h-4 animate-spin"
                                                                                                 }, void 0, false, {
                                                                                                     fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                    lineNumber: 267,
+                                                                                                    lineNumber: 303,
                                                                                                     columnNumber: 33
                                                                                                 }, this),
                                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3640,13 +3660,13 @@ function SetupPage() {
                                                                                                     children: "Connecting to Salesforce…"
                                                                                                 }, void 0, false, {
                                                                                                     fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                    lineNumber: 268,
+                                                                                                    lineNumber: 304,
                                                                                                     columnNumber: 33
                                                                                                 }, this)
                                                                                             ]
                                                                                         }, void 0, true, {
                                                                                             fileName: "[project]/src/app/setup/page.tsx",
-                                                                                            lineNumber: 266,
+                                                                                            lineNumber: 302,
                                                                                             columnNumber: 31
                                                                                         }, this)
                                                                                     }, void 0, false),
@@ -3657,7 +3677,7 @@ function SetupPage() {
                                                                                                 children: "Connected (Demo)"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 276,
+                                                                                                lineNumber: 312,
                                                                                                 columnNumber: 23
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3665,7 +3685,7 @@ function SetupPage() {
                                                                                                 children: "Last synced just now"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 277,
+                                                                                                lineNumber: 313,
                                                                                                 columnNumber: 31
                                                                                             }, this)
                                                                                         ]
@@ -3673,7 +3693,7 @@ function SetupPage() {
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 252,
+                                                                                lineNumber: 288,
                                                                                 columnNumber: 25
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3684,34 +3704,34 @@ function SetupPage() {
                                                                                         children: "Jazon reads:"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 284,
+                                                                                        lineNumber: 320,
                                                                                         columnNumber: 27
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                                                         children: "• Lead and contact fields (name, email, company, title)"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 287,
+                                                                                        lineNumber: 323,
                                                                                         columnNumber: 27
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                                                         children: "• Account data (industry, size, region)"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 291,
+                                                                                        lineNumber: 327,
                                                                                         columnNumber: 27
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                                                         children: "• Activity history (emails, calls, meetings)"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 292,
+                                                                                        lineNumber: 328,
                                                                                         columnNumber: 27
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 283,
+                                                                                lineNumber: 319,
                                                                                 columnNumber: 25
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3722,46 +3742,46 @@ function SetupPage() {
                                                                                         children: "Jazon writes:"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 295,
+                                                                                        lineNumber: 331,
                                                                                         columnNumber: 27
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                                                         children: "• Qualification status and ICP score"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 298,
+                                                                                        lineNumber: 334,
                                                                                         columnNumber: 27
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                                                         children: "• Next best action and AI recommendations"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 299,
+                                                                                        lineNumber: 335,
                                                                                         columnNumber: 27
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                                                         children: "• Logged activities for outreach and follow-up"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 300,
+                                                                                        lineNumber: 336,
                                                                                         columnNumber: 27
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 294,
+                                                                                lineNumber: 330,
                                                                                 columnNumber: 25
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 251,
+                                                                        lineNumber: 287,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 241,
+                                                                lineNumber: 277,
                                                                 columnNumber: 19
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -3775,27 +3795,27 @@ function SetupPage() {
                                                                                         className: "w-4 h-4"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 308,
+                                                                                        lineNumber: 344,
                                                                                         columnNumber: 25
                                                                                     }, this),
                                                                                     "HubSpot"
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 307,
+                                                                                lineNumber: 343,
                                                                                 columnNumber: 23
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
                                                                                 children: "Demo connection for marketing and lifecycle leads."
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 311,
+                                                                                lineNumber: 347,
                                                                                 columnNumber: 25
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 306,
+                                                                        lineNumber: 342,
                                                                         columnNumber: 21
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -3811,7 +3831,7 @@ function SetupPage() {
                                                                                                 children: "Not connected"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 319,
+                                                                                                lineNumber: 355,
                                                                                                 columnNumber: 31
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -3820,7 +3840,7 @@ function SetupPage() {
                                                                                                 children: "Connect"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 320,
+                                                                                                lineNumber: 356,
                                                                                                 columnNumber: 31
                                                                                             }, this)
                                                                                         ]
@@ -3833,7 +3853,7 @@ function SetupPage() {
                                                                                                     className: "w-4 h-4 animate-spin"
                                                                                                 }, void 0, false, {
                                                                                                     fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                    lineNumber: 331,
+                                                                                                    lineNumber: 367,
                                                                                                     columnNumber: 33
                                                                                                 }, this),
                                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3841,13 +3861,13 @@ function SetupPage() {
                                                                                                     children: "Connecting to HubSpot…"
                                                                                                 }, void 0, false, {
                                                                                                     fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                    lineNumber: 332,
+                                                                                                    lineNumber: 368,
                                                                                                     columnNumber: 33
                                                                                                 }, this)
                                                                                             ]
                                                                                         }, void 0, true, {
                                                                                             fileName: "[project]/src/app/setup/page.tsx",
-                                                                                            lineNumber: 330,
+                                                                                            lineNumber: 366,
                                                                                             columnNumber: 31
                                                                                         }, this)
                                                                                     }, void 0, false),
@@ -3858,7 +3878,7 @@ function SetupPage() {
                                                                                                 children: "Connected (Demo)"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 340,
+                                                                                                lineNumber: 376,
                                                                                                 columnNumber: 23
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3866,7 +3886,7 @@ function SetupPage() {
                                                                                                 children: "Last synced just now"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 341,
+                                                                                                lineNumber: 377,
                                                                                                 columnNumber: 31
                                                                                             }, this)
                                                                                         ]
@@ -3874,7 +3894,7 @@ function SetupPage() {
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 316,
+                                                                                lineNumber: 352,
                                                                                 columnNumber: 25
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3885,34 +3905,34 @@ function SetupPage() {
                                                                                         children: "Jazon reads:"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 348,
+                                                                                        lineNumber: 384,
                                                                                         columnNumber: 27
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                                                         children: "• Lifecycle stage and lead source"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 351,
+                                                                                        lineNumber: 387,
                                                                                         columnNumber: 27
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                                                         children: "• Campaign and email engagement history"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 352,
+                                                                                        lineNumber: 388,
                                                                                         columnNumber: 27
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                                                         children: "• Form submissions and key properties"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 353,
+                                                                                        lineNumber: 389,
                                                                                         columnNumber: 27
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 347,
+                                                                                lineNumber: 383,
                                                                                 columnNumber: 25
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3923,58 +3943,58 @@ function SetupPage() {
                                                                                         children: "Jazon writes:"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 356,
+                                                                                        lineNumber: 392,
                                                                                         columnNumber: 27
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                                                         children: "• Qualification outcome and reason"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 359,
+                                                                                        lineNumber: 395,
                                                                                         columnNumber: 27
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                                                         children: "• Primary outreach channel and status"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 360,
+                                                                                        lineNumber: 396,
                                                                                         columnNumber: 27
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                                                         children: "• Notes for SDR and AE follow-up tasks"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 361,
+                                                                                        lineNumber: 397,
                                                                                         columnNumber: 27
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 355,
+                                                                                lineNumber: 391,
                                                                                 columnNumber: 25
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 315,
+                                                                        lineNumber: 351,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 305,
+                                                                lineNumber: 341,
                                                                 columnNumber: 19
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                        lineNumber: 240,
+                                                        lineNumber: 276,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                lineNumber: 230,
+                                                lineNumber: 266,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3987,7 +4007,7 @@ function SetupPage() {
                                                                 children: "Outbound Lead Sources"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 370,
+                                                                lineNumber: 406,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3995,13 +4015,13 @@ function SetupPage() {
                                                                 children: "Connect Apollo.io to automatically pull high-intent outbound leads"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 373,
+                                                                lineNumber: 409,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                        lineNumber: 369,
+                                                        lineNumber: 405,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -4015,27 +4035,27 @@ function SetupPage() {
                                                                                 className: "w-4 h-4"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 380,
+                                                                                lineNumber: 416,
                                                                                 columnNumber: 25
                                                                             }, this),
                                                                             "Apollo.io"
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 379,
+                                                                        lineNumber: 415,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
                                                                         children: "Read-only connection for outbound lead sourcing"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 383,
+                                                                        lineNumber: 419,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 378,
+                                                                lineNumber: 414,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -4052,7 +4072,7 @@ function SetupPage() {
                                                                                     id: "apollo-enabled"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/setup/page.tsx",
-                                                                                    lineNumber: 390,
+                                                                                    lineNumber: 426,
                                                                                     columnNumber: 27
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4063,7 +4083,7 @@ function SetupPage() {
                                                                                             children: "Enable Apollo for outbound leads"
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/app/setup/page.tsx",
-                                                                                            lineNumber: 396,
+                                                                                            lineNumber: 432,
                                                                                             columnNumber: 29
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4071,24 +4091,24 @@ function SetupPage() {
                                                                                             children: apolloEnabled ? "Apollo leads will be auto-ingested and enriched" : "Apollo integration is disabled"
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/app/setup/page.tsx",
-                                                                                            lineNumber: 399,
+                                                                                            lineNumber: 435,
                                                                                             columnNumber: 29
                                                                                         }, this)
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "[project]/src/app/setup/page.tsx",
-                                                                                    lineNumber: 395,
+                                                                                    lineNumber: 431,
                                                                                     columnNumber: 27
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/setup/page.tsx",
-                                                                            lineNumber: 389,
+                                                                            lineNumber: 425,
                                                                             columnNumber: 25
                                                                         }, this)
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 388,
+                                                                        lineNumber: 424,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     apolloEnabled && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -4100,7 +4120,7 @@ function SetupPage() {
                                                                                         children: "Select Apollo Workspace / Lists"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 409,
+                                                                                        lineNumber: 445,
                                                                                         columnNumber: 29
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Select"], {
@@ -4110,12 +4130,12 @@ function SetupPage() {
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectTrigger"], {
                                                                                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectValue"], {}, void 0, false, {
                                                                                                     fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                    lineNumber: 415,
+                                                                                                    lineNumber: 451,
                                                                                                     columnNumber: 33
                                                                                                 }, this)
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 414,
+                                                                                                lineNumber: 450,
                                                                                                 columnNumber: 31
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -4125,7 +4145,7 @@ function SetupPage() {
                                                                                                         children: "US Mid-Market RevOps Leaders"
                                                                                                     }, void 0, false, {
                                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                        lineNumber: 418,
+                                                                                                        lineNumber: 454,
                                                                                                         columnNumber: 33
                                                                                                     }, this),
                                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -4133,7 +4153,7 @@ function SetupPage() {
                                                                                                         children: "Enterprise Sales Ops – Q1"
                                                                                                     }, void 0, false, {
                                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                        lineNumber: 419,
+                                                                                                        lineNumber: 455,
                                                                                                         columnNumber: 33
                                                                                                     }, this),
                                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -4141,7 +4161,7 @@ function SetupPage() {
                                                                                                         children: "SaaS Decision Makers"
                                                                                                     }, void 0, false, {
                                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                        lineNumber: 420,
+                                                                                                        lineNumber: 456,
                                                                                                         columnNumber: 33
                                                                                                     }, this),
                                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -4149,19 +4169,19 @@ function SetupPage() {
                                                                                                         children: "Fortune 500 Revenue Operations"
                                                                                                     }, void 0, false, {
                                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                        lineNumber: 421,
+                                                                                                        lineNumber: 457,
                                                                                                         columnNumber: 33
                                                                                                     }, this)
                                                                                                 ]
                                                                                             }, void 0, true, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 417,
+                                                                                                lineNumber: 453,
                                                                                                 columnNumber: 31
                                                                                             }, this)
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 410,
+                                                                                        lineNumber: 446,
                                                                                         columnNumber: 29
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4169,13 +4189,13 @@ function SetupPage() {
                                                                                         children: "Jazon will pull leads from this Apollo list for analysis and outreach"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 424,
+                                                                                        lineNumber: 460,
                                                                                         columnNumber: 29
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 408,
+                                                                                lineNumber: 444,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4187,7 +4207,7 @@ function SetupPage() {
                                                                                         id: "apollo-auto-ingest"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 430,
+                                                                                        lineNumber: 466,
                                                                                         columnNumber: 29
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4199,7 +4219,7 @@ function SetupPage() {
                                                                                                 children: "Auto-ingest new leads daily"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 436,
+                                                                                                lineNumber: 472,
                                                                                                 columnNumber: 31
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4207,19 +4227,19 @@ function SetupPage() {
                                                                                                 children: "Jazon will automatically sync new leads from the selected Apollo list every 24 hours"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 439,
+                                                                                                lineNumber: 475,
                                                                                                 columnNumber: 31
                                                                                             }, this)
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 435,
+                                                                                        lineNumber: 471,
                                                                                         columnNumber: 29
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 429,
+                                                                                lineNumber: 465,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4230,7 +4250,7 @@ function SetupPage() {
                                                                                         children: "How it works:"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 446,
+                                                                                        lineNumber: 482,
                                                                                         columnNumber: 29
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -4244,20 +4264,20 @@ function SetupPage() {
                                                                                                         children: "•"
                                                                                                     }, void 0, false, {
                                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                        lineNumber: 449,
+                                                                                                        lineNumber: 485,
                                                                                                         columnNumber: 33
                                                                                                     }, this),
                                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                                                         children: "Jazon pulls leads from selected Apollo lists"
                                                                                                     }, void 0, false, {
                                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                        lineNumber: 450,
+                                                                                                        lineNumber: 486,
                                                                                                         columnNumber: 33
                                                                                                     }, this)
                                                                                                 ]
                                                                                             }, void 0, true, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 448,
+                                                                                                lineNumber: 484,
                                                                                                 columnNumber: 31
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
@@ -4268,20 +4288,20 @@ function SetupPage() {
                                                                                                         children: "•"
                                                                                                     }, void 0, false, {
                                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                        lineNumber: 453,
+                                                                                                        lineNumber: 489,
                                                                                                         columnNumber: 33
                                                                                                     }, this),
                                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                                                         children: "Automatically enriches with ICP scoring and trigger detection"
                                                                                                     }, void 0, false, {
                                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                        lineNumber: 454,
+                                                                                                        lineNumber: 490,
                                                                                                         columnNumber: 33
                                                                                                     }, this)
                                                                                                 ]
                                                                                             }, void 0, true, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 452,
+                                                                                                lineNumber: 488,
                                                                                                 columnNumber: 31
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
@@ -4292,20 +4312,20 @@ function SetupPage() {
                                                                                                         children: "•"
                                                                                                     }, void 0, false, {
                                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                        lineNumber: 457,
+                                                                                                        lineNumber: 493,
                                                                                                         columnNumber: 33
                                                                                                     }, this),
                                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                                                         children: "Routes qualified leads through the Outreach Engine"
                                                                                                     }, void 0, false, {
                                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                        lineNumber: 458,
+                                                                                                        lineNumber: 494,
                                                                                                         columnNumber: 33
                                                                                                     }, this)
                                                                                                 ]
                                                                                             }, void 0, true, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 456,
+                                                                                                lineNumber: 492,
                                                                                                 columnNumber: 31
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
@@ -4316,7 +4336,7 @@ function SetupPage() {
                                                                                                         children: "•"
                                                                                                     }, void 0, false, {
                                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                        lineNumber: 461,
+                                                                                                        lineNumber: 497,
                                                                                                         columnNumber: 33
                                                                                                     }, this),
                                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4325,32 +4345,32 @@ function SetupPage() {
                                                                                                                 children: "All outreach is executed by Jazon"
                                                                                                             }, void 0, false, {
                                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                                lineNumber: 462,
+                                                                                                                lineNumber: 498,
                                                                                                                 columnNumber: 39
                                                                                                             }, this),
                                                                                                             " (not Apollo sequences)"
                                                                                                         ]
                                                                                                     }, void 0, true, {
                                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                        lineNumber: 462,
+                                                                                                        lineNumber: 498,
                                                                                                         columnNumber: 33
                                                                                                     }, this)
                                                                                                 ]
                                                                                             }, void 0, true, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 460,
+                                                                                                lineNumber: 496,
                                                                                                 columnNumber: 31
                                                                                             }, this)
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 447,
+                                                                                        lineNumber: 483,
                                                                                         columnNumber: 29
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 445,
+                                                                                lineNumber: 481,
                                                                                 columnNumber: 27
                                                                             }, this)
                                                                         ]
@@ -4362,30 +4382,30 @@ function SetupPage() {
                                                                             children: "Enable Apollo to start ingesting outbound leads from your saved lists"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/setup/page.tsx",
-                                                                            lineNumber: 471,
+                                                                            lineNumber: 507,
                                                                             columnNumber: 27
                                                                         }, this)
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 470,
+                                                                        lineNumber: 506,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 387,
+                                                                lineNumber: 423,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                        lineNumber: 377,
+                                                        lineNumber: 413,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                lineNumber: 368,
+                                                lineNumber: 404,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4398,7 +4418,7 @@ function SetupPage() {
                                                                 children: "Manual Lead Upload (Optional)"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 482,
+                                                                lineNumber: 518,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4406,13 +4426,13 @@ function SetupPage() {
                                                                 children: "Use CSV upload for pilots, proof-of-concept environments, or one-time imports when CRM integrations are not yet enabled."
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 485,
+                                                                lineNumber: 521,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                        lineNumber: 481,
+                                                        lineNumber: 517,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -4426,27 +4446,27 @@ function SetupPage() {
                                                                                 className: "w-4 h-4"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 494,
+                                                                                lineNumber: 530,
                                                                                 columnNumber: 25
                                                                             }, this),
                                                                             "Manual CSV Upload"
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 493,
+                                                                        lineNumber: 529,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
                                                                         children: "Use CSV to load leads into Jazon for this workspace."
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 497,
+                                                                        lineNumber: 533,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 492,
+                                                                lineNumber: 528,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -4460,7 +4480,7 @@ function SetupPage() {
                                                                                 children: "Upload CSV"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 503,
+                                                                                lineNumber: 539,
                                                                                 columnNumber: 25
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -4473,7 +4493,7 @@ function SetupPage() {
                                                                                 }
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 506,
+                                                                                lineNumber: 542,
                                                                                 columnNumber: 25
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4481,13 +4501,13 @@ function SetupPage() {
                                                                                 children: "Expecting a header row with at least name, email, and company."
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 514,
+                                                                                lineNumber: 550,
                                                                                 columnNumber: 25
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 502,
+                                                                        lineNumber: 538,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     csvHeaders.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4501,7 +4521,7 @@ function SetupPage() {
                                                                                         children: "Field Mapping"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 523,
+                                                                                        lineNumber: 559,
                                                                                         columnNumber: 29
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4509,13 +4529,13 @@ function SetupPage() {
                                                                                         children: "Map your CSV columns to Jazon fields."
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 526,
+                                                                                        lineNumber: 562,
                                                                                         columnNumber: 29
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 522,
+                                                                                lineNumber: 558,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4528,7 +4548,7 @@ function SetupPage() {
                                                                                                 children: field
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 533,
+                                                                                                lineNumber: 569,
                                                                                                 columnNumber: 33
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Select"], {
@@ -4544,12 +4564,12 @@ function SetupPage() {
                                                                                                             placeholder: "Select column"
                                                                                                         }, void 0, false, {
                                                                                                             fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                            lineNumber: 546,
+                                                                                                            lineNumber: 582,
                                                                                                             columnNumber: 37
                                                                                                         }, this)
                                                                                                     }, void 0, false, {
                                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                        lineNumber: 545,
+                                                                                                        lineNumber: 581,
                                                                                                         columnNumber: 35
                                                                                                     }, this),
                                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -4558,29 +4578,29 @@ function SetupPage() {
                                                                                                                 children: h
                                                                                                             }, h, false, {
                                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                                lineNumber: 550,
+                                                                                                                lineNumber: 586,
                                                                                                                 columnNumber: 39
                                                                                                             }, this))
                                                                                                     }, void 0, false, {
                                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                        lineNumber: 548,
+                                                                                                        lineNumber: 584,
                                                                                                         columnNumber: 35
                                                                                                     }, this)
                                                                                                 ]
                                                                                             }, void 0, true, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 536,
+                                                                                                lineNumber: 572,
                                                                                                 columnNumber: 33
                                                                                             }, this)
                                                                                         ]
                                                                                     }, field, true, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 532,
+                                                                                        lineNumber: 568,
                                                                                         columnNumber: 31
                                                                                     }, this))
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 530,
+                                                                                lineNumber: 566,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             csvPreview.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4591,7 +4611,7 @@ function SetupPage() {
                                                                                         children: "Preview (first 5 rows)"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 562,
+                                                                                        lineNumber: 598,
                                                                                         columnNumber: 31
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4607,17 +4627,17 @@ function SetupPage() {
                                                                                                                 children: h
                                                                                                             }, h, false, {
                                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                                lineNumber: 570,
+                                                                                                                lineNumber: 606,
                                                                                                                 columnNumber: 41
                                                                                                             }, this))
                                                                                                     }, void 0, false, {
                                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                        lineNumber: 568,
+                                                                                                        lineNumber: 604,
                                                                                                         columnNumber: 37
                                                                                                     }, this)
                                                                                                 }, void 0, false, {
                                                                                                     fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                    lineNumber: 567,
+                                                                                                    lineNumber: 603,
                                                                                                     columnNumber: 35
                                                                                                 }, this),
                                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -4628,34 +4648,34 @@ function SetupPage() {
                                                                                                                     children: cell
                                                                                                                 }, cidx, false, {
                                                                                                                     fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                                    lineNumber: 583,
+                                                                                                                    lineNumber: 619,
                                                                                                                     columnNumber: 43
                                                                                                                 }, this))
                                                                                                         }, idx, false, {
                                                                                                             fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                            lineNumber: 581,
+                                                                                                            lineNumber: 617,
                                                                                                             columnNumber: 39
                                                                                                         }, this))
                                                                                                 }, void 0, false, {
                                                                                                     fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                    lineNumber: 579,
+                                                                                                    lineNumber: 615,
                                                                                                     columnNumber: 35
                                                                                                 }, this)
                                                                                             ]
                                                                                         }, void 0, true, {
                                                                                             fileName: "[project]/src/app/setup/page.tsx",
-                                                                                            lineNumber: 566,
+                                                                                            lineNumber: 602,
                                                                                             columnNumber: 33
                                                                                         }, this)
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 565,
+                                                                                        lineNumber: 601,
                                                                                         columnNumber: 31
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 561,
+                                                                                lineNumber: 597,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -4663,10 +4683,10 @@ function SetupPage() {
                                                                                 className: "w-full",
                                                                                 disabled: isImporting || !csvPreview.length,
                                                                                 onClick: handleImport,
-                                                                                children: isImporting ? "Importing leads…" : "Import Leads (Demo)"
+                                                                                children: isImporting ? "Importing leads…" : "Import Leads"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 595,
+                                                                                lineNumber: 631,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             importMessage && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4674,37 +4694,37 @@ function SetupPage() {
                                                                                 children: importMessage
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 607,
+                                                                                lineNumber: 643,
                                                                                 columnNumber: 29
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 521,
+                                                                        lineNumber: 557,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 501,
+                                                                lineNumber: 537,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                        lineNumber: 491,
+                                                        lineNumber: 527,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                lineNumber: 480,
+                                                lineNumber: 516,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/setup/page.tsx",
-                                        lineNumber: 229,
+                                        lineNumber: 265,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TabsContent"], {
@@ -4722,27 +4742,27 @@ function SetupPage() {
                                                                         className: "w-4 h-4"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 622,
+                                                                        lineNumber: 658,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     "Company & Product Context"
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 621,
+                                                                lineNumber: 657,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
                                                                 children: "Jazon uses this information to personalize research, outreach, and qualification."
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 625,
+                                                                lineNumber: 661,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                        lineNumber: 620,
+                                                        lineNumber: 656,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -4758,7 +4778,7 @@ function SetupPage() {
                                                                                 children: "Company Name"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 633,
+                                                                                lineNumber: 669,
                                                                                 columnNumber: 25
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -4769,13 +4789,13 @@ function SetupPage() {
                                                                                         }))
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 634,
+                                                                                lineNumber: 670,
                                                                                 columnNumber: 25
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 632,
+                                                                        lineNumber: 668,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4785,7 +4805,7 @@ function SetupPage() {
                                                                                 children: "Website"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 645,
+                                                                                lineNumber: 681,
                                                                                 columnNumber: 25
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -4796,19 +4816,19 @@ function SetupPage() {
                                                                                         }))
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 646,
+                                                                                lineNumber: 682,
                                                                                 columnNumber: 25
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 644,
+                                                                        lineNumber: 680,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 631,
+                                                                lineNumber: 667,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4818,7 +4838,7 @@ function SetupPage() {
                                                                         children: "Product Description"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 659,
+                                                                        lineNumber: 695,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -4830,13 +4850,13 @@ function SetupPage() {
                                                                                 }))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 660,
+                                                                        lineNumber: 696,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 658,
+                                                                lineNumber: 694,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4846,7 +4866,7 @@ function SetupPage() {
                                                                         children: "Target Customers"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 673,
+                                                                        lineNumber: 709,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -4858,13 +4878,13 @@ function SetupPage() {
                                                                                 }))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 674,
+                                                                        lineNumber: 710,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 672,
+                                                                lineNumber: 708,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4874,7 +4894,7 @@ function SetupPage() {
                                                                         children: "Primary Use Case"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 687,
+                                                                        lineNumber: 723,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -4886,13 +4906,13 @@ function SetupPage() {
                                                                                 }))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 688,
+                                                                        lineNumber: 724,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 686,
+                                                                lineNumber: 722,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4902,7 +4922,7 @@ function SetupPage() {
                                                                         children: "Key Value Propositions"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 701,
+                                                                        lineNumber: 737,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -4914,13 +4934,13 @@ function SetupPage() {
                                                                                 }))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 702,
+                                                                        lineNumber: 738,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 700,
+                                                                lineNumber: 736,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4928,19 +4948,19 @@ function SetupPage() {
                                                                 children: "Values are stored locally in this session for demo purposes."
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 714,
+                                                                lineNumber: 750,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                        lineNumber: 630,
+                                                        lineNumber: 666,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                lineNumber: 619,
+                                                lineNumber: 655,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -4951,20 +4971,20 @@ function SetupPage() {
                                                                 children: "Company Knowledge Base"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 723,
+                                                                lineNumber: 759,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
                                                                 children: "Jazon uses your internal documents and links to align research, outreach, qualification, and objection handling with your company's messaging."
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 724,
+                                                                lineNumber: 760,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                        lineNumber: 722,
+                                                        lineNumber: 758,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -4977,7 +4997,7 @@ function SetupPage() {
                                                                         children: "Upload company documents"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 732,
+                                                                        lineNumber: 768,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -4987,7 +5007,7 @@ function SetupPage() {
                                                                         onChange: (e)=>handleKnowledgeUpload(e.target.files)
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 733,
+                                                                        lineNumber: 769,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4995,13 +5015,13 @@ function SetupPage() {
                                                                         children: "Recommended: product overviews, case studies, pricing decks, objection handling guides, security or compliance documents."
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 739,
+                                                                        lineNumber: 775,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 731,
+                                                                lineNumber: 767,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5011,7 +5031,7 @@ function SetupPage() {
                                                                         children: "Add relevant URLs"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 747,
+                                                                        lineNumber: 783,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5023,7 +5043,7 @@ function SetupPage() {
                                                                                 onChange: (e)=>setUrlInput(e.target.value)
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 749,
+                                                                                lineNumber: 785,
                                                                                 columnNumber: 25
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -5033,13 +5053,13 @@ function SetupPage() {
                                                                                 children: "Add URL"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 754,
+                                                                                lineNumber: 790,
                                                                                 columnNumber: 25
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 748,
+                                                                        lineNumber: 784,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     knowledgeUrls.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5047,7 +5067,7 @@ function SetupPage() {
                                                                         children: "Examples: https://company.com/product, https://company.com/customers"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 763,
+                                                                        lineNumber: 799,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     knowledgeUrls.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -5057,18 +5077,18 @@ function SetupPage() {
                                                                                 children: url
                                                                             }, url, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 771,
+                                                                                lineNumber: 807,
                                                                                 columnNumber: 29
                                                                             }, this))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 769,
+                                                                        lineNumber: 805,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 746,
+                                                                lineNumber: 782,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5078,7 +5098,7 @@ function SetupPage() {
                                                                         children: "Additional context for the AI (optional)"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 780,
+                                                                        lineNumber: 816,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -5088,13 +5108,13 @@ function SetupPage() {
                                                                         onChange: (e)=>setKnowledgeNotes(e.target.value)
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 781,
+                                                                        lineNumber: 817,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 779,
+                                                                lineNumber: 815,
                                                                 columnNumber: 21
                                                             }, this),
                                                             knowledgeDocs.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5105,7 +5125,7 @@ function SetupPage() {
                                                                         children: "Uploaded documents"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 791,
+                                                                        lineNumber: 827,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5121,7 +5141,7 @@ function SetupPage() {
                                                                                                 children: doc.name
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 801,
+                                                                                                lineNumber: 837,
                                                                                                 columnNumber: 33
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5132,13 +5152,13 @@ function SetupPage() {
                                                                                                 ]
                                                                                             }, void 0, true, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 804,
+                                                                                                lineNumber: 840,
                                                                                                 columnNumber: 33
                                                                                             }, this)
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 800,
+                                                                                        lineNumber: 836,
                                                                                         columnNumber: 31
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -5146,24 +5166,24 @@ function SetupPage() {
                                                                                         children: "Indexed (Demo)"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 809,
+                                                                                        lineNumber: 845,
                                                                                         columnNumber: 31
                                                                                     }, this)
                                                                                 ]
                                                                             }, doc.id, true, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 796,
+                                                                                lineNumber: 832,
                                                                                 columnNumber: 29
                                                                             }, this))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 794,
+                                                                        lineNumber: 830,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 790,
+                                                                lineNumber: 826,
                                                                 columnNumber: 23
                                                             }, this),
                                                             knowledgeDocs.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5171,25 +5191,25 @@ function SetupPage() {
                                                                 children: "When you add documents and URLs here, Jazon will treat them as the source of truth for how to speak about your product in outreach, qualification, and AE handoff packs (demo only, no data leaves this session)."
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 819,
+                                                                lineNumber: 855,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                        lineNumber: 730,
+                                                        lineNumber: 766,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                lineNumber: 721,
+                                                lineNumber: 757,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/setup/page.tsx",
-                                        lineNumber: 618,
+                                        lineNumber: 654,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TabsContent"], {
@@ -5207,27 +5227,27 @@ function SetupPage() {
                                                                         className: "w-4 h-4"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 834,
+                                                                        lineNumber: 870,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     "Agent Instructions"
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 833,
+                                                                lineNumber: 869,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
                                                                 children: "Control how Jazon behaves across outreach, qualification, and workflow decisions."
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 837,
+                                                                lineNumber: 873,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                        lineNumber: 832,
+                                                        lineNumber: 868,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -5243,7 +5263,7 @@ function SetupPage() {
                                                                                 children: "Outreach Tone"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 845,
+                                                                                lineNumber: 881,
                                                                                 columnNumber: 25
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Select"], {
@@ -5256,12 +5276,12 @@ function SetupPage() {
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectTrigger"], {
                                                                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectValue"], {}, void 0, false, {
                                                                                             fileName: "[project]/src/app/setup/page.tsx",
-                                                                                            lineNumber: 856,
+                                                                                            lineNumber: 892,
                                                                                             columnNumber: 29
                                                                                         }, this)
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 855,
+                                                                                        lineNumber: 891,
                                                                                         columnNumber: 27
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -5271,7 +5291,7 @@ function SetupPage() {
                                                                                                 children: "Formal"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 859,
+                                                                                                lineNumber: 895,
                                                                                                 columnNumber: 29
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -5279,25 +5299,25 @@ function SetupPage() {
                                                                                                 children: "Consultative"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 860,
+                                                                                                lineNumber: 896,
                                                                                                 columnNumber: 29
                                                                                             }, this)
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 858,
+                                                                                        lineNumber: 894,
                                                                                         columnNumber: 27
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 846,
+                                                                                lineNumber: 882,
                                                                                 columnNumber: 25
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 844,
+                                                                        lineNumber: 880,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5307,7 +5327,7 @@ function SetupPage() {
                                                                                 children: "Qualification Strictness"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 868,
+                                                                                lineNumber: 904,
                                                                                 columnNumber: 25
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Select"], {
@@ -5320,12 +5340,12 @@ function SetupPage() {
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectTrigger"], {
                                                                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectValue"], {}, void 0, false, {
                                                                                             fileName: "[project]/src/app/setup/page.tsx",
-                                                                                            lineNumber: 880,
+                                                                                            lineNumber: 916,
                                                                                             columnNumber: 29
                                                                                         }, this)
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 879,
+                                                                                        lineNumber: 915,
                                                                                         columnNumber: 27
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -5335,7 +5355,7 @@ function SetupPage() {
                                                                                                 children: "Low"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 883,
+                                                                                                lineNumber: 919,
                                                                                                 columnNumber: 29
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -5343,7 +5363,7 @@ function SetupPage() {
                                                                                                 children: "Medium"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 884,
+                                                                                                lineNumber: 920,
                                                                                                 columnNumber: 29
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -5351,31 +5371,31 @@ function SetupPage() {
                                                                                                 children: "High"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                                lineNumber: 885,
+                                                                                                lineNumber: 921,
                                                                                                 columnNumber: 29
                                                                                             }, this)
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 882,
+                                                                                        lineNumber: 918,
                                                                                         columnNumber: 27
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 869,
+                                                                                lineNumber: 905,
                                                                                 columnNumber: 25
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 867,
+                                                                        lineNumber: 903,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 843,
+                                                                lineNumber: 879,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5385,7 +5405,7 @@ function SetupPage() {
                                                                         children: "Allowed Channels"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 892,
+                                                                        lineNumber: 928,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5405,7 +5425,7 @@ function SetupPage() {
                                                                                 children: "Email"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 894,
+                                                                                lineNumber: 930,
                                                                                 columnNumber: 25
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -5422,7 +5442,7 @@ function SetupPage() {
                                                                                 children: "LinkedIn"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 914,
+                                                                                lineNumber: 950,
                                                                                 columnNumber: 25
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -5439,19 +5459,19 @@ function SetupPage() {
                                                                                 children: "Voice"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 934,
+                                                                                lineNumber: 970,
                                                                                 columnNumber: 25
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 893,
+                                                                        lineNumber: 929,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 891,
+                                                                lineNumber: 927,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5461,7 +5481,7 @@ function SetupPage() {
                                                                         children: "Voice Escalation Rules"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 958,
+                                                                        lineNumber: 994,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -5473,13 +5493,13 @@ function SetupPage() {
                                                                                 }))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 959,
+                                                                        lineNumber: 995,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 957,
+                                                                lineNumber: 993,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5489,7 +5509,7 @@ function SetupPage() {
                                                                         children: "Industries to Exclude"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 972,
+                                                                        lineNumber: 1008,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -5501,13 +5521,13 @@ function SetupPage() {
                                                                                 }))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 973,
+                                                                        lineNumber: 1009,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 971,
+                                                                lineNumber: 1007,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5515,19 +5535,19 @@ function SetupPage() {
                                                                 children: "These instructions are surfaced in Outreach Engine, Qualification reasoning, and Workflow for explainability."
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 985,
+                                                                lineNumber: 1021,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                        lineNumber: 842,
+                                                        lineNumber: 878,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                lineNumber: 831,
+                                                lineNumber: 867,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -5543,7 +5563,7 @@ function SetupPage() {
                                                                             className: "w-4 h-4"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/setup/page.tsx",
-                                                                            lineNumber: 996,
+                                                                            lineNumber: 1032,
                                                                             columnNumber: 25
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5552,7 +5572,7 @@ function SetupPage() {
                                                                                     children: "Voice Agent Script"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/setup/page.tsx",
-                                                                                    lineNumber: 998,
+                                                                                    lineNumber: 1034,
                                                                                     columnNumber: 27
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
@@ -5560,19 +5580,19 @@ function SetupPage() {
                                                                                     children: "Define exactly what the AI voice agent is allowed to say during live calls"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/setup/page.tsx",
-                                                                                    lineNumber: 999,
+                                                                                    lineNumber: 1035,
                                                                                     columnNumber: 27
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/setup/page.tsx",
-                                                                            lineNumber: 997,
+                                                                            lineNumber: 1033,
                                                                             columnNumber: 25
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/setup/page.tsx",
-                                                                    lineNumber: 995,
+                                                                    lineNumber: 1031,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5584,7 +5604,7 @@ function SetupPage() {
                                                                             children: "Active"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/setup/page.tsx",
-                                                                            lineNumber: 1006,
+                                                                            lineNumber: 1042,
                                                                             columnNumber: 25
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -5593,7 +5613,7 @@ function SetupPage() {
                                                                             children: "Save Script"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/setup/page.tsx",
-                                                                            lineNumber: 1009,
+                                                                            lineNumber: 1045,
                                                                             columnNumber: 25
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -5602,24 +5622,24 @@ function SetupPage() {
                                                                             children: "Reset to Default (Demo)"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/setup/page.tsx",
-                                                                            lineNumber: 1012,
+                                                                            lineNumber: 1048,
                                                                             columnNumber: 25
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/setup/page.tsx",
-                                                                    lineNumber: 1005,
+                                                                    lineNumber: 1041,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/setup/page.tsx",
-                                                            lineNumber: 994,
+                                                            lineNumber: 1030,
                                                             columnNumber: 21
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                        lineNumber: 993,
+                                                        lineNumber: 1029,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -5632,7 +5652,7 @@ function SetupPage() {
                                                                         children: "Opening Statement"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 1020,
+                                                                        lineNumber: 1056,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -5645,7 +5665,7 @@ function SetupPage() {
                                                                                 }))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 1021,
+                                                                        lineNumber: 1057,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5666,13 +5686,13 @@ function SetupPage() {
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 1032,
+                                                                        lineNumber: 1068,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 1019,
+                                                                lineNumber: 1055,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5682,7 +5702,7 @@ function SetupPage() {
                                                                         children: "Qualification Questions"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 1039,
+                                                                        lineNumber: 1075,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -5695,7 +5715,7 @@ function SetupPage() {
                                                                                 }))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 1040,
+                                                                        lineNumber: 1076,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5703,13 +5723,13 @@ function SetupPage() {
                                                                         children: "List key questions to uncover Budget, Authority, Need, and Timeline"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 1051,
+                                                                        lineNumber: 1087,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 1038,
+                                                                lineNumber: 1074,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5719,7 +5739,7 @@ function SetupPage() {
                                                                         children: "Objection Handling Guidelines"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 1058,
+                                                                        lineNumber: 1094,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -5732,86 +5752,12 @@ function SetupPage() {
                                                                                 }))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 1059,
-                                                                        columnNumber: 23
-                                                                    }, this),
-                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                                        className: "text-xs text-muted-foreground",
-                                                                        children: "Specify how the AI should respond to common objections"
-                                                                    }, void 0, false, {
-                                                                        fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 1070,
-                                                                        columnNumber: 23
-                                                                    }, this)
-                                                                ]
-                                                            }, void 0, true, {
-                                                                fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 1057,
-                                                                columnNumber: 21
-                                                            }, this),
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: "space-y-2",
-                                                                children: [
-                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Label"], {
-                                                                        children: "Disqualification Rules"
-                                                                    }, void 0, false, {
-                                                                        fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 1076,
-                                                                        columnNumber: 23
-                                                                    }, this),
-                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Textarea"], {
-                                                                        rows: 3,
-                                                                        placeholder: "Politely exit the call if budget is clearly below $X or authority is not reachable.",
-                                                                        value: voiceScript.disqualificationRules,
-                                                                        onChange: (e)=>setVoiceScript((prev)=>({
-                                                                                    ...prev,
-                                                                                    disqualificationRules: e.target.value
-                                                                                }))
-                                                                    }, void 0, false, {
-                                                                        fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 1077,
-                                                                        columnNumber: 23
-                                                                    }, this),
-                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                                        className: "text-xs text-muted-foreground",
-                                                                        children: "Define clear conditions for ending a call early"
-                                                                    }, void 0, false, {
-                                                                        fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 1088,
-                                                                        columnNumber: 23
-                                                                    }, this)
-                                                                ]
-                                                            }, void 0, true, {
-                                                                fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 1075,
-                                                                columnNumber: 21
-                                                            }, this),
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: "space-y-2",
-                                                                children: [
-                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Label"], {
-                                                                        children: "Escalation to AE Criteria"
-                                                                    }, void 0, false, {
-                                                                        fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 1094,
-                                                                        columnNumber: 23
-                                                                    }, this),
-                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Textarea"], {
-                                                                        rows: 3,
-                                                                        placeholder: "Escalate only when Budget + Authority + Timeline are verbally confirmed.",
-                                                                        value: voiceScript.escalationCriteria,
-                                                                        onChange: (e)=>setVoiceScript((prev)=>({
-                                                                                    ...prev,
-                                                                                    escalationCriteria: e.target.value
-                                                                                }))
-                                                                    }, void 0, false, {
-                                                                        fileName: "[project]/src/app/setup/page.tsx",
                                                                         lineNumber: 1095,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                                         className: "text-xs text-muted-foreground",
-                                                                        children: "Specify requirements for AE handoff after voice call"
+                                                                        children: "Specify how the AI should respond to common objections"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
                                                                         lineNumber: 1106,
@@ -5827,7 +5773,7 @@ function SetupPage() {
                                                                 className: "space-y-2",
                                                                 children: [
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Label"], {
-                                                                        children: "Compliance & Safety Disclaimer"
+                                                                        children: "Disqualification Rules"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
                                                                         lineNumber: 1112,
@@ -5835,11 +5781,11 @@ function SetupPage() {
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Textarea"], {
                                                                         rows: 3,
-                                                                        placeholder: "This call may be recorded for quality and training purposes. Follow regional compliance rules.",
-                                                                        value: voiceScript.complianceDisclaimer,
+                                                                        placeholder: "Politely exit the call if budget is clearly below $X or authority is not reachable.",
+                                                                        value: voiceScript.disqualificationRules,
                                                                         onChange: (e)=>setVoiceScript((prev)=>({
                                                                                     ...prev,
-                                                                                    complianceDisclaimer: e.target.value
+                                                                                    disqualificationRules: e.target.value
                                                                                 }))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
@@ -5848,7 +5794,7 @@ function SetupPage() {
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                                         className: "text-xs text-muted-foreground",
-                                                                        children: "Add required legal or regulatory disclosures"
+                                                                        children: "Define clear conditions for ending a call early"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
                                                                         lineNumber: 1124,
@@ -5861,6 +5807,80 @@ function SetupPage() {
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                className: "space-y-2",
+                                                                children: [
+                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Label"], {
+                                                                        children: "Escalation to AE Criteria"
+                                                                    }, void 0, false, {
+                                                                        fileName: "[project]/src/app/setup/page.tsx",
+                                                                        lineNumber: 1130,
+                                                                        columnNumber: 23
+                                                                    }, this),
+                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Textarea"], {
+                                                                        rows: 3,
+                                                                        placeholder: "Escalate only when Budget + Authority + Timeline are verbally confirmed.",
+                                                                        value: voiceScript.escalationCriteria,
+                                                                        onChange: (e)=>setVoiceScript((prev)=>({
+                                                                                    ...prev,
+                                                                                    escalationCriteria: e.target.value
+                                                                                }))
+                                                                    }, void 0, false, {
+                                                                        fileName: "[project]/src/app/setup/page.tsx",
+                                                                        lineNumber: 1131,
+                                                                        columnNumber: 23
+                                                                    }, this),
+                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                        className: "text-xs text-muted-foreground",
+                                                                        children: "Specify requirements for AE handoff after voice call"
+                                                                    }, void 0, false, {
+                                                                        fileName: "[project]/src/app/setup/page.tsx",
+                                                                        lineNumber: 1142,
+                                                                        columnNumber: 23
+                                                                    }, this)
+                                                                ]
+                                                            }, void 0, true, {
+                                                                fileName: "[project]/src/app/setup/page.tsx",
+                                                                lineNumber: 1129,
+                                                                columnNumber: 21
+                                                            }, this),
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                className: "space-y-2",
+                                                                children: [
+                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Label"], {
+                                                                        children: "Compliance & Safety Disclaimer"
+                                                                    }, void 0, false, {
+                                                                        fileName: "[project]/src/app/setup/page.tsx",
+                                                                        lineNumber: 1148,
+                                                                        columnNumber: 23
+                                                                    }, this),
+                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Textarea"], {
+                                                                        rows: 3,
+                                                                        placeholder: "This call may be recorded for quality and training purposes. Follow regional compliance rules.",
+                                                                        value: voiceScript.complianceDisclaimer,
+                                                                        onChange: (e)=>setVoiceScript((prev)=>({
+                                                                                    ...prev,
+                                                                                    complianceDisclaimer: e.target.value
+                                                                                }))
+                                                                    }, void 0, false, {
+                                                                        fileName: "[project]/src/app/setup/page.tsx",
+                                                                        lineNumber: 1149,
+                                                                        columnNumber: 23
+                                                                    }, this),
+                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                        className: "text-xs text-muted-foreground",
+                                                                        children: "Add required legal or regulatory disclosures"
+                                                                    }, void 0, false, {
+                                                                        fileName: "[project]/src/app/setup/page.tsx",
+                                                                        lineNumber: 1160,
+                                                                        columnNumber: 23
+                                                                    }, this)
+                                                                ]
+                                                            }, void 0, true, {
+                                                                fileName: "[project]/src/app/setup/page.tsx",
+                                                                lineNumber: 1147,
+                                                                columnNumber: 21
+                                                            }, this),
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                 className: "border-t pt-4",
                                                                 children: [
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5868,7 +5888,7 @@ function SetupPage() {
                                                                         children: "This script is followed verbatim by the AI voice agent and is logged for audit purposes."
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 1130,
+                                                                        lineNumber: 1166,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5880,7 +5900,7 @@ function SetupPage() {
                                                                                 id: "improvisation-toggle"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 1136,
+                                                                                lineNumber: 1172,
                                                                                 columnNumber: 25
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5892,7 +5912,7 @@ function SetupPage() {
                                                                                         children: "Allow limited AI improvisation within script boundaries"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 1142,
+                                                                                        lineNumber: 1178,
                                                                                         columnNumber: 27
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5900,75 +5920,75 @@ function SetupPage() {
                                                                                         children: "AI may paraphrase but will not change intent or claims."
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                                        lineNumber: 1148,
+                                                                                        lineNumber: 1184,
                                                                                         columnNumber: 27
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                                lineNumber: 1141,
+                                                                                lineNumber: 1177,
                                                                                 columnNumber: 25
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                                        lineNumber: 1135,
+                                                                        lineNumber: 1171,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                                lineNumber: 1129,
+                                                                lineNumber: 1165,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/setup/page.tsx",
-                                                        lineNumber: 1018,
+                                                        lineNumber: 1054,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/setup/page.tsx",
-                                                lineNumber: 992,
+                                                lineNumber: 1028,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/setup/page.tsx",
-                                        lineNumber: 830,
+                                        lineNumber: 866,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/setup/page.tsx",
-                                lineNumber: 222,
+                                lineNumber: 258,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/setup/page.tsx",
-                        lineNumber: 213,
+                        lineNumber: 249,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/app/setup/page.tsx",
-                    lineNumber: 212,
+                    lineNumber: 248,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/setup/page.tsx",
-                lineNumber: 211,
+                lineNumber: 247,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/setup/page.tsx",
-        lineNumber: 202,
+        lineNumber: 238,
         columnNumber: 5
     }, this);
 }
-_s(SetupPage, "drptgd4vp9kZfqNutJLYRbi3rGA=", false, function() {
+_s(SetupPage, "zGQD0wtkwPWMiYgOrOTY2LnLsT0=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$context$2f$jazon$2d$app$2d$context$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useJazonApp"]
     ];

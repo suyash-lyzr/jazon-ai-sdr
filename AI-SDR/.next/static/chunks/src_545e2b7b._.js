@@ -3168,14 +3168,68 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 function ResearchPage() {
+    var _selectedLeadData_icp_score, _selectedLeadData_icp_score_score_breakdown, _selectedLeadData_icp_score_factor_breakdown_companyFit, _selectedLeadData_icp_score_factor_breakdown, _selectedLeadData_icp_score_score_breakdown1, _selectedLeadData_icp_score_factor_breakdown_personaFit, _selectedLeadData_icp_score_factor_breakdown1, _selectedLeadData_icp_score_score_breakdown2, _selectedLeadData_icp_score_factor_breakdown_timingFit, _selectedLeadData_icp_score_factor_breakdown2, _selectedLeadData_icp_score_strengths, _selectedLeadData_company, _selectedLeadData_company1, _selectedLeadData_company_company_size, _selectedLeadData_company2, _selectedLeadData_company_company_size1, _selectedLeadData_company3, _selectedLeadData_company_company_size2, _selectedLeadData_company4, _selectedLeadData_company_technographics, _selectedLeadData_company5, _selectedLeadData_company6, _selectedLeadData_persona, _selectedLeadData_persona1, _selectedLeadData_persona2, _selectedLeadData_persona3, _selectedLeadData_persona_decision_authority, _selectedLeadData_persona4, _selectedLeadData_persona_decision_authority1, _selectedLeadData_persona5;
     _s();
-    const { leads } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$context$2f$jazon$2d$app$2d$context$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useJazonApp"])();
+    const { leads: mockLeads } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$context$2f$jazon$2d$app$2d$context$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useJazonApp"])();
     const [selectedLeadId, setSelectedLeadId] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [expandedSections, setExpandedSections] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({
         company: false,
         persona: false,
         timing: false
     });
+    const [dbLeads, setDbLeads] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [selectedLeadData, setSelectedLeadData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [isLoadingLead, setIsLoadingLead] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    // Fetch leads from database on mount
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "ResearchPage.useEffect": ()=>{
+            const fetchLeads = {
+                "ResearchPage.useEffect.fetchLeads": async ()=>{
+                    try {
+                        const response = await fetch("/api/leads");
+                        const data = await response.json();
+                        if (data.success && data.leads) {
+                            // Transform database leads (using normalized schema)
+                            const transformedLeads = data.leads.map({
+                                "ResearchPage.useEffect.fetchLeads.transformedLeads": (dbLead)=>{
+                                    var _dbLead_company, _dbLead_icp_score;
+                                    return {
+                                        id: dbLead._id,
+                                        name: dbLead.name,
+                                        company: ((_dbLead_company = dbLead.company) === null || _dbLead_company === void 0 ? void 0 : _dbLead_company.name) || "Unknown",
+                                        icpScore: ((_dbLead_icp_score = dbLead.icp_score) === null || _dbLead_icp_score === void 0 ? void 0 : _dbLead_icp_score.icp_score) || 0,
+                                        _dbLead: dbLead
+                                    };
+                                }
+                            }["ResearchPage.useEffect.fetchLeads.transformedLeads"]);
+                            setDbLeads(transformedLeads);
+                        }
+                    } catch (error) {
+                        console.error("Error fetching leads:", error);
+                    }
+                }
+            }["ResearchPage.useEffect.fetchLeads"];
+            fetchLeads();
+        }
+    }["ResearchPage.useEffect"], []);
+    // Combine mock leads and database leads
+    const leads = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
+        "ResearchPage.useMemo[leads]": ()=>{
+            const mockLeadsTransformed = mockLeads.map({
+                "ResearchPage.useMemo[leads].mockLeadsTransformed": (l)=>({
+                        ...l,
+                        _dbLead: null
+                    })
+            }["ResearchPage.useMemo[leads].mockLeadsTransformed"]);
+            return [
+                ...mockLeadsTransformed,
+                ...dbLeads
+            ];
+        }
+    }["ResearchPage.useMemo[leads]"], [
+        mockLeads,
+        dbLeads
+    ]);
     // Default to highest ICP score lead
     const defaultLead = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
         "ResearchPage.useMemo[defaultLead]": ()=>{
@@ -3188,8 +3242,115 @@ function ResearchPage() {
         leads
     ]);
     const selectedLead = selectedLeadId ? leads.find((l)=>l.id === selectedLeadId) || defaultLead : defaultLead;
-    // Use mock data for now - in production this would come from API based on selectedLead
-    const { companyAnalysis, personaAnalysis, triggers, icpScore } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$mock$2d$data$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["mockICPData"];
+    // Fetch full lead data when selection changes
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "ResearchPage.useEffect": ()=>{
+            const fetchLeadData = {
+                "ResearchPage.useEffect.fetchLeadData": async ()=>{
+                    if (!selectedLead || !selectedLead._dbLead) {
+                        setSelectedLeadData(null);
+                        return;
+                    }
+                    setIsLoadingLead(true);
+                    try {
+                        const response = await fetch("/api/leads/".concat(selectedLead.id));
+                        const data = await response.json();
+                        if (data.success) {
+                            setSelectedLeadData(data.lead);
+                        }
+                    } catch (error) {
+                        console.error("Error fetching lead data:", error);
+                    } finally{
+                        setIsLoadingLead(false);
+                    }
+                }
+            }["ResearchPage.useEffect.fetchLeadData"];
+            fetchLeadData();
+        }
+    }["ResearchPage.useEffect"], [
+        selectedLead === null || selectedLead === void 0 ? void 0 : selectedLead.id
+    ]);
+    // Use real data if available, otherwise use mock data (using normalized schema)
+    const { companyAnalysis, personaAnalysis, triggers, icpScore } = (selectedLeadData === null || selectedLeadData === void 0 ? void 0 : selectedLeadData.icp_score) && (selectedLeadData === null || selectedLeadData === void 0 ? void 0 : selectedLeadData.company) ? {
+        icpScore: {
+            overall: ((_selectedLeadData_icp_score = selectedLeadData.icp_score) === null || _selectedLeadData_icp_score === void 0 ? void 0 : _selectedLeadData_icp_score.icp_score) || 0,
+            breakdown: {
+                companyFit: {
+                    score: ((_selectedLeadData_icp_score_score_breakdown = selectedLeadData.icp_score.score_breakdown) === null || _selectedLeadData_icp_score_score_breakdown === void 0 ? void 0 : _selectedLeadData_icp_score_score_breakdown.company_fit) || 0,
+                    factors: ((_selectedLeadData_icp_score_factor_breakdown = selectedLeadData.icp_score.factor_breakdown) === null || _selectedLeadData_icp_score_factor_breakdown === void 0 ? void 0 : (_selectedLeadData_icp_score_factor_breakdown_companyFit = _selectedLeadData_icp_score_factor_breakdown.companyFit) === null || _selectedLeadData_icp_score_factor_breakdown_companyFit === void 0 ? void 0 : _selectedLeadData_icp_score_factor_breakdown_companyFit.factors) || [
+                        {
+                            name: "Company size",
+                            value: 0,
+                            weight: 30
+                        },
+                        {
+                            name: "Industry match",
+                            value: 0,
+                            weight: 25
+                        },
+                        {
+                            name: "Tech stack compatibility",
+                            value: 0,
+                            weight: 20
+                        }
+                    ]
+                },
+                personaFit: {
+                    score: ((_selectedLeadData_icp_score_score_breakdown1 = selectedLeadData.icp_score.score_breakdown) === null || _selectedLeadData_icp_score_score_breakdown1 === void 0 ? void 0 : _selectedLeadData_icp_score_score_breakdown1.persona_fit) || 0,
+                    factors: ((_selectedLeadData_icp_score_factor_breakdown1 = selectedLeadData.icp_score.factor_breakdown) === null || _selectedLeadData_icp_score_factor_breakdown1 === void 0 ? void 0 : (_selectedLeadData_icp_score_factor_breakdown_personaFit = _selectedLeadData_icp_score_factor_breakdown1.personaFit) === null || _selectedLeadData_icp_score_factor_breakdown_personaFit === void 0 ? void 0 : _selectedLeadData_icp_score_factor_breakdown_personaFit.factors) || [
+                        {
+                            name: "Decision authority",
+                            value: 0,
+                            weight: 35
+                        },
+                        {
+                            name: "Seniority level",
+                            value: 0,
+                            weight: 20
+                        }
+                    ]
+                },
+                timingFit: {
+                    score: ((_selectedLeadData_icp_score_score_breakdown2 = selectedLeadData.icp_score.score_breakdown) === null || _selectedLeadData_icp_score_score_breakdown2 === void 0 ? void 0 : _selectedLeadData_icp_score_score_breakdown2.timing_fit) || 0,
+                    factors: ((_selectedLeadData_icp_score_factor_breakdown2 = selectedLeadData.icp_score.factor_breakdown) === null || _selectedLeadData_icp_score_factor_breakdown2 === void 0 ? void 0 : (_selectedLeadData_icp_score_factor_breakdown_timingFit = _selectedLeadData_icp_score_factor_breakdown2.timingFit) === null || _selectedLeadData_icp_score_factor_breakdown_timingFit === void 0 ? void 0 : _selectedLeadData_icp_score_factor_breakdown_timingFit.factors) || [
+                        {
+                            name: "Active triggers",
+                            value: 0,
+                            weight: 40
+                        }
+                    ]
+                }
+            },
+            explanation: ((_selectedLeadData_icp_score_strengths = selectedLeadData.icp_score.strengths) === null || _selectedLeadData_icp_score_strengths === void 0 ? void 0 : _selectedLeadData_icp_score_strengths.join(". ")) || "No explanation available"
+        },
+        companyAnalysis: {
+            name: ((_selectedLeadData_company = selectedLeadData.company) === null || _selectedLeadData_company === void 0 ? void 0 : _selectedLeadData_company.name) || "Unknown",
+            industry: ((_selectedLeadData_company1 = selectedLeadData.company) === null || _selectedLeadData_company1 === void 0 ? void 0 : _selectedLeadData_company1.industry) || "Unknown",
+            size: ((_selectedLeadData_company2 = selectedLeadData.company) === null || _selectedLeadData_company2 === void 0 ? void 0 : (_selectedLeadData_company_company_size = _selectedLeadData_company2.company_size) === null || _selectedLeadData_company_company_size === void 0 ? void 0 : _selectedLeadData_company_company_size.employee_count) ? "".concat(selectedLeadData.company.company_size.employee_count.toLocaleString(), " employees globally") : "Unknown",
+            revenue: ((_selectedLeadData_company3 = selectedLeadData.company) === null || _selectedLeadData_company3 === void 0 ? void 0 : (_selectedLeadData_company_company_size1 = _selectedLeadData_company3.company_size) === null || _selectedLeadData_company_company_size1 === void 0 ? void 0 : _selectedLeadData_company_company_size1.annual_revenue_usd) ? "$".concat((selectedLeadData.company.company_size.annual_revenue_usd / 1000000000).toFixed(1), "B") : "Unknown",
+            structure: ((_selectedLeadData_company4 = selectedLeadData.company) === null || _selectedLeadData_company4 === void 0 ? void 0 : (_selectedLeadData_company_company_size2 = _selectedLeadData_company4.company_size) === null || _selectedLeadData_company_company_size2 === void 0 ? void 0 : _selectedLeadData_company_company_size2.is_public) ? "Public company".concat(selectedLeadData.company.company_size.ticker ? " (".concat(selectedLeadData.company.company_size.ticker, ")") : "") : "Private company",
+            techStack: ((_selectedLeadData_company5 = selectedLeadData.company) === null || _selectedLeadData_company5 === void 0 ? void 0 : (_selectedLeadData_company_technographics = _selectedLeadData_company5.technographics) === null || _selectedLeadData_company_technographics === void 0 ? void 0 : _selectedLeadData_company_technographics.map((tech)=>tech.name).join(", ")) || "Unknown",
+            salesMotion: ((_selectedLeadData_company6 = selectedLeadData.company) === null || _selectedLeadData_company6 === void 0 ? void 0 : _selectedLeadData_company6.sales_motion) || "Unknown"
+        },
+        personaAnalysis: {
+            title: selectedLeadData.title || "Unknown",
+            seniority: ((_selectedLeadData_persona = selectedLeadData.persona) === null || _selectedLeadData_persona === void 0 ? void 0 : _selectedLeadData_persona.seniority) || "Unknown",
+            reportingStructure: ((_selectedLeadData_persona1 = selectedLeadData.persona) === null || _selectedLeadData_persona1 === void 0 ? void 0 : _selectedLeadData_persona1.reports_to) || "Unknown",
+            responsibilities: ((_selectedLeadData_persona2 = selectedLeadData.persona) === null || _selectedLeadData_persona2 === void 0 ? void 0 : _selectedLeadData_persona2.responsibilities) || [],
+            painPoints: ((_selectedLeadData_persona3 = selectedLeadData.persona) === null || _selectedLeadData_persona3 === void 0 ? void 0 : _selectedLeadData_persona3.pain_points) || [],
+            decisionAuthority: ((_selectedLeadData_persona4 = selectedLeadData.persona) === null || _selectedLeadData_persona4 === void 0 ? void 0 : (_selectedLeadData_persona_decision_authority = _selectedLeadData_persona4.decision_authority) === null || _selectedLeadData_persona_decision_authority === void 0 ? void 0 : _selectedLeadData_persona_decision_authority.rationale) || (((_selectedLeadData_persona5 = selectedLeadData.persona) === null || _selectedLeadData_persona5 === void 0 ? void 0 : (_selectedLeadData_persona_decision_authority1 = _selectedLeadData_persona5.decision_authority) === null || _selectedLeadData_persona_decision_authority1 === void 0 ? void 0 : _selectedLeadData_persona_decision_authority1.decision_maker_likelihood) ? "Decision maker likelihood: ".concat(selectedLeadData.persona.decision_authority.decision_maker_likelihood) : "Unknown")
+        },
+        triggers: (selectedLeadData.detected_signals || []).map((signal)=>{
+            var _signal_strength;
+            return {
+                type: signal.type || "general",
+                signal: signal.signal || "Signal detected",
+                source: signal.source || "Research",
+                strength: ((_signal_strength = signal.strength) === null || _signal_strength === void 0 ? void 0 : _signal_strength.toLowerCase()) || "medium",
+                recency: signal.recency || "Detected in research"
+            };
+        })
+    } : __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$mock$2d$data$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["mockICPData"];
     const getFitLabel = (score)=>{
         if (score >= 85) return "Excellent Fit";
         if (score >= 70) return "Good Fit";
@@ -3258,7 +3419,7 @@ function ResearchPage() {
                 variant: "inset"
             }, void 0, false, {
                 fileName: "[project]/src/app/research/page.tsx",
-                lineNumber: 142,
+                lineNumber: 268,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$sidebar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SidebarInset"], {
@@ -3278,7 +3439,7 @@ function ResearchPage() {
                                                 children: "Research & ICP Analysis"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                lineNumber: 149,
+                                                lineNumber: 275,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3286,13 +3447,13 @@ function ResearchPage() {
                                                 children: "Deep intelligence gathering to prove AI understanding"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                lineNumber: 152,
+                                                lineNumber: 278,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/research/page.tsx",
-                                        lineNumber: 148,
+                                        lineNumber: 274,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3303,7 +3464,7 @@ function ResearchPage() {
                                                 children: "Lead:"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                lineNumber: 157,
+                                                lineNumber: 283,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Select"], {
@@ -3316,12 +3477,12 @@ function ResearchPage() {
                                                             placeholder: "Choose a lead to analyze"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                            lineNumber: 165,
+                                                            lineNumber: 291,
                                                             columnNumber: 21
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                        lineNumber: 164,
+                                                        lineNumber: 290,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -3335,7 +3496,7 @@ function ResearchPage() {
                                                                             children: lead.name
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 173,
+                                                                            lineNumber: 299,
                                                                             columnNumber: 29
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3343,7 +3504,7 @@ function ResearchPage() {
                                                                             children: lead.company
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 174,
+                                                                            lineNumber: 300,
                                                                             columnNumber: 29
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -3355,41 +3516,41 @@ function ResearchPage() {
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 177,
+                                                                            lineNumber: 303,
                                                                             columnNumber: 29
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 172,
+                                                                    lineNumber: 298,
                                                                     columnNumber: 27
                                                                 }, this)
                                                             }, lead.id, false, {
                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                lineNumber: 171,
+                                                                lineNumber: 297,
                                                                 columnNumber: 25
                                                             }, this))
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                        lineNumber: 167,
+                                                        lineNumber: 293,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                lineNumber: 160,
+                                                lineNumber: 286,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/research/page.tsx",
-                                        lineNumber: 156,
+                                        lineNumber: 282,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/research/page.tsx",
-                                lineNumber: 147,
+                                lineNumber: 273,
                                 columnNumber: 13
                             }, this),
                             selectedLead && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -3409,7 +3570,7 @@ function ResearchPage() {
                                                                     children: selectedLead.icpScore
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 195,
+                                                                    lineNumber: 321,
                                                                     columnNumber: 25
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3417,20 +3578,20 @@ function ResearchPage() {
                                                                     children: "out of 100"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 202,
+                                                                    lineNumber: 328,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                            lineNumber: 194,
+                                                            lineNumber: 320,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                             className: "h-12 w-px bg-border"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                            lineNumber: 206,
+                                                            lineNumber: 332,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3440,7 +3601,7 @@ function ResearchPage() {
                                                                     children: selectedLead.name
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 208,
+                                                                    lineNumber: 334,
                                                                     columnNumber: 25
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3452,19 +3613,19 @@ function ResearchPage() {
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 211,
+                                                                    lineNumber: 337,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                            lineNumber: 207,
+                                                            lineNumber: 333,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                    lineNumber: 193,
+                                                    lineNumber: 319,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3476,7 +3637,7 @@ function ResearchPage() {
                                                             children: getFitLabel(selectedLead.icpScore)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                            lineNumber: 217,
+                                                            lineNumber: 343,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3486,37 +3647,37 @@ function ResearchPage() {
                                                                     className: "w-3 h-3"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 230,
+                                                                    lineNumber: 356,
                                                                     columnNumber: 25
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                     children: "Updated 2 hours ago"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 231,
+                                                                    lineNumber: 357,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                            lineNumber: 229,
+                                                            lineNumber: 355,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                    lineNumber: 216,
+                                                    lineNumber: 342,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/research/page.tsx",
-                                            lineNumber: 192,
+                                            lineNumber: 318,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/research/page.tsx",
-                                        lineNumber: 191,
+                                        lineNumber: 317,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -3527,7 +3688,7 @@ function ResearchPage() {
                                                         children: "AI Summary"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                        lineNumber: 240,
+                                                        lineNumber: 366,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
@@ -3540,13 +3701,13 @@ function ResearchPage() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                        lineNumber: 241,
+                                                        lineNumber: 367,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                lineNumber: 239,
+                                                lineNumber: 365,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -3559,7 +3720,7 @@ function ResearchPage() {
                                                                     className: "w-4 h-4 text-chart-2 mt-0.5 shrink-0"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 258,
+                                                                    lineNumber: 384,
                                                                     columnNumber: 27
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3567,29 +3728,29 @@ function ResearchPage() {
                                                                     children: bullet
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 259,
+                                                                    lineNumber: 385,
                                                                     columnNumber: 27
                                                                 }, this)
                                                             ]
                                                         }, idx, true, {
                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                            lineNumber: 254,
+                                                            lineNumber: 380,
                                                             columnNumber: 25
                                                         }, this))
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                    lineNumber: 252,
+                                                    lineNumber: 378,
                                                     columnNumber: 21
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                lineNumber: 251,
+                                                lineNumber: 377,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/research/page.tsx",
-                                        lineNumber: 238,
+                                        lineNumber: 364,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3610,14 +3771,14 @@ function ResearchPage() {
                                                                                     className: "w-5 h-5"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 275,
+                                                                                    lineNumber: 401,
                                                                                     columnNumber: 29
                                                                                 }, this),
                                                                                 "Company Analysis"
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 274,
+                                                                            lineNumber: 400,
                                                                             columnNumber: 27
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
@@ -3625,13 +3786,13 @@ function ResearchPage() {
                                                                             children: companyAnalysis.name
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 278,
+                                                                            lineNumber: 404,
                                                                             columnNumber: 27
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 273,
+                                                                    lineNumber: 399,
                                                                     columnNumber: 25
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3643,7 +3804,7 @@ function ResearchPage() {
                                                                             children: "LinkedIn"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 283,
+                                                                            lineNumber: 409,
                                                                             columnNumber: 27
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -3652,7 +3813,7 @@ function ResearchPage() {
                                                                             children: "CRM"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 286,
+                                                                            lineNumber: 412,
                                                                             columnNumber: 27
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -3661,24 +3822,24 @@ function ResearchPage() {
                                                                             children: "Perplexity"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 289,
+                                                                            lineNumber: 415,
                                                                             columnNumber: 27
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 282,
+                                                                    lineNumber: 408,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                            lineNumber: 272,
+                                                            lineNumber: 398,
                                                             columnNumber: 23
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                        lineNumber: 271,
+                                                        lineNumber: 397,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -3696,7 +3857,7 @@ function ResearchPage() {
                                                                                     children: "Industry"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 299,
+                                                                                    lineNumber: 425,
                                                                                     columnNumber: 29
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3704,13 +3865,13 @@ function ResearchPage() {
                                                                                     children: companyAnalysis.industry
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 302,
+                                                                                    lineNumber: 428,
                                                                                     columnNumber: 29
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 298,
+                                                                            lineNumber: 424,
                                                                             columnNumber: 27
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3720,7 +3881,7 @@ function ResearchPage() {
                                                                                     children: "Company Size"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 307,
+                                                                                    lineNumber: 433,
                                                                                     columnNumber: 29
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3728,13 +3889,13 @@ function ResearchPage() {
                                                                                     children: companyAnalysis.size
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 310,
+                                                                                    lineNumber: 436,
                                                                                     columnNumber: 29
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 306,
+                                                                            lineNumber: 432,
                                                                             columnNumber: 27
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3744,7 +3905,7 @@ function ResearchPage() {
                                                                                     children: "Annual Revenue"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 315,
+                                                                                    lineNumber: 441,
                                                                                     columnNumber: 29
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3752,13 +3913,13 @@ function ResearchPage() {
                                                                                     children: companyAnalysis.revenue
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 318,
+                                                                                    lineNumber: 444,
                                                                                     columnNumber: 29
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 314,
+                                                                            lineNumber: 440,
                                                                             columnNumber: 27
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3768,7 +3929,7 @@ function ResearchPage() {
                                                                                     children: "Structure"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 323,
+                                                                                    lineNumber: 449,
                                                                                     columnNumber: 29
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3776,24 +3937,24 @@ function ResearchPage() {
                                                                                     children: companyAnalysis.structure
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 326,
+                                                                                    lineNumber: 452,
                                                                                     columnNumber: 29
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 322,
+                                                                            lineNumber: 448,
                                                                             columnNumber: 27
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 297,
+                                                                    lineNumber: 423,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                lineNumber: 296,
+                                                                lineNumber: 422,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3806,7 +3967,7 @@ function ResearchPage() {
                                                                                 children: "Tech Stack"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                                lineNumber: 335,
+                                                                                lineNumber: 461,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3817,18 +3978,18 @@ function ResearchPage() {
                                                                                     children: "Verified"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 339,
+                                                                                    lineNumber: 465,
                                                                                     columnNumber: 29
                                                                                 }, this)
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                                lineNumber: 338,
+                                                                                lineNumber: 464,
                                                                                 columnNumber: 27
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                                        lineNumber: 334,
+                                                                        lineNumber: 460,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3836,13 +3997,13 @@ function ResearchPage() {
                                                                         children: companyAnalysis.techStack
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                                        lineNumber: 344,
+                                                                        lineNumber: 470,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                lineNumber: 333,
+                                                                lineNumber: 459,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3855,7 +4016,7 @@ function ResearchPage() {
                                                                                 children: "Sales Motion"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                                lineNumber: 351,
+                                                                                lineNumber: 477,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3866,18 +4027,18 @@ function ResearchPage() {
                                                                                     children: "AI Inferred"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 355,
+                                                                                    lineNumber: 481,
                                                                                     columnNumber: 29
                                                                                 }, this)
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                                lineNumber: 354,
+                                                                                lineNumber: 480,
                                                                                 columnNumber: 27
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                                        lineNumber: 350,
+                                                                        lineNumber: 476,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3885,25 +4046,25 @@ function ResearchPage() {
                                                                         children: companyAnalysis.salesMotion
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                                        lineNumber: 360,
+                                                                        lineNumber: 486,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                lineNumber: 349,
+                                                                lineNumber: 475,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                        lineNumber: 295,
+                                                        lineNumber: 421,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                lineNumber: 270,
+                                                lineNumber: 396,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -3921,14 +4082,14 @@ function ResearchPage() {
                                                                                     className: "w-5 h-5"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 373,
+                                                                                    lineNumber: 499,
                                                                                     columnNumber: 29
                                                                                 }, this),
                                                                                 "Persona Analysis"
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 372,
+                                                                            lineNumber: 498,
                                                                             columnNumber: 27
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
@@ -3936,13 +4097,13 @@ function ResearchPage() {
                                                                             children: personaAnalysis.title
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 376,
+                                                                            lineNumber: 502,
                                                                             columnNumber: 27
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 371,
+                                                                    lineNumber: 497,
                                                                     columnNumber: 25
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3954,7 +4115,7 @@ function ResearchPage() {
                                                                             children: "LinkedIn"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 381,
+                                                                            lineNumber: 507,
                                                                             columnNumber: 27
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -3963,24 +4124,24 @@ function ResearchPage() {
                                                                             children: "Conversations"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 384,
+                                                                            lineNumber: 510,
                                                                             columnNumber: 27
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 380,
+                                                                    lineNumber: 506,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                            lineNumber: 370,
+                                                            lineNumber: 496,
                                                             columnNumber: 23
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                        lineNumber: 369,
+                                                        lineNumber: 495,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -3998,7 +4159,7 @@ function ResearchPage() {
                                                                                     children: "Seniority"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 394,
+                                                                                    lineNumber: 520,
                                                                                     columnNumber: 29
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4006,13 +4167,13 @@ function ResearchPage() {
                                                                                     children: personaAnalysis.seniority
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 397,
+                                                                                    lineNumber: 523,
                                                                                     columnNumber: 29
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 393,
+                                                                            lineNumber: 519,
                                                                             columnNumber: 27
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4022,7 +4183,7 @@ function ResearchPage() {
                                                                                     children: "Reports To"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 402,
+                                                                                    lineNumber: 528,
                                                                                     columnNumber: 29
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4030,24 +4191,24 @@ function ResearchPage() {
                                                                                     children: personaAnalysis.reportingStructure
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 405,
+                                                                                    lineNumber: 531,
                                                                                     columnNumber: 29
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 401,
+                                                                            lineNumber: 527,
                                                                             columnNumber: 27
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 392,
+                                                                    lineNumber: 518,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                lineNumber: 391,
+                                                                lineNumber: 517,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4060,7 +4221,7 @@ function ResearchPage() {
                                                                                 children: "Key Responsibilities"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                                lineNumber: 414,
+                                                                                lineNumber: 540,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -4069,13 +4230,13 @@ function ResearchPage() {
                                                                                 children: "Verified"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                                lineNumber: 417,
+                                                                                lineNumber: 543,
                                                                                 columnNumber: 27
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                                        lineNumber: 413,
+                                                                        lineNumber: 539,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -4088,7 +4249,7 @@ function ResearchPage() {
                                                                                         children: "•"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                                                        lineNumber: 427,
+                                                                                        lineNumber: 553,
                                                                                         columnNumber: 31
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4096,24 +4257,24 @@ function ResearchPage() {
                                                                                         children: resp
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                                                        lineNumber: 428,
+                                                                                        lineNumber: 554,
                                                                                         columnNumber: 31
                                                                                     }, this)
                                                                                 ]
                                                                             }, idx, true, {
                                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                                lineNumber: 423,
+                                                                                lineNumber: 549,
                                                                                 columnNumber: 29
                                                                             }, this))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                                        lineNumber: 421,
+                                                                        lineNumber: 547,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                lineNumber: 412,
+                                                                lineNumber: 538,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4126,7 +4287,7 @@ function ResearchPage() {
                                                                                 children: "Pain Points"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                                lineNumber: 436,
+                                                                                lineNumber: 562,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -4135,13 +4296,13 @@ function ResearchPage() {
                                                                                 children: "AI Inferred"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                                lineNumber: 439,
+                                                                                lineNumber: 565,
                                                                                 columnNumber: 27
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                                        lineNumber: 435,
+                                                                        lineNumber: 561,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -4153,7 +4314,7 @@ function ResearchPage() {
                                                                                         className: "w-4 h-4 text-destructive mt-0.5 shrink-0"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                                                        lineNumber: 449,
+                                                                                        lineNumber: 575,
                                                                                         columnNumber: 31
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4161,24 +4322,24 @@ function ResearchPage() {
                                                                                         children: pain
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                                                        lineNumber: 450,
+                                                                                        lineNumber: 576,
                                                                                         columnNumber: 31
                                                                                     }, this)
                                                                                 ]
                                                                             }, idx, true, {
                                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                                lineNumber: 445,
+                                                                                lineNumber: 571,
                                                                                 columnNumber: 29
                                                                             }, this))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                                        lineNumber: 443,
+                                                                        lineNumber: 569,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                lineNumber: 434,
+                                                                lineNumber: 560,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4191,7 +4352,7 @@ function ResearchPage() {
                                                                                 children: "Decision Authority"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                                lineNumber: 458,
+                                                                                lineNumber: 584,
                                                                                 columnNumber: 27
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -4200,13 +4361,13 @@ function ResearchPage() {
                                                                                 children: "Confirmed"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                                lineNumber: 461,
+                                                                                lineNumber: 587,
                                                                                 columnNumber: 27
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                                        lineNumber: 457,
+                                                                        lineNumber: 583,
                                                                         columnNumber: 25
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4214,31 +4375,31 @@ function ResearchPage() {
                                                                         children: personaAnalysis.decisionAuthority
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                                        lineNumber: 465,
+                                                                        lineNumber: 591,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                lineNumber: 456,
+                                                                lineNumber: 582,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                        lineNumber: 390,
+                                                        lineNumber: 516,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                lineNumber: 368,
+                                                lineNumber: 494,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/research/page.tsx",
-                                        lineNumber: 268,
+                                        lineNumber: 394,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -4252,27 +4413,27 @@ function ResearchPage() {
                                                                 className: "w-5 h-5 text-chart-4"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                lineNumber: 477,
+                                                                lineNumber: 603,
                                                                 columnNumber: 23
                                                             }, this),
                                                             "Detected Triggers"
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                        lineNumber: 476,
+                                                        lineNumber: 602,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
                                                         children: "Real-time buying signals indicating readiness to engage"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                        lineNumber: 480,
+                                                        lineNumber: 606,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                lineNumber: 475,
+                                                lineNumber: 601,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -4293,7 +4454,7 @@ function ResearchPage() {
                                                                                     children: trigger.type
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 493,
+                                                                                    lineNumber: 619,
                                                                                     columnNumber: 31
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -4305,13 +4466,13 @@ function ResearchPage() {
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 503,
+                                                                                    lineNumber: 629,
                                                                                     columnNumber: 31
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 492,
+                                                                            lineNumber: 618,
                                                                             columnNumber: 29
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -4320,13 +4481,13 @@ function ResearchPage() {
                                                                             children: "Used in ICP scoring"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 507,
+                                                                            lineNumber: 633,
                                                                             columnNumber: 29
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 491,
+                                                                    lineNumber: 617,
                                                                     columnNumber: 27
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4334,7 +4495,7 @@ function ResearchPage() {
                                                                     children: trigger.signal
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 514,
+                                                                    lineNumber: 640,
                                                                     columnNumber: 27
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4347,7 +4508,7 @@ function ResearchPage() {
                                                                                     children: "Source:"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 519,
+                                                                                    lineNumber: 645,
                                                                                     columnNumber: 31
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4355,13 +4516,13 @@ function ResearchPage() {
                                                                                     children: trigger.source
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 520,
+                                                                                    lineNumber: 646,
                                                                                     columnNumber: 31
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 518,
+                                                                            lineNumber: 644,
                                                                             columnNumber: 29
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4371,48 +4532,48 @@ function ResearchPage() {
                                                                                     className: "w-3 h-3"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 525,
+                                                                                    lineNumber: 651,
                                                                                     columnNumber: 31
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                                     children: trigger.recency
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 526,
+                                                                                    lineNumber: 652,
                                                                                     columnNumber: 31
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 524,
+                                                                            lineNumber: 650,
                                                                             columnNumber: 29
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 517,
+                                                                    lineNumber: 643,
                                                                     columnNumber: 27
                                                                 }, this)
                                                             ]
                                                         }, idx, true, {
                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                            lineNumber: 487,
+                                                            lineNumber: 613,
                                                             columnNumber: 25
                                                         }, this))
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                    lineNumber: 485,
+                                                    lineNumber: 611,
                                                     columnNumber: 21
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                lineNumber: 484,
+                                                lineNumber: 610,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/research/page.tsx",
-                                        lineNumber: 474,
+                                        lineNumber: 600,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -4423,20 +4584,20 @@ function ResearchPage() {
                                                         children: "ICP Score Breakdown"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                        lineNumber: 538,
+                                                        lineNumber: 664,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
                                                         children: "Expand each category to view detailed factor analysis with weighted scoring"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                        lineNumber: 539,
+                                                        lineNumber: 665,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                lineNumber: 537,
+                                                lineNumber: 663,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -4461,13 +4622,13 @@ function ResearchPage() {
                                                                                     className: "w-4 h-4 text-muted-foreground"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 559,
+                                                                                    lineNumber: 685,
                                                                                     columnNumber: 31
                                                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronRight$3e$__["ChevronRight"], {
                                                                                     className: "w-4 h-4 text-muted-foreground"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 561,
+                                                                                    lineNumber: 687,
                                                                                     columnNumber: 31
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -4475,13 +4636,13 @@ function ResearchPage() {
                                                                                     children: "Company Fit"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 563,
+                                                                                    lineNumber: 689,
                                                                                     columnNumber: 29
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 557,
+                                                                            lineNumber: 683,
                                                                             columnNumber: 27
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4492,7 +4653,7 @@ function ResearchPage() {
                                                                                     children: "Score:"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 568,
+                                                                                    lineNumber: 694,
                                                                                     columnNumber: 29
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4500,24 +4661,24 @@ function ResearchPage() {
                                                                                     children: icpScore.breakdown.companyFit.score
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 571,
+                                                                                    lineNumber: 697,
                                                                                     columnNumber: 29
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 567,
+                                                                            lineNumber: 693,
                                                                             columnNumber: 27
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 556,
+                                                                    lineNumber: 682,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                lineNumber: 555,
+                                                                lineNumber: 681,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$collapsible$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CollapsibleContent"], {
@@ -4535,7 +4696,7 @@ function ResearchPage() {
                                                                                             children: factor.name
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                                            lineNumber: 583,
+                                                                                            lineNumber: 709,
                                                                                             columnNumber: 35
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4548,13 +4709,13 @@ function ResearchPage() {
                                                                                             ]
                                                                                         }, void 0, true, {
                                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                                            lineNumber: 586,
+                                                                                            lineNumber: 712,
                                                                                             columnNumber: 35
                                                                                         }, this)
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 582,
+                                                                                    lineNumber: 708,
                                                                                     columnNumber: 33
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$progress$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Progress"], {
@@ -4562,29 +4723,29 @@ function ResearchPage() {
                                                                                     className: "h-2"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 590,
+                                                                                    lineNumber: 716,
                                                                                     columnNumber: 33
                                                                                 }, this)
                                                                             ]
                                                                         }, idx, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 581,
+                                                                            lineNumber: 707,
                                                                             columnNumber: 31
                                                                         }, this))
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 578,
+                                                                    lineNumber: 704,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                lineNumber: 577,
+                                                                lineNumber: 703,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                        lineNumber: 546,
+                                                        lineNumber: 672,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$collapsible$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Collapsible"], {
@@ -4606,13 +4767,13 @@ function ResearchPage() {
                                                                                     className: "w-4 h-4 text-muted-foreground"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 615,
+                                                                                    lineNumber: 741,
                                                                                     columnNumber: 31
                                                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronRight$3e$__["ChevronRight"], {
                                                                                     className: "w-4 h-4 text-muted-foreground"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 617,
+                                                                                    lineNumber: 743,
                                                                                     columnNumber: 31
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -4620,13 +4781,13 @@ function ResearchPage() {
                                                                                     children: "Persona Fit"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 619,
+                                                                                    lineNumber: 745,
                                                                                     columnNumber: 29
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 613,
+                                                                            lineNumber: 739,
                                                                             columnNumber: 27
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4637,7 +4798,7 @@ function ResearchPage() {
                                                                                     children: "Score:"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 624,
+                                                                                    lineNumber: 750,
                                                                                     columnNumber: 29
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4645,24 +4806,24 @@ function ResearchPage() {
                                                                                     children: icpScore.breakdown.personaFit.score
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 627,
+                                                                                    lineNumber: 753,
                                                                                     columnNumber: 29
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 623,
+                                                                            lineNumber: 749,
                                                                             columnNumber: 27
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 612,
+                                                                    lineNumber: 738,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                lineNumber: 611,
+                                                                lineNumber: 737,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$collapsible$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CollapsibleContent"], {
@@ -4680,7 +4841,7 @@ function ResearchPage() {
                                                                                             children: factor.name
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                                            lineNumber: 639,
+                                                                                            lineNumber: 765,
                                                                                             columnNumber: 35
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4693,13 +4854,13 @@ function ResearchPage() {
                                                                                             ]
                                                                                         }, void 0, true, {
                                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                                            lineNumber: 642,
+                                                                                            lineNumber: 768,
                                                                                             columnNumber: 35
                                                                                         }, this)
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 638,
+                                                                                    lineNumber: 764,
                                                                                     columnNumber: 33
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$progress$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Progress"], {
@@ -4707,29 +4868,29 @@ function ResearchPage() {
                                                                                     className: "h-2"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 646,
+                                                                                    lineNumber: 772,
                                                                                     columnNumber: 33
                                                                                 }, this)
                                                                             ]
                                                                         }, idx, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 637,
+                                                                            lineNumber: 763,
                                                                             columnNumber: 31
                                                                         }, this))
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 634,
+                                                                    lineNumber: 760,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                lineNumber: 633,
+                                                                lineNumber: 759,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                        lineNumber: 602,
+                                                        lineNumber: 728,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$collapsible$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Collapsible"], {
@@ -4751,13 +4912,13 @@ function ResearchPage() {
                                                                                     className: "w-4 h-4 text-muted-foreground"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 671,
+                                                                                    lineNumber: 797,
                                                                                     columnNumber: 31
                                                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronRight$3e$__["ChevronRight"], {
                                                                                     className: "w-4 h-4 text-muted-foreground"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 673,
+                                                                                    lineNumber: 799,
                                                                                     columnNumber: 31
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -4765,13 +4926,13 @@ function ResearchPage() {
                                                                                     children: "Timing Fit"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 675,
+                                                                                    lineNumber: 801,
                                                                                     columnNumber: 29
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 669,
+                                                                            lineNumber: 795,
                                                                             columnNumber: 27
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4782,7 +4943,7 @@ function ResearchPage() {
                                                                                     children: "Score:"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 680,
+                                                                                    lineNumber: 806,
                                                                                     columnNumber: 29
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4790,24 +4951,24 @@ function ResearchPage() {
                                                                                     children: icpScore.breakdown.timingFit.score
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 683,
+                                                                                    lineNumber: 809,
                                                                                     columnNumber: 29
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 679,
+                                                                            lineNumber: 805,
                                                                             columnNumber: 27
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 668,
+                                                                    lineNumber: 794,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                lineNumber: 667,
+                                                                lineNumber: 793,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$collapsible$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CollapsibleContent"], {
@@ -4825,7 +4986,7 @@ function ResearchPage() {
                                                                                             children: factor.name
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                                            lineNumber: 695,
+                                                                                            lineNumber: 821,
                                                                                             columnNumber: 35
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4838,13 +4999,13 @@ function ResearchPage() {
                                                                                             ]
                                                                                         }, void 0, true, {
                                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                                            lineNumber: 698,
+                                                                                            lineNumber: 824,
                                                                                             columnNumber: 35
                                                                                         }, this)
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 694,
+                                                                                    lineNumber: 820,
                                                                                     columnNumber: 33
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$progress$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Progress"], {
@@ -4852,41 +5013,41 @@ function ResearchPage() {
                                                                                     className: "h-2"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                                    lineNumber: 702,
+                                                                                    lineNumber: 828,
                                                                                     columnNumber: 33
                                                                                 }, this)
                                                                             ]
                                                                         }, idx, true, {
                                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                                            lineNumber: 693,
+                                                                            lineNumber: 819,
                                                                             columnNumber: 31
                                                                         }, this))
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                                    lineNumber: 690,
+                                                                    lineNumber: 816,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                lineNumber: 689,
+                                                                lineNumber: 815,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                        lineNumber: 658,
+                                                        lineNumber: 784,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                lineNumber: 544,
+                                                lineNumber: 670,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/research/page.tsx",
-                                        lineNumber: 536,
+                                        lineNumber: 662,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4901,7 +5062,7 @@ function ResearchPage() {
                                                             children: "Next Actions"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                            lineNumber: 719,
+                                                            lineNumber: 845,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4909,18 +5070,18 @@ function ResearchPage() {
                                                             children: "Use this research to drive revenue workflows"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/research/page.tsx",
-                                                            lineNumber: 720,
+                                                            lineNumber: 846,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/research/page.tsx",
-                                                    lineNumber: 718,
+                                                    lineNumber: 844,
                                                     columnNumber: 21
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                lineNumber: 717,
+                                                lineNumber: 843,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4934,14 +5095,14 @@ function ResearchPage() {
                                                                 className: "w-4 h-4"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                lineNumber: 727,
+                                                                lineNumber: 853,
                                                                 columnNumber: 23
                                                             }, this),
                                                             "Start outreach using this research"
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                        lineNumber: 726,
+                                                        lineNumber: 852,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -4953,14 +5114,14 @@ function ResearchPage() {
                                                                 className: "w-4 h-4"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                lineNumber: 731,
+                                                                lineNumber: 857,
                                                                 columnNumber: 23
                                                             }, this),
                                                             "Re-run research"
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                        lineNumber: 730,
+                                                        lineNumber: 856,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -4972,14 +5133,14 @@ function ResearchPage() {
                                                                 className: "w-4 h-4"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                lineNumber: 735,
+                                                                lineNumber: 861,
                                                                 columnNumber: 23
                                                             }, this),
                                                             "Override AI decision"
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                        lineNumber: 734,
+                                                        lineNumber: 860,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -4991,26 +5152,26 @@ function ResearchPage() {
                                                                 className: "w-4 h-4"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                                lineNumber: 739,
+                                                                lineNumber: 865,
                                                                 columnNumber: 23
                                                             }, this),
                                                             "Send to AE for review"
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/research/page.tsx",
-                                                        lineNumber: 738,
+                                                        lineNumber: 864,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/research/page.tsx",
-                                                lineNumber: 725,
+                                                lineNumber: 851,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/research/page.tsx",
-                                        lineNumber: 716,
+                                        lineNumber: 842,
                                         columnNumber: 17
                                     }, this)
                                 ]
@@ -5018,27 +5179,27 @@ function ResearchPage() {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/research/page.tsx",
-                        lineNumber: 145,
+                        lineNumber: 271,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/app/research/page.tsx",
-                    lineNumber: 144,
+                    lineNumber: 270,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/research/page.tsx",
-                lineNumber: 143,
+                lineNumber: 269,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/research/page.tsx",
-        lineNumber: 134,
+        lineNumber: 260,
         columnNumber: 5
     }, this);
 }
-_s(ResearchPage, "xpNh4QsoWt5r/31iQA1NuVtm0rQ=", false, function() {
+_s(ResearchPage, "QWiI8GcFqkijQi2+vE1Dn9E7Ano=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$context$2f$jazon$2d$app$2d$context$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useJazonApp"]
     ];

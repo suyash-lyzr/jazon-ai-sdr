@@ -348,7 +348,7 @@ export default function ConversationsPage() {
                 <Alert className="mb-6">
                   <Info className="h-4 w-4" />
                   <AlertDescription className="text-xs">
-                    This timeline shows the exact messages exchanged across channels. Messaging actions and strategy controls are managed in the Outreach Engine.
+                    This timeline shows the exact messages exchanged across channels. Messaging actions and strategy controls are managed in the Outreach Campaign.
                   </AlertDescription>
                 </Alert>
 

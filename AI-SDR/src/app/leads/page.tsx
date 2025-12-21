@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { JazonSidebar } from "@/components/jazon-sidebar"
 import {
   SidebarInset,
@@ -49,17 +49,74 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { mockConversations, mockQualificationData, mockMeetings } from "@/lib/mock-data"
 import { useJazonApp } from "@/context/jazon-app-context"
-import { Search, Filter, ArrowUpDown, Mail, Phone, MessageSquare, Clock, CheckCircle2, AlertCircle, Plus, Database, Upload, HelpCircle, Sparkles } from "lucide-react"
+import { Search, Filter, ArrowUpDown, Mail, Phone, MessageSquare, Clock, CheckCircle2, AlertCircle, Plus, Database, Upload, HelpCircle, Sparkles, RefreshCw, Loader2, Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 export default function LeadsPage() {
-  const { leads } = useJazonApp()
+  const { leads: mockLeads } = useJazonApp()
   const router = useRouter()
   const [selectedLead, setSelectedLead] = useState<string | null>(null)
   const [filterStage, setFilterStage] = useState<string>("all")
   const [filterSource, setFilterSource] = useState<string>("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [addLeadsOpen, setAddLeadsOpen] = useState(false)
+  const [isRefreshing, setIsRefreshing] = useState(false)
+  const [dbLeads, setDbLeads] = useState<any[]>([])
+  const [isLoadingLeads, setIsLoadingLeads] = useState(true)
+  const [deletingLeadId, setDeletingLeadId] = useState<string | null>(null)
+
+  // Fetch leads from database on mount
+  useEffect(() => {
+    const fetchLeads = async () => {
+      try {
+        setIsLoadingLeads(true)
+        const response = await fetch("/api/leads")
+        const data = await response.json()
+        
+        if (data.success && data.leads) {
+          // Transform database leads to match the UI format (using normalized schema)
+          // Only show leads that have completed ICP scoring (status: "icp_scored")
+          const transformedLeads = data.leads
+            .filter((dbLead: any) => dbLead.status === "icp_scored")
+            .map((dbLead: any) => ({
+              id: dbLead._id,
+              name: dbLead.name,
+              email: dbLead.email || "N/A",
+              company: dbLead.company?.name || "Unknown",
+              title: dbLead.title,
+              icpScore: dbLead.icp_score?.icp_score || 0,
+              stage: "Qualification", // All shown leads are icp_scored, so they're in Qualification stage
+              channel: "Email",
+              status: "Active",
+              lastContact: "Not contacted yet",
+              aiRecommendation: dbLead.icp_score?.strengths?.[0] || "Processing...",
+              industry: dbLead.company?.industry || "Unknown",
+              companySize: dbLead.company?.company_size?.employee_count 
+                ? `${dbLead.company.company_size.employee_count.toLocaleString()} employees`
+                : "Unknown",
+              triggers: dbLead.detected_signals?.map((s: any) => s.signal) || [],
+              source: dbLead.source || "CSV",
+              ingestedAt: new Date(dbLead.createdAt).toLocaleDateString(),
+              importedBy: "CSV Upload",
+              originTrigger: "CSV upload from Setup page",
+              _dbLead: dbLead, // Keep reference to full database object
+            }))
+          setDbLeads(transformedLeads)
+        }
+      } catch (error) {
+        console.error("Error fetching leads:", error)
+      } finally {
+        setIsLoadingLeads(false)
+      }
+    }
+
+    fetchLeads()
+  }, [])
+
+  // Combine mock leads and database leads
+  const leads = useMemo(() => {
+    return [...mockLeads, ...dbLeads]
+  }, [mockLeads, dbLeads])
 
   const lead = selectedLead ? leads.find((l) => l.id === selectedLead) : null
   const conversations = selectedLead ? mockConversations[selectedLead] || [] : []
@@ -97,6 +154,151 @@ export default function LeadsPage() {
     if (score >= 70) return "Medium fit"
     return "Low fit"
   }
+
+  const handleRefreshLeads = async () => {
+    setIsRefreshing(true);
+    try {
+      console.log("🔄 Refreshing leads with Research Agent...");
+      
+      const response = await fetch("/api/leads/refresh", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || result.message || "Failed to refresh leads");
+      }
+
+      console.log("✅ Refresh completed:", result);
+      console.log("📊 Processed:", result.processed, "leads");
+      console.log("📥 Agent responses:", result.responses);
+
+      // Log each response for debugging
+      if (result.responses && result.responses.length > 0) {
+        result.responses.forEach((item: any, index: number) => {
+          console.log(`\n📋 Response ${index + 1} for ${item.leadName} (${item.leadCompany}):`);
+          console.log(JSON.stringify(item.response, null, 2));
+        });
+      }
+
+      if (result.errors && result.errors.length > 0) {
+        console.warn("⚠️ Errors during refresh:", result.errors);
+      }
+
+      alert(`Refresh completed! Processed ${result.processed} lead(s). Check console for details.`);
+      
+      // Refresh the leads list to show newly processed leads
+      const refreshResponse = await fetch("/api/leads");
+      const refreshData = await refreshResponse.json();
+      
+      if (refreshData.success && refreshData.leads) {
+        const transformedLeads = refreshData.leads
+          .filter((dbLead: any) => dbLead.status === "icp_scored")
+          .map((dbLead: any) => ({
+            id: dbLead._id,
+            name: dbLead.name,
+            email: dbLead.email || "N/A",
+            company: dbLead.company?.name || "Unknown",
+            title: dbLead.title,
+            icpScore: dbLead.icp_score?.icp_score || 0,
+            stage: "Qualification",
+            channel: "Email",
+            status: "Active",
+            lastContact: "Not contacted yet",
+            aiRecommendation: dbLead.icp_score?.strengths?.[0] || "Processing...",
+            industry: dbLead.company?.industry || "Unknown",
+            companySize: dbLead.company?.company_size?.employee_count 
+              ? `${dbLead.company.company_size.employee_count.toLocaleString()} employees`
+              : "Unknown",
+            triggers: dbLead.detected_signals?.map((s: any) => s.signal) || [],
+            source: dbLead.source || "CSV",
+            ingestedAt: new Date(dbLead.createdAt).toLocaleDateString(),
+            importedBy: "CSV Upload",
+            originTrigger: "CSV upload from Setup page",
+            _dbLead: dbLead,
+          }));
+        setDbLeads(transformedLeads);
+      }
+    } catch (error: any) {
+      console.error("❌ Refresh error:", error);
+      alert(`Error: ${error.message || "Failed to refresh leads"}`);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  const handleDeleteLead = async (leadId: string) => {
+    if (!confirm("Are you sure you want to delete this lead? This will remove all related data including research, ICP scores, and signals.")) {
+      return;
+    }
+
+    setDeletingLeadId(leadId);
+
+    try {
+      const response = await fetch(`/api/leads/${leadId}`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Remove from state
+        setDbLeads((prev) => prev.filter((lead) => lead.id !== leadId));
+        
+        // Close sheet if this lead was selected
+        if (selectedLead === leadId) {
+          setSelectedLead(null);
+        }
+
+        alert("Lead and all related data deleted successfully");
+        
+        // Refresh the leads list
+        const refreshResponse = await fetch("/api/leads");
+        const refreshData = await refreshResponse.json();
+        
+        if (refreshData.success && refreshData.leads) {
+          const transformedLeads = refreshData.leads
+            .filter((dbLead: any) => dbLead.status === "icp_scored")
+            .map((dbLead: any) => ({
+              id: dbLead._id,
+              name: dbLead.name,
+              email: dbLead.email || "N/A",
+              company: dbLead.company?.name || "Unknown",
+              title: dbLead.title,
+              icpScore: dbLead.icp_score?.icp_score || 0,
+              stage: "Qualification",
+              channel: "Email",
+              status: "Active",
+              lastContact: "Not contacted yet",
+              aiRecommendation: dbLead.icp_score?.strengths?.[0] || "Processing...",
+              industry: dbLead.company?.industry || "Unknown",
+              companySize: dbLead.company?.company_size?.employee_count 
+                ? `${dbLead.company.company_size.employee_count.toLocaleString()} employees`
+                : "Unknown",
+              triggers: dbLead.detected_signals?.map((s: any) => s.signal) || [],
+              source: dbLead.source || "CSV",
+              ingestedAt: new Date(dbLead.createdAt).toLocaleDateString(),
+              importedBy: "CSV Upload",
+              originTrigger: "CSV upload from Setup page",
+              _dbLead: dbLead,
+            }));
+          setDbLeads(transformedLeads);
+        }
+      } else {
+        alert(`Failed to delete lead: ${data.message || data.error}`);
+      }
+    } catch (error) {
+      console.error("Error deleting lead:", error);
+      alert("Failed to delete lead. Please try again.");
+    } finally {
+      setDeletingLeadId(null);
+    }
+  };
 
   const getStageExplanation = (stage: string) => {
     switch (stage) {
@@ -200,6 +402,25 @@ export default function LeadsPage() {
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <Badge variant="secondary" className="whitespace-nowrap">{filteredLeads.length} leads</Badge>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-2 whitespace-nowrap"
+                      onClick={handleRefreshLeads}
+                      disabled={isRefreshing}
+                    >
+                      {isRefreshing ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Refreshing...
+                        </>
+                      ) : (
+                        <>
+                          <RefreshCw className="w-4 h-4" />
+                          Refresh Leads
+                        </>
+                      )}
+                    </Button>
                     <Button
                       variant="default"
                       size="sm"
@@ -421,6 +642,37 @@ export default function LeadsPage() {
                                 <p className="text-xs">{getRecommendationReason(lead)}</p>
                               </TooltipContent>
                             </Tooltip>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {lead._dbLead ? (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleDeleteLead(lead.id)
+                                      }}
+                                      disabled={deletingLeadId === lead.id}
+                                      className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                    >
+                                      {deletingLeadId === lead.id ? (
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                      ) : (
+                                        <Trash2 className="h-4 w-4" />
+                                      )}
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Delete lead and all related data</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">Mock</span>
+                            )}
                           </TableCell>
                         </TableRow>
                       ))}

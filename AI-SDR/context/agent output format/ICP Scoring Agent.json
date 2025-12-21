@@ -1,0 +1,167 @@
+{
+  "name": "icp_scoring_output",
+  "strict": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "icp_score": {
+        "type": "number",
+        "description": "Overall ICP fit score from 0 to 100"
+      },
+      "fit_tier": {
+        "type": "string",
+        "description": "Overall ICP fit classification",
+        "enum": ["Tier 1", "Tier 2", "Tier 3", "Disqualified"]
+      },
+      "score_breakdown": {
+        "type": "object",
+        "properties": {
+          "company_fit": {
+            "type": "number",
+            "description": "Company alignment score (0–100)"
+          },
+          "persona_fit": {
+            "type": "number",
+            "description": "Persona alignment score (0–100)"
+          },
+          "timing_fit": {
+            "type": "number",
+            "description": "Timing and intent alignment score (0–100)"
+          }
+        },
+        "required": ["company_fit", "persona_fit", "timing_fit"],
+        "additionalProperties": false
+      },
+      "factor_breakdown": {
+        "type": "object",
+        "description": "Factor-level scoring used to render the UI breakdown panels.",
+        "properties": {
+          "companyFit": {
+            "type": "object",
+            "properties": {
+              "score": { "type": "number" },
+              "factors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "value": { "type": "number", "description": "0-100" },
+                    "weight": {
+                      "type": "number",
+                      "description": "0-100 (relative weight)"
+                    }
+                  },
+                  "required": ["name", "value", "weight"],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": ["score", "factors"],
+            "additionalProperties": false
+          },
+          "personaFit": {
+            "type": "object",
+            "properties": {
+              "score": { "type": "number" },
+              "factors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "value": { "type": "number" },
+                    "weight": { "type": "number" }
+                  },
+                  "required": ["name", "value", "weight"],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": ["score", "factors"],
+            "additionalProperties": false
+          },
+          "timingFit": {
+            "type": "object",
+            "properties": {
+              "score": { "type": "number" },
+              "factors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "value": { "type": "number" },
+                    "weight": { "type": "number" }
+                  },
+                  "required": ["name", "value", "weight"],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": ["score", "factors"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["companyFit", "personaFit", "timingFit"],
+        "additionalProperties": false
+      },
+      "strengths": {
+        "type": "array",
+        "description": "Key factors positively influencing ICP score",
+        "items": {
+          "type": "string"
+        }
+      },
+      "risks": {
+        "type": "array",
+        "description": "Risk factors or concerns impacting fit",
+        "items": {
+          "type": "string"
+        }
+      },
+      "gaps": {
+        "type": "array",
+        "description": "Missing or unverified data affecting scoring confidence",
+        "items": {
+          "type": "string"
+        }
+      },
+      "confidence_level": {
+        "type": "string",
+        "description": "Confidence in the ICP score based on data completeness",
+        "enum": ["High", "Medium", "Low"]
+      },
+      "scoring_meta": {
+        "type": "object",
+        "properties": {
+          "inputs_used": {
+            "type": "array",
+            "description": "Research inputs used for scoring",
+            "items": {
+              "type": "string"
+            }
+          },
+          "scored_at": {
+            "type": "string",
+            "description": "Timestamp when scoring was generated (ISO 8601 format)"
+          }
+        },
+        "required": ["inputs_used", "scored_at"],
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "icp_score",
+      "fit_tier",
+      "score_breakdown",
+      "factor_breakdown",
+      "strengths",
+      "risks",
+      "gaps",
+      "confidence_level",
+      "scoring_meta"
+    ],
+    "additionalProperties": false
+  }
+}

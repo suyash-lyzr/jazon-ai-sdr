@@ -19,13 +19,16 @@ if (!cached) {
 }
 
 async function connectDB() {
-  const MONGODB_URI = process.env.MONGODB_URI;
+  let MONGODB_URI = process.env.MONGODB_URI;
 
   if (!MONGODB_URI) {
     throw new Error(
       'Please define the MONGODB_URI environment variable inside .env.local'
     );
   }
+
+  // Remove quotes if present
+  MONGODB_URI = MONGODB_URI.replace(/^["']|["']$/g, '');
 
   // If we have a cached connection, return it
   if (cached.conn) {

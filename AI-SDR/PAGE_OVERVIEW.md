@@ -159,14 +159,14 @@ DETAIL DRAWER (when lead clicked):
 
 ---
 
-## 4. Outreach Engine (/outreach)
+## 4. Outreach Campaign (/outreach)
 
 **Purpose**: Strategic multi-channel engagement
 
 **Layout**:
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ OUTREACH ENGINE                                              │
+│ OUTREACH CAMPAIGN                                            │
 │ Strategic, multi-channel engagement - not email blasting     │
 ├─────────────────────────────────────────────────────────────┤
 │  Sarah Chen - Accenture [Active]                            │
@@ -531,7 +531,7 @@ HANDOFF PACK MODAL (when clicked):
 │ 🏠 Dashboard       │ ← Start here for overview
 │ 👥 Leads           │ ← Browse and click for details
 │ 🔍 Research & ICP  │ ← See AI intelligence
-│ 🚀 Outreach Engine │ ← Multi-channel strategy
+│ 🚀 Outreach Campaign │ ← Multi-channel strategy
 │ 💬 Conversations   │ ← Unified timeline
 │ ✅ Qualification   │ ← BANT with confidence
 │ 📅 Meetings        │ ← View handoff packs

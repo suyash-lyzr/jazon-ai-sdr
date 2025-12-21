@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { JazonSidebar } from "@/components/jazon-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import {
@@ -25,6 +25,17 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetFooter,
+} from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { mockICPData } from "@/lib/mock-data";
 import { useJazonApp } from "@/context/jazon-app-context";
 import {
@@ -40,10 +51,12 @@ import {
   RefreshCw,
   UserCheck,
   ExternalLink,
+  Edit3,
+  Plus,
 } from "lucide-react";
 
 export default function ResearchPage() {
-  const { leads } = useJazonApp();
+  const { leads: mockLeads } = useJazonApp();
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<{
     company: boolean;
@@ -54,6 +67,53 @@ export default function ResearchPage() {
     persona: false,
     timing: false,
   });
+  const [dbLeads, setDbLeads] = useState<any[]>([]);
+  const [selectedLeadData, setSelectedLeadData] = useState<any>(null);
+  const [isLoadingLead, setIsLoadingLead] = useState(false);
+  const [editSidebar, setEditSidebar] = useState<{
+    open: boolean;
+    section: "company" | "persona" | null;
+  }>({
+    open: false,
+    section: null,
+  });
+  const [editFormData, setEditFormData] = useState<any>({});
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Fetch leads from database on mount
+  useEffect(() => {
+    const fetchLeads = async () => {
+      try {
+        const response = await fetch("/api/leads");
+        const data = await response.json();
+
+        if (data.success && data.leads) {
+          // Transform database leads (using normalized schema)
+          const transformedLeads = data.leads.map((dbLead: any) => ({
+            id: dbLead._id,
+            name: dbLead.name,
+            company: dbLead.company?.name || "Unknown",
+            icpScore: dbLead.icp_score?.icp_score || 0,
+            _dbLead: dbLead,
+          }));
+          setDbLeads(transformedLeads);
+        }
+      } catch (error) {
+        console.error("Error fetching leads:", error);
+      }
+    };
+
+    fetchLeads();
+  }, []);
+
+  // Combine mock leads and database leads
+  const leads = useMemo(() => {
+    const mockLeadsTransformed = mockLeads.map((l) => ({
+      ...l,
+      _dbLead: null,
+    }));
+    return [...mockLeadsTransformed, ...dbLeads];
+  }, [mockLeads, dbLeads]);
 
   // Default to highest ICP score lead
   const defaultLead = useMemo(() => {
@@ -67,8 +127,345 @@ export default function ResearchPage() {
     ? leads.find((l) => l.id === selectedLeadId) || defaultLead
     : defaultLead;
 
-  // Use mock data for now - in production this would come from API based on selectedLead
-  const { companyAnalysis, personaAnalysis, triggers, icpScore } = mockICPData;
+  // Fetch full lead data when selection changes
+  useEffect(() => {
+    const fetchLeadData = async () => {
+      if (!selectedLead || !selectedLead._dbLead) {
+        setSelectedLeadData(null);
+        return;
+      }
+
+      setIsLoadingLead(true);
+      try {
+        const response = await fetch(`/api/leads/${selectedLead.id}`);
+        const data = await response.json();
+
+        if (data.success) {
+          setSelectedLeadData(data.lead);
+        }
+      } catch (error) {
+        console.error("Error fetching lead data:", error);
+      } finally {
+        setIsLoadingLead(false);
+      }
+    };
+
+    fetchLeadData();
+  }, [selectedLead?.id]);
+
+  // Open edit sidebar
+  const openEditSidebar = (section: "company" | "persona") => {
+    if (!selectedLeadData) return;
+
+    let initialData = {};
+
+    // Helper to safely convert values to strings
+    const safeString = (value: any): string => {
+      if (value === null || value === undefined) return "";
+      if (typeof value === "string") return value;
+      if (typeof value === "object") {
+        // If it's an object, try to extract meaningful data
+        if (value.city && value.state) return `${value.city}, ${value.state}`;
+        if (value.city) return value.city;
+        if (value.country) return value.country;
+        return "";
+      }
+      return String(value);
+    };
+
+    if (section === "company") {
+      initialData = {
+        industry: safeString(selectedLeadData.company?.industry),
+        employee_count:
+          selectedLeadData.company?.company_size?.employee_count || "",
+        annual_revenue_usd:
+          selectedLeadData.company?.company_size?.annual_revenue_usd || "",
+        keywords: (selectedLeadData.company?.keywords || []).join("\n"),
+        sales_motion: safeString(selectedLeadData.company?.sales_motion),
+        headquarters: safeString(selectedLeadData.company?.headquarters),
+        linkedin_url: safeString(selectedLeadData.company?.linkedin_url),
+        website_url: safeString(selectedLeadData.company?.website_url),
+      };
+    } else if (section === "persona") {
+      initialData = {
+        seniority: safeString(selectedLeadData.persona?.seniority),
+        reports_to: safeString(selectedLeadData.persona?.reports_to),
+        department: safeString(selectedLeadData.persona?.department),
+        location: safeString(selectedLeadData.persona?.location),
+        responsibilities: (
+          selectedLeadData.persona?.responsibilities || []
+        ).join("\n"),
+        pain_points: (selectedLeadData.persona?.pain_points || []).join("\n"),
+        decision_authority_rationale: safeString(
+          selectedLeadData.persona?.decision_authority?.rationale
+        ),
+        decision_maker_likelihood: safeString(
+          selectedLeadData.persona?.decision_authority
+            ?.decision_maker_likelihood
+        ),
+      };
+    }
+
+    setEditFormData(initialData);
+    setEditSidebar({ open: true, section });
+  };
+
+  // Save all edited fields in the section
+  const saveEditedSection = async () => {
+    if (!selectedLead || !selectedLead._dbLead || !editSidebar.section) return;
+
+    setIsSaving(true);
+    try {
+      const updates: Array<{
+        field: string;
+        value: any;
+        target: string;
+      }> = [];
+
+      if (editSidebar.section === "company") {
+        // Prepare company updates
+        if (editFormData.industry) {
+          updates.push({
+            field: "industry",
+            value: editFormData.industry,
+            target: "company",
+          });
+        }
+        if (editFormData.employee_count) {
+          updates.push({
+            field: "employee_count",
+            value: parseFloat(editFormData.employee_count),
+            target: "company.company_size",
+          });
+        }
+        if (editFormData.annual_revenue_usd) {
+          updates.push({
+            field: "annual_revenue_usd",
+            value: parseFloat(editFormData.annual_revenue_usd),
+            target: "company.company_size",
+          });
+        }
+        if (editFormData.keywords) {
+          const keywordsArray = editFormData.keywords
+            .split("\n")
+            .map((k: string) => k.trim())
+            .filter((k: string) => k.length > 0);
+          updates.push({
+            field: "keywords",
+            value: keywordsArray,
+            target: "company",
+          });
+        }
+        if (editFormData.sales_motion) {
+          updates.push({
+            field: "sales_motion",
+            value: editFormData.sales_motion,
+            target: "company",
+          });
+        }
+        if (editFormData.headquarters) {
+          updates.push({
+            field: "headquarters",
+            value: editFormData.headquarters,
+            target: "company",
+          });
+        }
+        if (editFormData.linkedin_url) {
+          updates.push({
+            field: "linkedin_url",
+            value: editFormData.linkedin_url,
+            target: "company",
+          });
+        }
+        if (editFormData.website_url) {
+          updates.push({
+            field: "website_url",
+            value: editFormData.website_url,
+            target: "company",
+          });
+        }
+      } else if (editSidebar.section === "persona") {
+        // Prepare persona updates
+        if (editFormData.seniority) {
+          updates.push({
+            field: "seniority",
+            value: editFormData.seniority,
+            target: "persona",
+          });
+        }
+        if (editFormData.reports_to) {
+          updates.push({
+            field: "reports_to",
+            value: editFormData.reports_to,
+            target: "persona",
+          });
+        }
+        if (editFormData.department) {
+          updates.push({
+            field: "department",
+            value: editFormData.department,
+            target: "persona",
+          });
+        }
+        if (editFormData.location) {
+          updates.push({
+            field: "location",
+            value: editFormData.location,
+            target: "persona",
+          });
+        }
+        if (editFormData.responsibilities) {
+          const respArray = editFormData.responsibilities
+            .split("\n")
+            .map((r: string) => r.trim())
+            .filter((r: string) => r.length > 0);
+          updates.push({
+            field: "responsibilities",
+            value: respArray,
+            target: "persona",
+          });
+        }
+        if (editFormData.pain_points) {
+          const painArray = editFormData.pain_points
+            .split("\n")
+            .map((p: string) => p.trim())
+            .filter((p: string) => p.length > 0);
+          updates.push({
+            field: "pain_points",
+            value: painArray,
+            target: "persona",
+          });
+        }
+        if (editFormData.decision_authority_rationale) {
+          updates.push({
+            field: "rationale",
+            value: editFormData.decision_authority_rationale,
+            target: "persona.decision_authority",
+          });
+        }
+        if (editFormData.decision_maker_likelihood) {
+          updates.push({
+            field: "decision_maker_likelihood",
+            value: editFormData.decision_maker_likelihood,
+            target: "persona.decision_authority",
+          });
+        }
+      }
+
+      // Execute all updates
+      for (const update of updates) {
+        await fetch(`/api/leads/${selectedLead.id}/update-field`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(update),
+        });
+      }
+
+      // Refresh lead data
+      const refreshResponse = await fetch(`/api/leads/${selectedLead.id}`);
+      const refreshData = await refreshResponse.json();
+      if (refreshData.success) {
+        setSelectedLeadData(refreshData.lead);
+      }
+
+      setEditSidebar({ open: false, section: null });
+    } catch (error) {
+      console.error("Error saving fields:", error);
+      alert("Failed to save changes");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Use real data if available, otherwise use mock data (using normalized schema)
+  const { companyAnalysis, personaAnalysis, triggers, icpScore } =
+    selectedLeadData?.icp_score && selectedLeadData?.company
+      ? {
+          icpScore: {
+            overall: selectedLeadData.icp_score?.icp_score || 0,
+            breakdown: {
+              companyFit: {
+                score:
+                  selectedLeadData.icp_score.score_breakdown?.company_fit || 0,
+                factors: selectedLeadData.icp_score.factor_breakdown?.companyFit
+                  ?.factors || [
+                  { name: "Company size", value: 0, weight: 30 },
+                  { name: "Industry match", value: 0, weight: 25 },
+                  { name: "Tech stack compatibility", value: 0, weight: 20 },
+                ],
+              },
+              personaFit: {
+                score:
+                  selectedLeadData.icp_score.score_breakdown?.persona_fit || 0,
+                factors: selectedLeadData.icp_score.factor_breakdown?.personaFit
+                  ?.factors || [
+                  { name: "Decision authority", value: 0, weight: 35 },
+                  { name: "Seniority level", value: 0, weight: 20 },
+                ],
+              },
+              timingFit: {
+                score:
+                  selectedLeadData.icp_score.score_breakdown?.timing_fit || 0,
+                factors: selectedLeadData.icp_score.factor_breakdown?.timingFit
+                  ?.factors || [
+                  { name: "Active triggers", value: 0, weight: 40 },
+                ],
+              },
+            },
+            explanation:
+              selectedLeadData.icp_score.strengths?.join(". ") ||
+              "No explanation available",
+          },
+          companyAnalysis: {
+            name: selectedLeadData.company?.name || "Unknown",
+            industry: selectedLeadData.company?.industry || "Unknown",
+            size: selectedLeadData.company?.company_size?.employee_count
+              ? `${selectedLeadData.company.company_size.employee_count.toLocaleString()} employees globally`
+              : "Unknown",
+            revenue: selectedLeadData.company?.company_size?.annual_revenue_usd
+              ? `$${(
+                  selectedLeadData.company.company_size.annual_revenue_usd /
+                  1000000000
+                ).toFixed(1)}B`
+              : "Unknown",
+            structure: selectedLeadData.company?.company_size?.is_public
+              ? `Public company${
+                  selectedLeadData.company.company_size.ticker
+                    ? ` (${selectedLeadData.company.company_size.ticker})`
+                    : ""
+                }`
+              : "Private company",
+            techStack:
+              selectedLeadData.company?.technographics
+                ?.map((tech: any) => tech.name)
+                .join(", ") || "Unknown",
+            salesMotion: selectedLeadData.company?.sales_motion || "Unknown",
+          },
+          personaAnalysis: {
+            title: selectedLeadData.title || "Unknown",
+            seniority: selectedLeadData.persona?.seniority || "Unknown",
+            reportingStructure:
+              selectedLeadData.persona?.reports_to || "Unknown",
+            responsibilities: selectedLeadData.persona?.responsibilities || [],
+            painPoints: selectedLeadData.persona?.pain_points || [],
+            decisionAuthority:
+              selectedLeadData.persona?.decision_authority?.rationale ||
+              (selectedLeadData.persona?.decision_authority
+                ?.decision_maker_likelihood
+                ? `Decision maker likelihood: ${selectedLeadData.persona.decision_authority.decision_maker_likelihood}`
+                : "Unknown"),
+          },
+          triggers: (selectedLeadData.detected_signals || []).map(
+            (signal: any) => ({
+              type: signal.type || "general",
+              signal: signal.signal || "Signal detected",
+              source: signal.source || "Research",
+              strength: signal.strength?.toLowerCase() || "medium",
+              recency: signal.recency || "Detected in research",
+            })
+          ),
+        }
+      : mockICPData;
 
   const getFitLabel = (score: number) => {
     if (score >= 85) return "Excellent Fit";
@@ -269,8 +666,8 @@ export default function ResearchPage() {
                   {/* Company Analysis */}
                   <Card>
                     <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <div>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
                           <CardTitle className="flex items-center gap-2">
                             <Building2 className="w-5 h-5" />
                             Company Analysis
@@ -279,16 +676,29 @@ export default function ResearchPage() {
                             {companyAnalysis.name}
                           </CardDescription>
                         </div>
-                        <div className="flex gap-1">
-                          <Badge variant="secondary" className="text-xs">
-                            LinkedIn
-                          </Badge>
-                          <Badge variant="secondary" className="text-xs">
-                            CRM
-                          </Badge>
-                          <Badge variant="outline" className="text-xs">
-                            Perplexity
-                          </Badge>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <div className="flex items-center gap-1">
+                            <Badge variant="secondary" className="text-xs">
+                              LinkedIn
+                            </Badge>
+                            <Badge variant="secondary" className="text-xs">
+                              CRM
+                            </Badge>
+                            <Badge variant="outline" className="text-xs">
+                              Perplexity
+                            </Badge>
+                          </div>
+                          {selectedLeadData && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => openEditSidebar("company")}
+                              className="h-6 px-2 gap-1.5 text-xs"
+                            >
+                              <Edit3 className="h-3 w-3" />
+                              Edit
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </CardHeader>
@@ -367,8 +777,8 @@ export default function ResearchPage() {
                   {/* Persona Analysis */}
                   <Card>
                     <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <div>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
                           <CardTitle className="flex items-center gap-2">
                             <User className="w-5 h-5" />
                             Persona Analysis
@@ -377,13 +787,26 @@ export default function ResearchPage() {
                             {personaAnalysis.title}
                           </CardDescription>
                         </div>
-                        <div className="flex gap-1">
-                          <Badge variant="secondary" className="text-xs">
-                            LinkedIn
-                          </Badge>
-                          <Badge variant="outline" className="text-xs">
-                            Conversations
-                          </Badge>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <div className="flex items-center gap-1">
+                            <Badge variant="secondary" className="text-xs">
+                              LinkedIn
+                            </Badge>
+                            <Badge variant="outline" className="text-xs">
+                              Conversations
+                            </Badge>
+                          </div>
+                          {selectedLeadData && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => openEditSidebar("persona")}
+                              className="h-6 px-2 gap-1.5 text-xs"
+                            >
+                              <Edit3 className="h-3 w-3" />
+                              Edit
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </CardHeader>
@@ -745,6 +1168,380 @@ export default function ResearchPage() {
             )}
           </div>
         </div>
+
+        {/* Edit Sidebar */}
+        <Sheet
+          open={editSidebar.open}
+          onOpenChange={(open) => setEditSidebar({ ...editSidebar, open })}
+        >
+          <SheetContent className="w-[600px] sm:w-[800px] overflow-y-auto">
+            <SheetHeader className="px-6">
+              <SheetTitle className="text-xl font-semibold">
+                Edit {editSidebar.section === "company" ? "Company" : "Persona"}{" "}
+                Information
+              </SheetTitle>
+              <SheetDescription className="text-sm text-muted-foreground">
+                Update the fields below. All fields are prefilled with AI
+                research data and can be edited.
+              </SheetDescription>
+            </SheetHeader>
+
+            <div className="px-6 py-6 space-y-6">
+              {editSidebar.section === "company" && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="industry" className="text-sm font-medium">
+                      Industry
+                    </Label>
+                    <Input
+                      id="industry"
+                      value={editFormData.industry || ""}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          industry: e.target.value,
+                        })
+                      }
+                      placeholder="e.g., E-commerce, SaaS, Manufacturing"
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="employee_count"
+                      className="text-sm font-medium"
+                    >
+                      Employee Count
+                    </Label>
+                    <Input
+                      id="employee_count"
+                      type="number"
+                      value={editFormData.employee_count || ""}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          employee_count: e.target.value,
+                        })
+                      }
+                      placeholder="e.g., 500"
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="annual_revenue_usd"
+                      className="text-sm font-medium"
+                    >
+                      Annual Revenue (USD)
+                    </Label>
+                    <Input
+                      id="annual_revenue_usd"
+                      type="number"
+                      value={editFormData.annual_revenue_usd || ""}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          annual_revenue_usd: e.target.value,
+                        })
+                      }
+                      placeholder="e.g., 50000000"
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="headquarters"
+                      className="text-sm font-medium"
+                    >
+                      Headquarters
+                    </Label>
+                    <Input
+                      id="headquarters"
+                      value={editFormData.headquarters || ""}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          headquarters: e.target.value,
+                        })
+                      }
+                      placeholder="e.g., San Francisco, CA"
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="linkedin_url"
+                      className="text-sm font-medium"
+                    >
+                      LinkedIn URL
+                    </Label>
+                    <Input
+                      id="linkedin_url"
+                      value={editFormData.linkedin_url || ""}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          linkedin_url: e.target.value,
+                        })
+                      }
+                      placeholder="https://linkedin.com/company/..."
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="website_url"
+                      className="text-sm font-medium"
+                    >
+                      Website URL
+                    </Label>
+                    <Input
+                      id="website_url"
+                      value={editFormData.website_url || ""}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          website_url: e.target.value,
+                        })
+                      }
+                      placeholder="https://example.com"
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="keywords" className="text-sm font-medium">
+                      Tech Stack / Keywords (one per line)
+                    </Label>
+                    <Textarea
+                      id="keywords"
+                      value={editFormData.keywords || ""}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          keywords: e.target.value,
+                        })
+                      }
+                      rows={6}
+                      placeholder="Salesforce&#10;HubSpot&#10;AWS&#10;React"
+                      className="w-full resize-none"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="sales_motion"
+                      className="text-sm font-medium"
+                    >
+                      Sales Motion
+                    </Label>
+                    <Textarea
+                      id="sales_motion"
+                      value={editFormData.sales_motion || ""}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          sales_motion: e.target.value,
+                        })
+                      }
+                      rows={4}
+                      placeholder="Describe the company's sales approach..."
+                      className="w-full resize-none"
+                    />
+                  </div>
+                </>
+              )}
+
+              {editSidebar.section === "persona" && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="seniority" className="text-sm font-medium">
+                      Seniority
+                    </Label>
+                    <Input
+                      id="seniority"
+                      value={editFormData.seniority || ""}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          seniority: e.target.value,
+                        })
+                      }
+                      placeholder="e.g., VP, Director, Manager"
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="reports_to" className="text-sm font-medium">
+                      Reports To
+                    </Label>
+                    <Input
+                      id="reports_to"
+                      value={editFormData.reports_to || ""}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          reports_to: e.target.value,
+                        })
+                      }
+                      placeholder="e.g., Chief Revenue Officer"
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="department" className="text-sm font-medium">
+                      Department
+                    </Label>
+                    <Input
+                      id="department"
+                      value={editFormData.department || ""}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          department: e.target.value,
+                        })
+                      }
+                      placeholder="e.g., Sales, Marketing, Operations"
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="location" className="text-sm font-medium">
+                      Location
+                    </Label>
+                    <Input
+                      id="location"
+                      value={editFormData.location || ""}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          location: e.target.value,
+                        })
+                      }
+                      placeholder="e.g., New York, NY"
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="responsibilities"
+                      className="text-sm font-medium"
+                    >
+                      Key Responsibilities (one per line)
+                    </Label>
+                    <Textarea
+                      id="responsibilities"
+                      value={editFormData.responsibilities || ""}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          responsibilities: e.target.value,
+                        })
+                      }
+                      rows={6}
+                      placeholder="Sales process optimization&#10;Team management&#10;Revenue forecasting"
+                      className="w-full resize-none"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="pain_points"
+                      className="text-sm font-medium"
+                    >
+                      Pain Points (one per line)
+                    </Label>
+                    <Textarea
+                      id="pain_points"
+                      value={editFormData.pain_points || ""}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          pain_points: e.target.value,
+                        })
+                      }
+                      rows={6}
+                      placeholder="Manual data entry&#10;Lack of automation&#10;Poor lead quality"
+                      className="w-full resize-none"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="decision_authority_rationale"
+                      className="text-sm font-medium"
+                    >
+                      Decision Authority Rationale
+                    </Label>
+                    <Textarea
+                      id="decision_authority_rationale"
+                      value={editFormData.decision_authority_rationale || ""}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          decision_authority_rationale: e.target.value,
+                        })
+                      }
+                      rows={4}
+                      placeholder="Explain decision-making authority..."
+                      className="w-full resize-none"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="decision_maker_likelihood"
+                      className="text-sm font-medium"
+                    >
+                      Decision Maker Likelihood
+                    </Label>
+                    <Input
+                      id="decision_maker_likelihood"
+                      value={editFormData.decision_maker_likelihood || ""}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          decision_maker_likelihood: e.target.value,
+                        })
+                      }
+                      placeholder="e.g., High, Medium, Low"
+                      className="w-full"
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+
+            <SheetFooter className="px-6 pb-6">
+              <div className="flex items-center gap-3 w-full">
+                <Button
+                  variant="outline"
+                  onClick={() => setEditSidebar({ open: false, section: null })}
+                  disabled={isSaving}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={saveEditedSection}
+                  disabled={isSaving}
+                  className="flex-1"
+                >
+                  {isSaving ? "Saving..." : "Save All Changes"}
+                </Button>
+              </div>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
       </SidebarInset>
     </SidebarProvider>
   );
