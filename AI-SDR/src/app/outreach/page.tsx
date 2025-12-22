@@ -70,6 +70,9 @@ import {
   Edit3,
   Loader2,
   Linkedin,
+  Settings2,
+  Upload,
+  X,
 } from "lucide-react";
 
 export default function OutreachPage() {
@@ -105,6 +108,26 @@ export default function OutreachPage() {
   const [selectedStepCopy, setSelectedStepCopy] = useState<any>(null);
   const [editingCopy, setEditingCopy] = useState(false);
   const [editedCopyData, setEditedCopyData] = useState<any>(null);
+  const [campaignSettingsOpen, setCampaignSettingsOpen] = useState(false);
+
+  // Campaign customization state
+  const [campaignInstructions, setCampaignInstructions] = useState({
+    formatting: "",
+    tone: "",
+    personalization: "",
+    additionalNotes: "",
+  });
+  const [campaignTemplates, setCampaignTemplates] = useState({
+    email: "",
+    linkedin: "",
+    voice: "",
+  });
+  const [campaignKnowledgeBase, setCampaignKnowledgeBase] = useState({
+    documents: [] as { id: string; name: string; type: string }[],
+    urls: [] as string[],
+    notes: "",
+  });
+  const [campaignUrlInput, setCampaignUrlInput] = useState("");
 
   // Helper function to format dates consistently (avoid hydration mismatch)
   const formatDate = (date: Date | string | null | undefined): string => {
@@ -710,26 +733,37 @@ export default function OutreachPage() {
               </div>
               <div className="flex items-center gap-3">
                 {selectedLead && selectedLead._dbLead && (
-                  <Button
-                    onClick={handleGenerateOutreach}
-                    disabled={isGenerating}
-                    className="gap-2"
-                    size="sm"
-                  >
-                    {isGenerating ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        Generating...
-                      </>
-                    ) : (
-                      <>
-                        <Zap className="h-4 w-4" />
-                        {outreachData?.strategy
-                          ? "Regenerate Outreach Strategy"
-                          : "Generate Outreach Strategy"}
-                      </>
-                    )}
-                  </Button>
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={() => setCampaignSettingsOpen(true)}
+                      className="gap-2"
+                      size="sm"
+                    >
+                      <Settings2 className="h-4 w-4" />
+                      Campaign Settings
+                    </Button>
+                    <Button
+                      onClick={handleGenerateOutreach}
+                      disabled={isGenerating}
+                      className="gap-2"
+                      size="sm"
+                    >
+                      {isGenerating ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Generating...
+                        </>
+                      ) : (
+                        <>
+                          <Zap className="h-4 w-4" />
+                          {outreachData?.strategy
+                            ? "Regenerate Outreach Strategy"
+                            : "Generate Outreach Strategy"}
+                        </>
+                      )}
+                    </Button>
+                  </>
                 )}
                 <div className="flex items-center gap-2 min-w-0 max-w-md">
                   <label className="text-xs text-muted-foreground shrink-0">
@@ -3000,6 +3034,415 @@ export default function OutreachPage() {
           </SheetFooter>
         </SheetContent>
       </Sheet>
+
+      {/* Campaign Settings Dialog */}
+      <Dialog
+        open={campaignSettingsOpen}
+        onOpenChange={setCampaignSettingsOpen}
+      >
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Campaign Settings</DialogTitle>
+            <DialogDescription>
+              Customize agent instructions, templates, and knowledge base for
+              this campaign
+            </DialogDescription>
+          </DialogHeader>
+
+          <Tabs defaultValue="instructions" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="instructions">Agent Instructions</TabsTrigger>
+              <TabsTrigger value="templates">Templates</TabsTrigger>
+              <TabsTrigger value="knowledge">Knowledge Base</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="instructions" className="space-y-4 mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">
+                    Formatting Instructions
+                  </CardTitle>
+                  <CardDescription>
+                    Specify how the AI should format outreach content (email
+                    structure, LinkedIn style, etc.)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Textarea
+                    rows={4}
+                    placeholder="Example: Use bullet points for value propositions, keep paragraphs under 3 sentences, include clear CTAs..."
+                    value={campaignInstructions.formatting}
+                    onChange={(e) =>
+                      setCampaignInstructions((prev) => ({
+                        ...prev,
+                        formatting: e.target.value,
+                      }))
+                    }
+                  />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Tone & Style</CardTitle>
+                  <CardDescription>
+                    Define the tone and writing style for this campaign
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Textarea
+                    rows={3}
+                    placeholder="Example: Professional but conversational, avoid jargon, focus on business outcomes..."
+                    value={campaignInstructions.tone}
+                    onChange={(e) =>
+                      setCampaignInstructions((prev) => ({
+                        ...prev,
+                        tone: e.target.value,
+                      }))
+                    }
+                  />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">
+                    Personalization Guidelines
+                  </CardTitle>
+                  <CardDescription>
+                    Specify how to personalize content for this campaign
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Textarea
+                    rows={3}
+                    placeholder="Example: Always mention company name in first paragraph, reference specific pain points from research, use prospect's title when relevant..."
+                    value={campaignInstructions.personalization}
+                    onChange={(e) =>
+                      setCampaignInstructions((prev) => ({
+                        ...prev,
+                        personalization: e.target.value,
+                      }))
+                    }
+                  />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Additional Notes</CardTitle>
+                  <CardDescription>
+                    Any other instructions or guidelines for this campaign
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Textarea
+                    rows={3}
+                    placeholder="Additional campaign-specific instructions..."
+                    value={campaignInstructions.additionalNotes}
+                    onChange={(e) =>
+                      setCampaignInstructions((prev) => ({
+                        ...prev,
+                        additionalNotes: e.target.value,
+                      }))
+                    }
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="templates" className="space-y-4 mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Mail className="w-4 h-4" />
+                    Email Template
+                  </CardTitle>
+                  <CardDescription>
+                    Provide a template structure for email outreach. Use
+                    variables like {"{"}prospect_name{"}"}, {"{"}company_name
+                    {"}"}, {"{"}pain_point{"}"}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Textarea
+                    rows={10}
+                    placeholder={`Subject: [Customize based on pain point]\n\nHi {prospect_name},\n\n[Opening paragraph with personalization]\n\n[Value proposition]\n\n[Call to action]\n\nBest regards,\n[Your name]`}
+                    value={campaignTemplates.email}
+                    onChange={(e) =>
+                      setCampaignTemplates((prev) => ({
+                        ...prev,
+                        email: e.target.value,
+                      }))
+                    }
+                    className="font-mono text-sm"
+                  />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Linkedin className="w-4 h-4" />
+                    LinkedIn Template
+                  </CardTitle>
+                  <CardDescription>
+                    Template for LinkedIn messages. Keep it concise and
+                    professional.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Textarea
+                    rows={8}
+                    placeholder={`Hi {prospect_name},\n\n[Personalized opening]\n\n[Value proposition]\n\n[Soft CTA]\n\nBest,\n[Your name]`}
+                    value={campaignTemplates.linkedin}
+                    onChange={(e) =>
+                      setCampaignTemplates((prev) => ({
+                        ...prev,
+                        linkedin: e.target.value,
+                      }))
+                    }
+                    className="font-mono text-sm"
+                  />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Phone className="w-4 h-4" />
+                    Voice Call Talking Points
+                  </CardTitle>
+                  <CardDescription>
+                    Key talking points for voice calls. Separate each point with
+                    a blank line.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Textarea
+                    rows={8}
+                    placeholder={`1. Opening: Introduce yourself and reason for call\n\n2. Qualification: Ask about current challenges\n\n3. Value proposition: Explain how we help\n\n4. Next steps: Schedule follow-up if interested`}
+                    value={campaignTemplates.voice}
+                    onChange={(e) =>
+                      setCampaignTemplates((prev) => ({
+                        ...prev,
+                        voice: e.target.value,
+                      }))
+                    }
+                    className="font-mono text-sm"
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="knowledge" className="space-y-4 mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">
+                    Upload Campaign Documents
+                  </CardTitle>
+                  <CardDescription>
+                    Add documents specific to this campaign (case studies,
+                    product sheets, etc.)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Upload Documents</Label>
+                    <Input
+                      type="file"
+                      accept=".pdf,.doc,.docx,.ppt,.pptx,.txt"
+                      multiple
+                      onChange={(e) => {
+                        const files = e.target.files;
+                        if (files) {
+                          const newDocs = Array.from(files).map(
+                            (file, idx) => ({
+                              id: `${Date.now()}-${idx}`,
+                              name: file.name,
+                              type:
+                                file.name.split(".").pop()?.toUpperCase() ||
+                                "FILE",
+                            })
+                          );
+                          setCampaignKnowledgeBase((prev) => ({
+                            ...prev,
+                            documents: [...prev.documents, ...newDocs],
+                          }));
+                        }
+                      }}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Recommended: case studies, product sheets, pricing info,
+                      objection handling guides
+                    </p>
+                  </div>
+
+                  {campaignKnowledgeBase.documents.length > 0 && (
+                    <div className="space-y-2">
+                      <Label>Uploaded Documents</Label>
+                      <div className="border rounded-md divide-y">
+                        {campaignKnowledgeBase.documents.map((doc) => (
+                          <div
+                            key={doc.id}
+                            className="flex items-center justify-between px-3 py-2 text-sm"
+                          >
+                            <div className="flex items-center gap-2">
+                              <FileText className="w-4 h-4 text-muted-foreground" />
+                              <span className="font-medium">{doc.name}</span>
+                              <Badge variant="outline" className="text-xs">
+                                {doc.type}
+                              </Badge>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setCampaignKnowledgeBase((prev) => ({
+                                  ...prev,
+                                  documents: prev.documents.filter(
+                                    (d) => d.id !== doc.id
+                                  ),
+                                }));
+                              }}
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">
+                    Campaign-Specific URLs
+                  </CardTitle>
+                  <CardDescription>
+                    Add relevant URLs that should be referenced in outreach for
+                    this campaign
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="https://example.com/case-study"
+                      value={campaignUrlInput}
+                      onChange={(e) => setCampaignUrlInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          if (campaignUrlInput.trim()) {
+                            setCampaignKnowledgeBase((prev) => ({
+                              ...prev,
+                              urls: [...prev.urls, campaignUrlInput.trim()],
+                            }));
+                            setCampaignUrlInput("");
+                          }
+                        }
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        if (campaignUrlInput.trim()) {
+                          setCampaignKnowledgeBase((prev) => ({
+                            ...prev,
+                            urls: [...prev.urls, campaignUrlInput.trim()],
+                          }));
+                          setCampaignUrlInput("");
+                        }
+                      }}
+                    >
+                      Add URL
+                    </Button>
+                  </div>
+
+                  {campaignKnowledgeBase.urls.length > 0 && (
+                    <div className="space-y-2">
+                      <Label>Added URLs</Label>
+                      <div className="space-y-1">
+                        {campaignKnowledgeBase.urls.map((url, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-center justify-between px-3 py-2 text-sm border rounded-md"
+                          >
+                            <a
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary hover:underline truncate flex-1"
+                            >
+                              {url}
+                            </a>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setCampaignKnowledgeBase((prev) => ({
+                                  ...prev,
+                                  urls: prev.urls.filter((_, i) => i !== idx),
+                                }));
+                              }}
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Campaign Notes</CardTitle>
+                  <CardDescription>
+                    Additional context, messaging guidelines, or specific
+                    information for this campaign
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Textarea
+                    rows={6}
+                    placeholder="Add any campaign-specific context, messaging guidelines, or information that should inform outreach content..."
+                    value={campaignKnowledgeBase.notes}
+                    onChange={(e) =>
+                      setCampaignKnowledgeBase((prev) => ({
+                        ...prev,
+                        notes: e.target.value,
+                      }))
+                    }
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setCampaignSettingsOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={async () => {
+                // Save campaign settings (you can implement API call here)
+                // For now, just close the dialog
+                // TODO: Save to API endpoint for campaign-specific settings
+                setCampaignSettingsOpen(false);
+              }}
+            >
+              Save Settings
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </SidebarProvider>
   );
 }
