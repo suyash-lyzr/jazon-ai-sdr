@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { JazonSidebar } from "@/components/jazon-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import {
@@ -73,6 +74,7 @@ import {
 
 export default function OutreachPage() {
   const { leads: mockLeads } = useJazonApp();
+  const searchParams = useSearchParams();
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [statusNote, setStatusNote] = useState<string | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -164,6 +166,14 @@ export default function OutreachPage() {
 
     fetchLeads();
   }, []);
+
+  // Read leadId from URL query parameters
+  useEffect(() => {
+    const leadIdFromUrl = searchParams.get("leadId");
+    if (leadIdFromUrl) {
+      setSelectedLeadId(leadIdFromUrl);
+    }
+  }, [searchParams]);
 
   // Combine mock leads and database leads
   const leads = useMemo(() => {
@@ -715,9 +725,8 @@ export default function OutreachPage() {
                       <>
                         <Zap className="h-4 w-4" />
                         {outreachData?.strategy
-                          ? "Regenerate"
-                          : "Generate"}{" "}
-                        Outreach
+                          ? "Regenerate Outreach Strategy"
+                          : "Generate Outreach Strategy"}
                       </>
                     )}
                   </Button>
@@ -2125,7 +2134,7 @@ export default function OutreachPage() {
 
       {/* Copy View/Edit Sidebar */}
       <Sheet open={copyDialogOpen} onOpenChange={setCopyDialogOpen}>
-        <SheetContent className="w-[90vw] sm:w-[1200px] max-w-[1400px] flex flex-col overflow-hidden">
+        <SheetContent className="!w-[30rem] !max-w-[30rem] flex flex-col overflow-hidden overflow-x-hidden break-words">
           <SheetHeader className="px-6 pt-6 pb-4 border-b">
             <SheetTitle className="text-2xl font-semibold flex items-center gap-3">
               {selectedStepCopy?.channel === "Email" && (
@@ -2162,9 +2171,9 @@ export default function OutreachPage() {
             </SheetDescription>
           </SheetHeader>
 
-          <div className="flex-1 overflow-y-auto px-6 py-6">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 py-6 break-words min-w-0">
             {selectedStepCopy && (
-              <div className="space-y-6">
+              <div className="space-y-6 break-words min-w-0">
                 {selectedStepCopy._missing && (
                   <Alert>
                     <AlertCircle className="w-4 h-4" />
@@ -2214,10 +2223,10 @@ export default function OutreachPage() {
                             (subject: string, idx: number) => (
                               <Card
                                 key={idx}
-                                className="bg-muted/30 border-border/50"
+                                className="bg-muted/30 border-border/50 overflow-hidden"
                               >
-                                <CardContent className="p-4">
-                                  <p className="text-sm font-medium text-foreground">
+                                <CardContent className="p-2 overflow-hidden">
+                                  <p className="text-sm font-medium text-foreground break-words overflow-wrap-anywhere">
                                     {subject}
                                   </p>
                                 </CardContent>
@@ -2246,9 +2255,9 @@ export default function OutreachPage() {
                           className="text-sm resize-none"
                         />
                       ) : (
-                        <Card className="bg-muted/30 border-border/50">
-                          <CardContent className="p-5">
-                            <pre className="text-sm whitespace-pre-wrap font-sans leading-relaxed text-foreground">
+                        <Card className="bg-muted/30 border-border/50 overflow-hidden">
+                          <CardContent className="p-3 overflow-hidden">
+                            <pre className="text-sm whitespace-pre-wrap break-words font-sans leading-relaxed text-foreground overflow-wrap-anywhere">
                               {selectedStepCopy.body}
                             </pre>
                           </CardContent>
@@ -2278,9 +2287,9 @@ export default function OutreachPage() {
                         className="text-sm resize-none"
                       />
                     ) : (
-                      <Card className="bg-muted/30 border-border/50">
-                        <CardContent className="p-5">
-                          <pre className="text-sm whitespace-pre-wrap font-sans leading-relaxed text-foreground">
+                      <Card className="bg-muted/30 border-border/50 overflow-hidden">
+                        <CardContent className="p-3 overflow-hidden">
+                          <pre className="text-sm whitespace-pre-wrap break-words font-sans leading-relaxed text-foreground overflow-wrap-anywhere">
                             {selectedStepCopy.body}
                           </pre>
                         </CardContent>
@@ -2325,15 +2334,15 @@ export default function OutreachPage() {
                         />
                       </div>
                     ) : (
-                      <Card className="bg-muted/30 border-border/50">
-                        <CardContent className="p-5 space-y-4">
+                      <Card className="bg-muted/30 border-border/50 overflow-hidden">
+                        <CardContent className="p-3 space-y-4 overflow-hidden">
                           {(selectedStepCopy.talking_points || []).map(
                             (point: string, idx: number) => (
-                              <div key={idx} className="flex gap-3">
+                              <div key={idx} className="flex gap-3 min-w-0">
                                 <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary/10 border border-primary/20 text-primary flex items-center justify-center text-xs font-semibold">
                                   {idx + 1}
                                 </div>
-                                <p className="text-sm flex-1 leading-relaxed text-foreground pt-0.5">
+                                <p className="text-sm flex-1 leading-relaxed text-foreground pt-0.5 break-words overflow-wrap-anywhere min-w-0">
                                   {point}
                                 </p>
                               </div>
@@ -2352,17 +2361,46 @@ export default function OutreachPage() {
                       <Label className="text-base font-semibold">
                         Personalization Signals Used
                       </Label>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="space-y-3">
                         {selectedStepCopy.personalization_used.map(
-                          (signal: string, idx: number) => (
-                            <Badge
-                              key={idx}
-                              variant="secondary"
-                              className="text-xs py-1.5 px-3"
-                            >
-                              {signal}
-                            </Badge>
-                          )
+                          (signal: string, idx: number) => {
+                            // Check if signal contains semicolons (point-wise format)
+                            if (signal.includes(";")) {
+                              const points = signal
+                                .split(";")
+                                .map((p) => p.trim())
+                                .filter((p) => p);
+                              return (
+                                <div key={idx} className="space-y-1">
+                                  {points.map(
+                                    (point: string, pointIdx: number) => (
+                                      <div
+                                        key={pointIdx}
+                                        className="flex gap-2 items-start"
+                                      >
+                                        <span className="text-primary mt-1.5 flex-shrink-0">
+                                          •
+                                        </span>
+                                        <span className="text-sm text-foreground break-words overflow-wrap-anywhere flex-1">
+                                          {point}
+                                        </span>
+                                      </div>
+                                    )
+                                  )}
+                                </div>
+                              );
+                            }
+                            // Display as badge for single items
+                            return (
+                              <Badge
+                                key={idx}
+                                variant="secondary"
+                                className="text-xs py-1.5 px-3 break-words overflow-wrap-anywhere max-w-full"
+                              >
+                                {signal}
+                              </Badge>
+                            );
+                          }
                         )}
                       </div>
                     </div>
@@ -2374,11 +2412,11 @@ export default function OutreachPage() {
                     <Label className="text-base font-semibold">
                       Strategy Alignment
                     </Label>
-                    <Card className="bg-primary/5 border-primary/20">
-                      <CardContent className="p-4">
-                        <div className="flex gap-3">
+                    <Card className="bg-primary/5 border-primary/20 overflow-hidden">
+                      <CardContent className="p-3 overflow-hidden">
+                        <div className="flex gap-3 min-w-0">
                           <Target className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                          <p className="text-sm text-foreground leading-relaxed">
+                          <p className="text-sm text-foreground leading-relaxed break-words overflow-wrap-anywhere flex-1 min-w-0">
                             {selectedStepCopy.strategy_alignment}
                           </p>
                         </div>

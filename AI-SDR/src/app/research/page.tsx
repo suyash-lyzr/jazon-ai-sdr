@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { JazonSidebar } from "@/components/jazon-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import {
@@ -57,6 +58,8 @@ import {
 
 export default function ResearchPage() {
   const { leads: mockLeads } = useJazonApp();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<{
     company: boolean;
@@ -105,6 +108,14 @@ export default function ResearchPage() {
 
     fetchLeads();
   }, []);
+
+  // Read leadId from URL query parameters
+  useEffect(() => {
+    const leadIdFromUrl = searchParams.get("leadId");
+    if (leadIdFromUrl) {
+      setSelectedLeadId(leadIdFromUrl);
+    }
+  }, [searchParams]);
 
   // Combine mock leads and database leads
   const leads = useMemo(() => {
@@ -1146,7 +1157,15 @@ export default function ResearchPage() {
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-3">
-                    <Button size="default" className="gap-2">
+                    <Button 
+                      size="default" 
+                      className="gap-2"
+                      onClick={() => {
+                        if (selectedLead?.id) {
+                          router.push(`/outreach?leadId=${selectedLead.id}`);
+                        }
+                      }}
+                    >
                       <Rocket className="w-4 h-4" />
                       Start outreach using this research
                     </Button>

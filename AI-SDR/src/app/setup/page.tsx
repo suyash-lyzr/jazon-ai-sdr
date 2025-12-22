@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { JazonSidebar } from "@/components/jazon-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import {
@@ -49,6 +50,7 @@ type KnowledgeDocument = {
 };
 
 export default function SetupPage() {
+  const router = useRouter();
   const {
     companyProfile,
     setCompanyProfile,
@@ -226,6 +228,16 @@ export default function SetupPage() {
   };
 
   const simulateConnect = (target: "salesforce" | "hubspot") => {
+    if (target === "hubspot") {
+      // Redirect to HubSpot integration page
+      router.push("/integrations/hubspot");
+      return;
+    }
+    if (target === "salesforce") {
+      // Redirect to Salesforce integration page
+      router.push("/integrations/salesforce");
+      return;
+    }
     const setStatus =
       target === "salesforce" ? setSalesforceStatus : setHubspotStatus;
     setStatus("connecting");
@@ -263,6 +275,143 @@ export default function SetupPage() {
               </TabsList>
 
               <TabsContent value="sources" className="space-y-6">
+                <div className="space-y-4">
+                  <div>
+                    <h2 className="text-sm font-semibold text-foreground">
+                      Manual Lead Upload
+                    </h2>
+                    <p className="text-xs text-muted-foreground">
+                      Use CSV upload for pilots, proof-of-concept environments,
+                      or one-time imports when CRM integrations are not yet
+                      enabled.
+                    </p>
+                  </div>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Upload className="w-4 h-4" />
+                        Manual CSV Upload
+                      </CardTitle>
+                      <CardDescription>
+                        Use CSV to load leads into Jazon for this workspace.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <Label className="text-xs font-medium">
+                          Upload CSV
+                        </Label>
+                        <Input
+                          type="file"
+                          accept=".csv"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleCsvUpload(file);
+                          }}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          Expecting a header row with at least name, email, and
+                          company.
+                        </p>
+                      </div>
+
+                      {csvHeaders.length > 0 && (
+                        <div className="space-y-3">
+                          <div className="space-y-1">
+                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                              Field Mapping
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Map your CSV columns to Jazon fields.
+                            </p>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {csvFields.map((field) => (
+                              <div key={field} className="space-y-1">
+                                <Label className="text-xs capitalize">
+                                  {field}
+                                </Label>
+                                <Select
+                                  value={mapping[field]}
+                                  onValueChange={(val) =>
+                                    setMapping((prev) => ({
+                                      ...prev,
+                                      [field]: val,
+                                    }))
+                                  }
+                                >
+                                  <SelectTrigger className="h-8 text-xs">
+                                    <SelectValue placeholder="Select column" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {csvHeaders.map((h) => (
+                                      <SelectItem key={h} value={h}>
+                                        {h}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            ))}
+                          </div>
+
+                          {csvPreview.length > 0 && (
+                            <div className="space-y-2">
+                              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                                Preview (first 5 rows)
+                              </p>
+                              <div className="border rounded-md max-h-40 overflow-auto text-xs">
+                                <table className="w-full border-collapse">
+                                  <thead className="bg-muted/40">
+                                    <tr>
+                                      {csvHeaders.map((h) => (
+                                        <th
+                                          key={h}
+                                          className="px-2 py-1 text-left font-medium"
+                                        >
+                                          {h}
+                                        </th>
+                                      ))}
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {csvPreview.map((row, idx) => (
+                                      <tr key={idx} className="border-t">
+                                        {row.map((cell, cidx) => (
+                                          <td key={cidx} className="px-2 py-1">
+                                            {cell}
+                                          </td>
+                                        ))}
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          )}
+
+                          <Button
+                            size="sm"
+                            className="w-full"
+                            disabled={isImporting || !csvPreview.length}
+                            onClick={handleImport}
+                          >
+                            {isImporting
+                              ? "Importing leads…"
+                              : "Import Leads"}
+                          </Button>
+
+                          {importMessage && (
+                            <p className="text-xs text-muted-foreground">
+                              {importMessage}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+
                 <div className="space-y-4">
                   <div>
                     <h2 className="text-sm font-semibold text-foreground">
@@ -513,142 +662,6 @@ export default function SetupPage() {
                   </Card>
                 </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <h2 className="text-sm font-semibold text-foreground">
-                      Manual Lead Upload (Optional)
-                    </h2>
-                    <p className="text-xs text-muted-foreground">
-                      Use CSV upload for pilots, proof-of-concept environments,
-                      or one-time imports when CRM integrations are not yet
-                      enabled.
-                    </p>
-                  </div>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Upload className="w-4 h-4" />
-                        Manual CSV Upload
-                      </CardTitle>
-                      <CardDescription>
-                        Use CSV to load leads into Jazon for this workspace.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="space-y-2">
-                        <Label className="text-xs font-medium">
-                          Upload CSV
-                        </Label>
-                        <Input
-                          type="file"
-                          accept=".csv"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) handleCsvUpload(file);
-                          }}
-                        />
-                        <p className="text-xs text-muted-foreground">
-                          Expecting a header row with at least name, email, and
-                          company.
-                        </p>
-                      </div>
-
-                      {csvHeaders.length > 0 && (
-                        <div className="space-y-3">
-                          <div className="space-y-1">
-                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                              Field Mapping
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              Map your CSV columns to Jazon fields.
-                            </p>
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            {csvFields.map((field) => (
-                              <div key={field} className="space-y-1">
-                                <Label className="text-xs capitalize">
-                                  {field}
-                                </Label>
-                                <Select
-                                  value={mapping[field]}
-                                  onValueChange={(val) =>
-                                    setMapping((prev) => ({
-                                      ...prev,
-                                      [field]: val,
-                                    }))
-                                  }
-                                >
-                                  <SelectTrigger className="h-8 text-xs">
-                                    <SelectValue placeholder="Select column" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {csvHeaders.map((h) => (
-                                      <SelectItem key={h} value={h}>
-                                        {h}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                            ))}
-                          </div>
-
-                          {csvPreview.length > 0 && (
-                            <div className="space-y-2">
-                              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                                Preview (first 5 rows)
-                              </p>
-                              <div className="border rounded-md max-h-40 overflow-auto text-xs">
-                                <table className="w-full border-collapse">
-                                  <thead className="bg-muted/40">
-                                    <tr>
-                                      {csvHeaders.map((h) => (
-                                        <th
-                                          key={h}
-                                          className="px-2 py-1 text-left font-medium"
-                                        >
-                                          {h}
-                                        </th>
-                                      ))}
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {csvPreview.map((row, idx) => (
-                                      <tr key={idx} className="border-t">
-                                        {row.map((cell, cidx) => (
-                                          <td key={cidx} className="px-2 py-1">
-                                            {cell}
-                                          </td>
-                                        ))}
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                                </table>
-                              </div>
-                            </div>
-                          )}
-
-                          <Button
-                            size="sm"
-                            className="w-full"
-                            disabled={isImporting || !csvPreview.length}
-                            onClick={handleImport}
-                          >
-                            {isImporting
-                              ? "Importing leads…"
-                              : "Import Leads"}
-                          </Button>
-
-                          {importMessage && (
-                            <p className="text-xs text-muted-foreground">
-                              {importMessage}
-                            </p>
-                          )}
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </div>
               </TabsContent>
 
               <TabsContent value="company" className="space-y-4">

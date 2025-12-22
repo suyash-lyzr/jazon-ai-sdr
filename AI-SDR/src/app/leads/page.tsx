@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import { JazonSidebar } from "@/components/jazon-sidebar"
 import {
   SidebarInset,
@@ -49,7 +49,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { mockConversations, mockQualificationData, mockMeetings } from "@/lib/mock-data"
 import { useJazonApp } from "@/context/jazon-app-context"
-import { Search, Filter, ArrowUpDown, Mail, Phone, MessageSquare, Clock, CheckCircle2, AlertCircle, Plus, Database, Upload, HelpCircle, Sparkles, RefreshCw, Loader2, Trash2 } from "lucide-react"
+import { Search, Filter, ArrowUpDown, Mail, Phone, MessageSquare, Clock, CheckCircle2, AlertCircle, Plus, Database, Upload, HelpCircle, Sparkles, RefreshCw, Loader2, Trash2, FileText, Rocket } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 export default function LeadsPage() {
@@ -64,52 +64,56 @@ export default function LeadsPage() {
   const [dbLeads, setDbLeads] = useState<any[]>([])
   const [isLoadingLeads, setIsLoadingLeads] = useState(true)
   const [deletingLeadId, setDeletingLeadId] = useState<string | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadMessage, setUploadMessage] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Fetch leads from database
+  const fetchLeads = async () => {
+    try {
+      setIsLoadingLeads(true)
+      const response = await fetch("/api/leads")
+      const data = await response.json()
+      
+      if (data.success && data.leads) {
+        // Transform database leads to match the UI format (using normalized schema)
+        // Only show leads that have completed ICP scoring (status: "icp_scored")
+        const transformedLeads = data.leads
+          .filter((dbLead: any) => dbLead.status === "icp_scored")
+          .map((dbLead: any) => ({
+            id: dbLead._id,
+            name: dbLead.name,
+            email: dbLead.email || "N/A",
+            company: dbLead.company?.name || "Unknown",
+            title: dbLead.title,
+            icpScore: dbLead.icp_score?.icp_score || 0,
+            stage: "Qualification", // All shown leads are icp_scored, so they're in Qualification stage
+            channel: "Email",
+            status: "Active",
+            lastContact: "Not contacted yet",
+            aiRecommendation: dbLead.icp_score?.strengths?.[0] || "Processing...",
+            industry: dbLead.company?.industry || "Unknown",
+            companySize: dbLead.company?.company_size?.employee_count 
+              ? `${dbLead.company.company_size.employee_count.toLocaleString()} employees`
+              : "Unknown",
+            triggers: dbLead.detected_signals?.map((s: any) => s.signal) || [],
+            source: dbLead.source || "CSV",
+            ingestedAt: new Date(dbLead.createdAt).toLocaleDateString(),
+            importedBy: "CSV Upload",
+            originTrigger: "CSV upload from Setup page",
+            _dbLead: dbLead, // Keep reference to full database object
+          }))
+        setDbLeads(transformedLeads)
+      }
+    } catch (error) {
+      console.error("Error fetching leads:", error)
+    } finally {
+      setIsLoadingLeads(false)
+    }
+  }
 
   // Fetch leads from database on mount
   useEffect(() => {
-    const fetchLeads = async () => {
-      try {
-        setIsLoadingLeads(true)
-        const response = await fetch("/api/leads")
-        const data = await response.json()
-        
-        if (data.success && data.leads) {
-          // Transform database leads to match the UI format (using normalized schema)
-          // Only show leads that have completed ICP scoring (status: "icp_scored")
-          const transformedLeads = data.leads
-            .filter((dbLead: any) => dbLead.status === "icp_scored")
-            .map((dbLead: any) => ({
-              id: dbLead._id,
-              name: dbLead.name,
-              email: dbLead.email || "N/A",
-              company: dbLead.company?.name || "Unknown",
-              title: dbLead.title,
-              icpScore: dbLead.icp_score?.icp_score || 0,
-              stage: "Qualification", // All shown leads are icp_scored, so they're in Qualification stage
-              channel: "Email",
-              status: "Active",
-              lastContact: "Not contacted yet",
-              aiRecommendation: dbLead.icp_score?.strengths?.[0] || "Processing...",
-              industry: dbLead.company?.industry || "Unknown",
-              companySize: dbLead.company?.company_size?.employee_count 
-                ? `${dbLead.company.company_size.employee_count.toLocaleString()} employees`
-                : "Unknown",
-              triggers: dbLead.detected_signals?.map((s: any) => s.signal) || [],
-              source: dbLead.source || "CSV",
-              ingestedAt: new Date(dbLead.createdAt).toLocaleDateString(),
-              importedBy: "CSV Upload",
-              originTrigger: "CSV upload from Setup page",
-              _dbLead: dbLead, // Keep reference to full database object
-            }))
-          setDbLeads(transformedLeads)
-        }
-      } catch (error) {
-        console.error("Error fetching leads:", error)
-      } finally {
-        setIsLoadingLeads(false)
-      }
-    }
-
     fetchLeads()
   }, [])
 
@@ -125,15 +129,41 @@ export default function LeadsPage() {
   const voiceMessages = conversations.filter((msg) => msg.channel === "voice")
 
   const filteredLeads = useMemo(
-    () =>
-      leads.filter((lead) => {
+    () => {
+      const filtered = leads.filter((lead) => {
         const matchesSearch =
           lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           lead.company.toLowerCase().includes(searchQuery.toLowerCase())
         const matchesStage = filterStage === "all" || lead.stage === filterStage
         const matchesSource = filterSource === "all" || lead.source?.toLowerCase() === filterSource.toLowerCase()
         return matchesSearch && matchesStage && matchesSource
-      }),
+      })
+      
+      // Sort by ingestion date (latest first)
+      return filtered.sort((a, b) => {
+        // Get the actual date for comparison - prefer _dbLead.createdAt (database leads)
+        let dateA = 0
+        let dateB = 0
+        
+        if ((a as any)._dbLead?.createdAt) {
+          dateA = new Date((a as any)._dbLead.createdAt).getTime()
+        } else if (a.ingestedAt) {
+          // Try to parse ingestedAt, but it might be formatted, so use fallback
+          const parsed = Date.parse(a.ingestedAt)
+          dateA = isNaN(parsed) ? 0 : parsed
+        }
+        
+        if ((b as any)._dbLead?.createdAt) {
+          dateB = new Date((b as any)._dbLead.createdAt).getTime()
+        } else if (b.ingestedAt) {
+          const parsed = Date.parse(b.ingestedAt)
+          dateB = isNaN(parsed) ? 0 : parsed
+        }
+        
+        // Sort descending (newest first) - if dates are equal or both 0, maintain order
+        return dateB - dateA
+      })
+    },
     [leads, searchQuery, filterStage, filterSource],
   )
 
@@ -230,6 +260,77 @@ export default function LeadsPage() {
     } finally {
       setIsRefreshing(false);
     }
+  };
+
+  const handleCSVUpload = async (file: File) => {
+    if (!file) {
+      setUploadMessage("Please select a CSV file.");
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadMessage("Uploading and processing leads…");
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      // Use default mapping - API will handle it
+      formData.append("mapping", JSON.stringify({}));
+
+      const response = await fetch("/api/leads/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || result.message || "Failed to upload CSV");
+      }
+
+      if (!result.success) {
+        throw new Error(result.message || "Upload failed");
+      }
+
+      const createdCount = result.summary?.created || result.leads?.length || 0;
+      const failedCount = result.summary?.failed || 0;
+
+      if (createdCount === 0) {
+        setUploadMessage(
+          `No leads were imported. ${failedCount > 0 ? `${failedCount} failed.` : "Please check your CSV format."}`
+        );
+      } else {
+        const successMsg = `Successfully imported ${createdCount} lead${createdCount !== 1 ? "s" : ""}.${failedCount > 0 ? ` ${failedCount} failed.` : ""}`;
+        setUploadMessage(successMsg);
+        
+        // Refresh leads list after successful upload
+        setTimeout(async () => {
+          await fetchLeads();
+          setAddLeadsOpen(false);
+          setUploadMessage(null);
+        }, 1500);
+      }
+    } catch (error: any) {
+      console.error("❌ CSV upload error:", error);
+      setUploadMessage(`Error: ${error.message || "Failed to upload CSV"}`);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleCSVUpload(file);
+    }
+    // Reset input so same file can be selected again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleCSVButtonClick = () => {
+    fileInputRef.current?.click();
   };
 
   const handleDeleteLead = async (leadId: string) => {
@@ -430,7 +531,13 @@ export default function LeadsPage() {
                       <Sparkles className="w-4 h-4" />
                       Find Outbound Leads
                     </Button>
-                    <Dialog open={addLeadsOpen} onOpenChange={setAddLeadsOpen}>
+                    <Dialog open={addLeadsOpen} onOpenChange={(open) => {
+                      setAddLeadsOpen(open);
+                      if (!open) {
+                        setUploadMessage(null);
+                        setIsUploading(false);
+                      }
+                    }}>
                       <DialogTrigger asChild>
                         <Button variant="outline" size="sm" className="gap-2 whitespace-nowrap">
                           <Plus className="w-4 h-4" />
@@ -449,8 +556,8 @@ export default function LeadsPage() {
                             variant="outline"
                             className="h-auto p-4 justify-start"
                             onClick={() => {
-                              // Demo action
                               setAddLeadsOpen(false)
+                              router.push("/crm-sync")
                             }}
                           >
                             <div className="flex items-start gap-3 w-full">
@@ -466,21 +573,39 @@ export default function LeadsPage() {
                           <Button
                             variant="outline"
                             className="h-auto p-4 justify-start"
-                            onClick={() => {
-                              // Demo action
-                              setAddLeadsOpen(false)
-                            }}
+                            onClick={handleCSVButtonClick}
+                            disabled={isUploading}
                           >
                             <div className="flex items-start gap-3 w-full">
-                              <Upload className="w-5 h-5 mt-0.5 text-primary" />
+                              {isUploading ? (
+                                <Loader2 className="w-5 h-5 mt-0.5 text-primary animate-spin" />
+                              ) : (
+                                <Upload className="w-5 h-5 mt-0.5 text-primary" />
+                              )}
                               <div className="flex-1 text-left">
                                 <p className="font-medium">One-time CSV Upload</p>
                                 <p className="text-xs text-muted-foreground mt-1">
-                                  For pilots or demos only. Configure in Setup for production use.
+                                  {isUploading ? "Uploading..." : "For pilots or demos only. Configure in Setup for production use."}
                                 </p>
                               </div>
                             </div>
                           </Button>
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept=".csv"
+                            onChange={handleFileInputChange}
+                            className="hidden"
+                          />
+                          {uploadMessage && (
+                            <div className={`text-sm p-3 rounded-md ${
+                              uploadMessage.includes("Error") || uploadMessage.includes("failed")
+                                ? "bg-destructive/10 text-destructive"
+                                : "bg-primary/10 text-primary"
+                            }`}>
+                              {uploadMessage}
+                            </div>
+                          )}
                         </div>
                       </DialogContent>
                     </Dialog>
@@ -688,13 +813,41 @@ export default function LeadsPage() {
 
       {/* Lead Detail Sheet */}
       <Sheet open={!!selectedLead} onOpenChange={(open) => !open && setSelectedLead(null)}>
-        <SheetContent className="sm:max-w-2xl overflow-y-auto">
+        <SheetContent className="sm:max-w-lg overflow-y-auto">
           {lead && (
             <>
               <SheetHeader>
                 <SheetTitle>{lead.name}</SheetTitle>
                 <SheetDescription>{lead.title} at {lead.company}</SheetDescription>
               </SheetHeader>
+
+              {/* Navigation Buttons */}
+              <div className="mt-4 px-4 md:px-6 flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 gap-2"
+                  onClick={() => {
+                    setSelectedLead(null)
+                    router.push(`/research?leadId=${lead.id}`)
+                  }}
+                >
+                  <FileText className="w-4 h-4" />
+                  Research & ICP
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 gap-2"
+                  onClick={() => {
+                    setSelectedLead(null)
+                    router.push(`/outreach?leadId=${lead.id}`)
+                  }}
+                >
+                  <Rocket className="w-4 h-4" />
+                  Outreach Campaign
+                </Button>
+              </div>
 
               <div className="mt-6 space-y-6 px-4 md:px-6">
                 {/* Lead Source Context (Apollo-specific) */}
