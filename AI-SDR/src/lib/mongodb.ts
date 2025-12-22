@@ -6,9 +6,10 @@ import mongoose from 'mongoose';
  * during API Route usage.
  */
 declare global {
+  // eslint-disable-next-line no-var
   var mongoose: {
-    conn: typeof mongoose | null;
-    promise: Promise<typeof mongoose> | null;
+    conn: any;
+    promise: Promise<any> | null;
   };
 }
 
@@ -41,22 +42,22 @@ async function connectDB() {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then(async (mongoose) => {
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then(async (mongooseInstance) => {
       console.log('✅ MongoDB connected successfully');
       
       // Ensure models are registered (Next.js hot reload fix)
       // Dynamically import models to ensure they're registered after connection
-      if (!mongoose.models.Company) {
+      if (!mongooseInstance.models.Company) {
         await import('@/models/Company');
       }
-      if (!mongoose.models.Persona) {
+      if (!mongooseInstance.models.Persona) {
         await import('@/models/Persona');
       }
-      if (!mongoose.models.Lead) {
+      if (!mongooseInstance.models.Lead) {
         await import('@/models/Lead');
       }
       
-      return mongoose;
+      return mongooseInstance;
     });
   }
 

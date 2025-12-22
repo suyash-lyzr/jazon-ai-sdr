@@ -56,7 +56,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const researchRun = await ResearchRun.findOne({ lead_id: lead._id });
 
     // Fetch citations if research run exists
-    let citations = [];
+    let citations: unknown[] = [];
     if (researchRun) {
       citations = await Citation.find({ research_run_id: researchRun._id });
     }

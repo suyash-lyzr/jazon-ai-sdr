@@ -231,7 +231,7 @@ export default function MeetingsPage() {
     }
 
     // Find objections
-    if (meeting?.handoffPack.objectionsRaised.length > 0) {
+    if (meeting?.handoffPack.objectionsRaised && meeting.handoffPack.objectionsRaised.length > 0) {
       highlights.push(
         `Objections raised: ${meeting.handoffPack.objectionsRaised.join(", ")}`
       )

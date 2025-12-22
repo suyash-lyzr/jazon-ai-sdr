@@ -60,8 +60,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Process each lead
-    const responses = [];
-    const errors = [];
+    const responses: unknown[] = [];
+    const errors: { leadId: string; leadName?: string; error: string }[] = [];
 
     for (const lead of leads) {
       try {

@@ -73,7 +73,7 @@ FieldOverrideSchema.statics.getOverridesForEntity = async function (
   
   // Convert to a map for easy lookup
   const overrideMap: Record<string, any> = {};
-  overrides.forEach((override) => {
+  overrides.forEach((override: any) => {
     overrideMap[override.path] = override.value;
   });
   

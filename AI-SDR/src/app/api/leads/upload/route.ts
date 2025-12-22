@@ -80,8 +80,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate and create leads
-    const createdLeads = [];
-    const errors = [];
+    const createdLeads: unknown[] = [];
+    const errors: { row: number; error: string; data?: unknown }[] = [];
 
     for (let i = 0; i < records.length; i++) {
       const row = records[i];

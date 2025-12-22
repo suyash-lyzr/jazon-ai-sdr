@@ -1,4 +1,17 @@
 {
   "version": 1,
-  "functions": {}
+  "functions": {
+    "/api/leads/[id]/outreach/control": {},
+    "/api/leads/[id]/outreach/override": {},
+    "/api/leads/[id]/outreach": {},
+    "/api/leads/[id]/update-field": {},
+    "/api/leads": {},
+    "/api/leads/[id]/outreach/generate": {
+      "maxDuration": 300
+    },
+    "/api/test-db": {},
+    "/api/leads/[id]": {},
+    "/api/leads/upload": {},
+    "/api/leads/refresh": {}
+  }
 }

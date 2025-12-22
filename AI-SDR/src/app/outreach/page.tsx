@@ -1433,7 +1433,7 @@ export default function OutreachPage() {
                         </div>
 
                         {fullAuditTrail.length > 0 ? (
-                          fullAuditTrail.map((event) => {
+                          fullAuditTrail.map((event: any) => {
                             // Event type styling
                             const getEventColor = (type: string) => {
                               switch (type) {

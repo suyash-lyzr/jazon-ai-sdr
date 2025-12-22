@@ -847,7 +847,7 @@ export default function LeadsPage() {
                           Detected Triggers
                         </p>
                         <div className="flex flex-wrap gap-2">
-                          {lead.triggers.map((trigger, idx) => (
+                          {lead.triggers.map((trigger: string, idx: number) => (
                             <Badge key={idx} variant="secondary" className="text-xs">{trigger}</Badge>
                           ))}
                         </div>

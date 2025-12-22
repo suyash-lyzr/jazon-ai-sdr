@@ -492,7 +492,7 @@ export default function ResearchPage() {
   // AI Summary bullets based on ICP score
   const aiSummaryBullets = useMemo(() => {
     if (!selectedLead) return [];
-    const bullets = [];
+    const bullets: string[] = [];
 
     if (selectedLead.icpScore >= 85) {
       bullets.push(
@@ -842,7 +842,7 @@ export default function ResearchPage() {
                           </Badge>
                         </div>
                         <ul className="space-y-2">
-                          {personaAnalysis.responsibilities.map((resp, idx) => (
+                          {personaAnalysis.responsibilities.map((resp: string, idx: number) => (
                             <li
                               key={idx}
                               className="text-sm flex items-start gap-2"
@@ -864,7 +864,7 @@ export default function ResearchPage() {
                           </Badge>
                         </div>
                         <ul className="space-y-2">
-                          {personaAnalysis.painPoints.map((pain, idx) => (
+                          {personaAnalysis.painPoints.map((pain: string, idx: number) => (
                             <li
                               key={idx}
                               className="text-sm flex items-start gap-2"
@@ -906,7 +906,7 @@ export default function ResearchPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      {triggers.map((trigger, idx) => (
+                      {triggers.map((trigger: any, idx: number) => (
                         <div
                           key={idx}
                           className="bg-muted/20 rounded-lg p-4 border border-border/50"
@@ -1000,7 +1000,7 @@ export default function ResearchPage() {
                       <CollapsibleContent className="pt-4">
                         <div className="space-y-3 px-4 pb-2">
                           {icpScore.breakdown.companyFit.factors.map(
-                            (factor, idx) => (
+                            (factor: any, idx: number) => (
                               <div key={idx} className="space-y-2">
                                 <div className="flex items-center justify-between text-sm">
                                   <span className="text-foreground">
@@ -1056,7 +1056,7 @@ export default function ResearchPage() {
                       <CollapsibleContent className="pt-4">
                         <div className="space-y-3 px-4 pb-2">
                           {icpScore.breakdown.personaFit.factors.map(
-                            (factor, idx) => (
+                            (factor: any, idx: number) => (
                               <div key={idx} className="space-y-2">
                                 <div className="flex items-center justify-between text-sm">
                                   <span className="text-foreground">
@@ -1112,7 +1112,7 @@ export default function ResearchPage() {
                       <CollapsibleContent className="pt-4">
                         <div className="space-y-3 px-4 pb-2">
                           {icpScore.breakdown.timingFit.factors.map(
-                            (factor, idx) => (
+                            (factor: any, idx: number) => (
                               <div key={idx} className="space-y-2">
                                 <div className="flex items-center justify-between text-sm">
                                   <span className="text-foreground">
