@@ -167,10 +167,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     console.log("✅ Parsed strategy has drafts?", !!parsedStrategyOutput?.recommended_channel_sequence);
     console.log("✅ Parsed copy has drafts?", !!parsedCopyOutput?.drafts, "Count:", parsedCopyOutput?.drafts?.length);
     
-    const effectiveStrategy = parsedStrategyOutput
+    const effectiveStrategy = parsedStrategyOutput && strategyRun
       ? { ...applyOverrides(parsedStrategyOutput, strategyOverrides), _id: strategyRun._id }
       : null;
-    const effectiveCopy = parsedCopyOutput
+    const effectiveCopy = parsedCopyOutput && copyRun
       ? { ...applyOverrides(parsedCopyOutput, copyOverrides), _id: copyRun._id }
       : null;
     const effectiveGuardrails = applyOverrides(
