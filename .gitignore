@@ -1,4 +1,6 @@
 AI-SDR/node_modules/
+AI-SDR/output/
+AI-SDR/.env.local
 lyzr-boilerplate/
 
 
