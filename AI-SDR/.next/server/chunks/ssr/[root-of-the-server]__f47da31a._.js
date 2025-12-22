@@ -3135,6 +3135,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$up$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronUp$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/chevron-up.js [app-ssr] (ecmascript) <export default as ChevronUp>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$pen$2d$line$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Edit3$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/pen-line.js [app-ssr] (ecmascript) <export default as Edit3>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$loader$2d$circle$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Loader2$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/loader-circle.js [app-ssr] (ecmascript) <export default as Loader2>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$linkedin$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Linkedin$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/linkedin.js [app-ssr] (ecmascript) <export default as Linkedin>");
 "use client";
 ;
 ;
@@ -3662,7 +3663,7 @@ function OutreachPage() {
                 variant: "inset"
             }, void 0, false, {
                 fileName: "[project]/src/app/outreach/page.tsx",
-                lineNumber: 688,
+                lineNumber: 687,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$sidebar$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SidebarInset"], {
@@ -3682,7 +3683,7 @@ function OutreachPage() {
                                                 children: "Outreach Campaign"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 695,
+                                                lineNumber: 694,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3690,13 +3691,13 @@ function OutreachPage() {
                                                 children: "Strategic, multi-channel engagement - not email blasting"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 698,
+                                                lineNumber: 697,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 694,
+                                        lineNumber: 693,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3713,7 +3714,7 @@ function OutreachPage() {
                                                             className: "h-4 w-4 animate-spin"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 712,
+                                                            lineNumber: 711,
                                                             columnNumber: 25
                                                         }, this),
                                                         "Generating..."
@@ -3724,7 +3725,7 @@ function OutreachPage() {
                                                             className: "h-4 w-4"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 717,
+                                                            lineNumber: 716,
                                                             columnNumber: 25
                                                         }, this),
                                                         outreachData?.strategy ? "Regenerate" : "Generate",
@@ -3734,7 +3735,7 @@ function OutreachPage() {
                                                 }, void 0, true)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 704,
+                                                lineNumber: 703,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3745,7 +3746,7 @@ function OutreachPage() {
                                                         children: "Lead:"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 727,
+                                                        lineNumber: 726,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Select"], {
@@ -3758,12 +3759,12 @@ function OutreachPage() {
                                                                     placeholder: "Choose a lead"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 735,
+                                                                    lineNumber: 734,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 734,
+                                                                lineNumber: 733,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -3777,7 +3778,7 @@ function OutreachPage() {
                                                                                     children: lead.name
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                    lineNumber: 741,
+                                                                                    lineNumber: 740,
                                                                                     columnNumber: 29
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3788,7 +3789,7 @@ function OutreachPage() {
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                    lineNumber: 742,
+                                                                                    lineNumber: 741,
                                                                                     columnNumber: 29
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -3800,7 +3801,7 @@ function OutreachPage() {
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                    lineNumber: 745,
+                                                                                    lineNumber: 744,
                                                                                     columnNumber: 29
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -3809,47 +3810,47 @@ function OutreachPage() {
                                                                                     children: lead.stage
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                    lineNumber: 751,
+                                                                                    lineNumber: 750,
                                                                                     columnNumber: 29
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                            lineNumber: 740,
+                                                                            lineNumber: 739,
                                                                             columnNumber: 27
                                                                         }, this)
                                                                     }, lead.id, false, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 739,
+                                                                        lineNumber: 738,
                                                                         columnNumber: 25
                                                                     }, this))
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 737,
+                                                                lineNumber: 736,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 730,
+                                                        lineNumber: 729,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 726,
+                                                lineNumber: 725,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 702,
+                                        lineNumber: 701,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                lineNumber: 693,
+                                lineNumber: 692,
                                 columnNumber: 13
                             }, this),
                             selectedLead && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -3866,7 +3867,7 @@ function OutreachPage() {
                                                             children: "Outreach Status"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 769,
+                                                            lineNumber: 768,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3878,7 +3879,7 @@ function OutreachPage() {
                                                                             className: "w-2 h-2 rounded-full bg-primary animate-pulse"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                            lineNumber: 775,
+                                                                            lineNumber: 774,
                                                                             columnNumber: 29
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -3886,7 +3887,7 @@ function OutreachPage() {
                                                                             children: "Active"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                            lineNumber: 776,
+                                                                            lineNumber: 775,
                                                                             columnNumber: 29
                                                                         }, this)
                                                                     ]
@@ -3897,7 +3898,7 @@ function OutreachPage() {
                                                                             className: "w-4 h-4 text-chart-2"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                            lineNumber: 781,
+                                                                            lineNumber: 780,
                                                                             columnNumber: 29
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -3905,7 +3906,7 @@ function OutreachPage() {
                                                                             children: "Completed"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                            lineNumber: 782,
+                                                                            lineNumber: 781,
                                                                             columnNumber: 29
                                                                         }, this)
                                                                     ]
@@ -3916,7 +3917,7 @@ function OutreachPage() {
                                                                             className: "w-4 h-4 text-destructive"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                            lineNumber: 789,
+                                                                            lineNumber: 788,
                                                                             columnNumber: 29
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -3925,7 +3926,7 @@ function OutreachPage() {
                                                                             children: "Stopped"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                            lineNumber: 790,
+                                                                            lineNumber: 789,
                                                                             columnNumber: 29
                                                                         }, this)
                                                                     ]
@@ -3936,7 +3937,7 @@ function OutreachPage() {
                                                                             className: "w-4 h-4 text-muted-foreground"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                            lineNumber: 800,
+                                                                            lineNumber: 799,
                                                                             columnNumber: 29
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -3944,7 +3945,7 @@ function OutreachPage() {
                                                                             children: "Research"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                            lineNumber: 801,
+                                                                            lineNumber: 800,
                                                                             columnNumber: 29
                                                                         }, this)
                                                                     ]
@@ -3952,13 +3953,13 @@ function OutreachPage() {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 772,
+                                                            lineNumber: 771,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 768,
+                                                    lineNumber: 767,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3968,7 +3969,7 @@ function OutreachPage() {
                                                             children: "Current Phase"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 807,
+                                                            lineNumber: 806,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3976,13 +3977,13 @@ function OutreachPage() {
                                                             children: getCurrentPhase()
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 810,
+                                                            lineNumber: 809,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 806,
+                                                    lineNumber: 805,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3992,7 +3993,7 @@ function OutreachPage() {
                                                             children: "Last Action"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 813,
+                                                            lineNumber: 812,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4000,13 +4001,13 @@ function OutreachPage() {
                                                             children: outreachData?.events && outreachData.events.length > 0 ? `${outreachData.events[outreachData.events.length - 1].title} - ${formatRelativeTime(outreachData.events[outreachData.events.length - 1].timestamp)}` : outreachStatus === "active" ? "Voice call - 2 hours ago" : outreachStatus === "completed" ? "AE handoff - 1 hour ago" : selectedLead.lastContact
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 816,
+                                                            lineNumber: 815,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 812,
+                                                    lineNumber: 811,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4016,7 +4017,7 @@ function OutreachPage() {
                                                             children: "Next Planned Action"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 835,
+                                                            lineNumber: 834,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4024,13 +4025,13 @@ function OutreachPage() {
                                                             children: outreachData?.campaign?.next_planned_action?.label ? `${outreachData.campaign.next_planned_action.label}${outreachData.campaign.next_planned_action.scheduled_at ? ` - ${formatRelativeTime(outreachData.campaign.next_planned_action.scheduled_at)}` : ""}` : outreachStatus === "active" && selectedLead.stage === "Qualification" ? "Follow-up email - tomorrow" : outreachStatus === "completed" ? "AE handoff complete" : outreachStatus === "stopped" ? "None - outreach stopped" : "Generate outreach strategy"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 838,
+                                                            lineNumber: 837,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 834,
+                                                    lineNumber: 833,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4040,7 +4041,7 @@ function OutreachPage() {
                                                             children: "Final AI Decision"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 862,
+                                                            lineNumber: 861,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4048,24 +4049,24 @@ function OutreachPage() {
                                                             children: getFinalDecision()
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 865,
+                                                            lineNumber: 864,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 861,
+                                                    lineNumber: 860,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                            lineNumber: 767,
+                                            lineNumber: 766,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 766,
+                                        lineNumber: 765,
                                         columnNumber: 17
                                     }, this),
                                     outreachStatus === "completed" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -4081,12 +4082,12 @@ function OutreachPage() {
                                                             className: "w-6 h-6 text-chart-2"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 878,
+                                                            lineNumber: 877,
                                                             columnNumber: 27
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 877,
+                                                        lineNumber: 876,
                                                         columnNumber: 25
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4097,7 +4098,7 @@ function OutreachPage() {
                                                                 children: "Outreach Successfully Completed"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 881,
+                                                                lineNumber: 880,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4105,7 +4106,7 @@ function OutreachPage() {
                                                                 children: "Meeting scheduled and AE handoff completed. Outreach strategy achieved its goal."
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 884,
+                                                                lineNumber: 883,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4119,7 +4120,7 @@ function OutreachPage() {
                                                                                 children: "Why it worked"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 890,
+                                                                                lineNumber: 889,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -4133,7 +4134,7 @@ function OutreachPage() {
                                                                                                 children: "•"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                lineNumber: 895,
+                                                                                                lineNumber: 894,
                                                                                                 columnNumber: 35
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4144,13 +4145,13 @@ function OutreachPage() {
                                                                                                 ]
                                                                                             }, void 0, true, {
                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                lineNumber: 896,
+                                                                                                lineNumber: 895,
                                                                                                 columnNumber: 35
                                                                                             }, this)
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 894,
+                                                                                        lineNumber: 893,
                                                                                         columnNumber: 33
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
@@ -4161,20 +4162,20 @@ function OutreachPage() {
                                                                                                 children: "•"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                lineNumber: 901,
+                                                                                                lineNumber: 900,
                                                                                                 columnNumber: 35
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                                                 children: "Strong engagement across multiple channels"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                lineNumber: 902,
+                                                                                                lineNumber: 901,
                                                                                                 columnNumber: 35
                                                                                             }, this)
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 900,
+                                                                                        lineNumber: 899,
                                                                                         columnNumber: 33
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
@@ -4185,32 +4186,32 @@ function OutreachPage() {
                                                                                                 children: "•"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                lineNumber: 907,
+                                                                                                lineNumber: 906,
                                                                                                 columnNumber: 35
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                                                 children: "Active buying signals detected"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                lineNumber: 908,
+                                                                                                lineNumber: 907,
                                                                                                 columnNumber: 35
                                                                                             }, this)
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 906,
+                                                                                        lineNumber: 905,
                                                                                         columnNumber: 33
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 893,
+                                                                                lineNumber: 892,
                                                                                 columnNumber: 31
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 889,
+                                                                        lineNumber: 888,
                                                                         columnNumber: 29
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4221,7 +4222,7 @@ function OutreachPage() {
                                                                                 children: "Outcome"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 913,
+                                                                                lineNumber: 912,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -4234,20 +4235,20 @@ function OutreachPage() {
                                                                                                 className: "w-4 h-4 text-chart-2 mt-0.5"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                lineNumber: 918,
+                                                                                                lineNumber: 917,
                                                                                                 columnNumber: 35
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                                                 children: "Meeting booked"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                lineNumber: 919,
+                                                                                                lineNumber: 918,
                                                                                                 columnNumber: 35
                                                                                             }, this)
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 917,
+                                                                                        lineNumber: 916,
                                                                                         columnNumber: 33
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
@@ -4257,20 +4258,20 @@ function OutreachPage() {
                                                                                                 className: "w-4 h-4 text-chart-2 mt-0.5"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                lineNumber: 922,
+                                                                                                lineNumber: 921,
                                                                                                 columnNumber: 35
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                                                 children: "AE handoff pack prepared"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                lineNumber: 923,
+                                                                                                lineNumber: 922,
                                                                                                 columnNumber: 35
                                                                                             }, this)
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 921,
+                                                                                        lineNumber: 920,
                                                                                         columnNumber: 33
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
@@ -4280,60 +4281,60 @@ function OutreachPage() {
                                                                                                 className: "w-4 h-4 text-chart-2 mt-0.5"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                lineNumber: 926,
+                                                                                                lineNumber: 925,
                                                                                                 columnNumber: 35
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                                                 children: "CRM updated (demo)"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                lineNumber: 927,
+                                                                                                lineNumber: 926,
                                                                                                 columnNumber: 35
                                                                                             }, this)
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 925,
+                                                                                        lineNumber: 924,
                                                                                         columnNumber: 33
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 916,
+                                                                                lineNumber: 915,
                                                                                 columnNumber: 31
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 912,
+                                                                        lineNumber: 911,
                                                                         columnNumber: 29
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 888,
+                                                                lineNumber: 887,
                                                                 columnNumber: 27
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 880,
+                                                        lineNumber: 879,
                                                         columnNumber: 25
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 876,
+                                                lineNumber: 875,
                                                 columnNumber: 23
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                            lineNumber: 875,
+                                            lineNumber: 874,
                                             columnNumber: 21
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 874,
+                                        lineNumber: 873,
                                         columnNumber: 19
                                     }, this),
                                     outreachStatus === "stopped" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -4349,12 +4350,12 @@ function OutreachPage() {
                                                             className: "w-6 h-6 text-destructive"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 944,
+                                                            lineNumber: 943,
                                                             columnNumber: 27
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 943,
+                                                        lineNumber: 942,
                                                         columnNumber: 25
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4365,7 +4366,7 @@ function OutreachPage() {
                                                                 children: "Outreach Disabled"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 947,
+                                                                lineNumber: 946,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4373,7 +4374,7 @@ function OutreachPage() {
                                                                 children: "This lead was disqualified and outreach has been automatically stopped."
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 950,
+                                                                lineNumber: 949,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4387,7 +4388,7 @@ function OutreachPage() {
                                                                                 children: "Disqualification Reason"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 956,
+                                                                                lineNumber: 955,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4399,7 +4400,7 @@ function OutreachPage() {
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 959,
+                                                                                lineNumber: 958,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -4408,13 +4409,13 @@ function OutreachPage() {
                                                                                 children: "High Confidence"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 963,
+                                                                                lineNumber: 962,
                                                                                 columnNumber: 31
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 955,
+                                                                        lineNumber: 954,
                                                                         columnNumber: 29
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4425,7 +4426,7 @@ function OutreachPage() {
                                                                                 children: "Value Saved"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 968,
+                                                                                lineNumber: 967,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4433,7 +4434,7 @@ function OutreachPage() {
                                                                                 children: "Early disqualification prevented wasted AE time"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 971,
+                                                                                lineNumber: 970,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -4442,41 +4443,41 @@ function OutreachPage() {
                                                                                 children: "AI Decision (Automatic)"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 974,
+                                                                                lineNumber: 973,
                                                                                 columnNumber: 31
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 967,
+                                                                        lineNumber: 966,
                                                                         columnNumber: 29
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 954,
+                                                                lineNumber: 953,
                                                                 columnNumber: 27
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 946,
+                                                        lineNumber: 945,
                                                         columnNumber: 25
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 942,
+                                                lineNumber: 941,
                                                 columnNumber: 23
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                            lineNumber: 941,
+                                            lineNumber: 940,
                                             columnNumber: 21
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 940,
+                                        lineNumber: 939,
                                         columnNumber: 19
                                     }, this),
                                     (outreachStatus === "active" || outreachData?.strategy) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -4490,20 +4491,20 @@ function OutreachPage() {
                                                                 children: "AI-Generated Outreach Strategy for This Lead"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 990,
+                                                                lineNumber: 989,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardDescription"], {
                                                                 children: outreachData?.strategy?.plan_summary || `Intelligent channel escalation based on ICP score (${selectedLead.icpScore}) and engagement signals from Research & ICP`
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 993,
+                                                                lineNumber: 992,
                                                                 columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 989,
+                                                        lineNumber: 988,
                                                         columnNumber: 23
                                                     }, this),
                                                     outreachData?.strategy && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -4536,20 +4537,20 @@ function OutreachPage() {
                                                                 className: "h-3 w-3"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 1030,
+                                                                lineNumber: 1029,
                                                                 columnNumber: 27
                                                             }, this),
                                                             "Edit"
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 999,
+                                                        lineNumber: 998,
                                                         columnNumber: 25
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 988,
+                                                lineNumber: 987,
                                                 columnNumber: 21
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -4566,7 +4567,7 @@ function OutreachPage() {
                                                                             children: "Strategy Progress"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                            lineNumber: 1040,
+                                                                            lineNumber: 1039,
                                                                             columnNumber: 29
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4582,13 +4583,13 @@ function OutreachPage() {
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                            lineNumber: 1043,
+                                                                            lineNumber: 1042,
                                                                             columnNumber: 29
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 1039,
+                                                                    lineNumber: 1038,
                                                                     columnNumber: 27
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$progress$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Progress"], {
@@ -4596,7 +4597,7 @@ function OutreachPage() {
                                                                     className: "h-2"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 1055,
+                                                                    lineNumber: 1054,
                                                                     columnNumber: 27
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4607,18 +4608,18 @@ function OutreachPage() {
                                                                             className: `flex-1 h-1 rounded-full ${idx < (outreachData?.campaign?.current_step_number || strategy.currentStep) ? "bg-chart-2" : idx === (outreachData?.campaign?.current_step_number || strategy.currentStep) ? "bg-primary" : "bg-muted"}`
                                                                         }, idx, false, {
                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                            lineNumber: 1073,
+                                                                            lineNumber: 1072,
                                                                             columnNumber: 31
                                                                         }, this))
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 1066,
+                                                                    lineNumber: 1065,
                                                                     columnNumber: 27
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 1038,
+                                                            lineNumber: 1037,
                                                             columnNumber: 25
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4637,27 +4638,27 @@ function OutreachPage() {
                                                                                     className: "w-5 h-5"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                    lineNumber: 1124,
+                                                                                    lineNumber: 1123,
                                                                                     columnNumber: 37
                                                                                 }, this),
                                                                                 channel.channel === "LinkedIn" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$message$2d$square$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__MessageSquare$3e$__["MessageSquare"], {
                                                                                     className: "w-5 h-5"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                    lineNumber: 1127,
+                                                                                    lineNumber: 1126,
                                                                                     columnNumber: 37
                                                                                 }, this),
                                                                                 channel.channel === "Voice" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$phone$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Phone$3e$__["Phone"], {
                                                                                     className: "w-5 h-5"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                    lineNumber: 1130,
+                                                                                    lineNumber: 1129,
                                                                                     columnNumber: 37
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                            lineNumber: 1114,
+                                                                            lineNumber: 1113,
                                                                             columnNumber: 33
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4671,7 +4672,7 @@ function OutreachPage() {
                                                                                             children: channel.channel
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                            lineNumber: 1136,
+                                                                                            lineNumber: 1135,
                                                                                             columnNumber: 37
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -4683,14 +4684,14 @@ function OutreachPage() {
                                                                                             ]
                                                                                         }, void 0, true, {
                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                            lineNumber: 1139,
+                                                                                            lineNumber: 1138,
                                                                                             columnNumber: 37
                                                                                         }, this),
                                                                                         displayStatus === "completed" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$check$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__CheckCircle2$3e$__["CheckCircle2"], {
                                                                                             className: "w-4 h-4 text-chart-2"
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                            lineNumber: 1146,
+                                                                                            lineNumber: 1145,
                                                                                             columnNumber: 39
                                                                                         }, this),
                                                                                         displayStatus === "active" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4700,7 +4701,7 @@ function OutreachPage() {
                                                                                                     className: "w-2 h-2 rounded-full bg-primary animate-pulse"
                                                                                                 }, void 0, false, {
                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                    lineNumber: 1150,
+                                                                                                    lineNumber: 1149,
                                                                                                     columnNumber: 41
                                                                                                 }, this),
                                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4708,13 +4709,13 @@ function OutreachPage() {
                                                                                                     children: "In Progress"
                                                                                                 }, void 0, false, {
                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                    lineNumber: 1151,
+                                                                                                    lineNumber: 1150,
                                                                                                     columnNumber: 41
                                                                                                 }, this)
                                                                                             ]
                                                                                         }, void 0, true, {
                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                            lineNumber: 1149,
+                                                                                            lineNumber: 1148,
                                                                                             columnNumber: 39
                                                                                         }, this),
                                                                                         displayStatus === "pending" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -4723,13 +4724,13 @@ function OutreachPage() {
                                                                                             children: "Upcoming"
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                            lineNumber: 1157,
+                                                                                            lineNumber: 1156,
                                                                                             columnNumber: 39
                                                                                         }, this)
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                    lineNumber: 1135,
+                                                                                    lineNumber: 1134,
                                                                                     columnNumber: 35
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4737,7 +4738,7 @@ function OutreachPage() {
                                                                                     children: channel.goal
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                    lineNumber: 1165,
+                                                                                    lineNumber: 1164,
                                                                                     columnNumber: 35
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -4765,14 +4766,14 @@ function OutreachPage() {
                                                                                             className: "w-4 h-4"
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                            lineNumber: 1207,
+                                                                                            lineNumber: 1206,
                                                                                             columnNumber: 37
                                                                                         }, this),
                                                                                         "View AI-Generated Copy"
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                    lineNumber: 1170,
+                                                                                    lineNumber: 1169,
                                                                                     columnNumber: 35
                                                                                 }, this),
                                                                                 channel.reasoning && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4783,7 +4784,7 @@ function OutreachPage() {
                                                                                             children: "Why this step exists"
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                            lineNumber: 1213,
+                                                                                            lineNumber: 1212,
                                                                                             columnNumber: 39
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4791,7 +4792,7 @@ function OutreachPage() {
                                                                                             children: channel.reasoning
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                            lineNumber: 1216,
+                                                                                            lineNumber: 1215,
                                                                                             columnNumber: 39
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4805,7 +4806,7 @@ function OutreachPage() {
                                                                                                             children: "Confidence:"
                                                                                                         }, void 0, false, {
                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                            lineNumber: 1221,
+                                                                                                            lineNumber: 1220,
                                                                                                             columnNumber: 43
                                                                                                         }, this),
                                                                                                         " ",
@@ -4813,7 +4814,7 @@ function OutreachPage() {
                                                                                                     ]
                                                                                                 }, void 0, true, {
                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                    lineNumber: 1220,
+                                                                                                    lineNumber: 1219,
                                                                                                     columnNumber: 41
                                                                                                 }, this),
                                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4824,7 +4825,7 @@ function OutreachPage() {
                                                                                                             children: "Triggered by:"
                                                                                                         }, void 0, false, {
                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                            lineNumber: 1227,
+                                                                                                            lineNumber: 1226,
                                                                                                             columnNumber: 43
                                                                                                         }, this),
                                                                                                         " ",
@@ -4834,19 +4835,19 @@ function OutreachPage() {
                                                                                                     ]
                                                                                                 }, void 0, true, {
                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                    lineNumber: 1226,
+                                                                                                    lineNumber: 1225,
                                                                                                     columnNumber: 41
                                                                                                 }, this)
                                                                                             ]
                                                                                         }, void 0, true, {
                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                            lineNumber: 1219,
+                                                                                            lineNumber: 1218,
                                                                                             columnNumber: 39
                                                                                         }, this)
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                    lineNumber: 1212,
+                                                                                    lineNumber: 1211,
                                                                                     columnNumber: 37
                                                                                 }, this),
                                                                                 channel.channel === "Voice" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4859,7 +4860,7 @@ function OutreachPage() {
                                                                                                     className: "w-4 h-4 text-primary"
                                                                                                 }, void 0, false, {
                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                    lineNumber: 1241,
+                                                                                                    lineNumber: 1240,
                                                                                                     columnNumber: 41
                                                                                                 }, this),
                                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4867,13 +4868,13 @@ function OutreachPage() {
                                                                                                     children: "Voice Readiness Check"
                                                                                                 }, void 0, false, {
                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                    lineNumber: 1242,
+                                                                                                    lineNumber: 1241,
                                                                                                     columnNumber: 41
                                                                                                 }, this)
                                                                                             ]
                                                                                         }, void 0, true, {
                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                            lineNumber: 1240,
+                                                                                            lineNumber: 1239,
                                                                                             columnNumber: 39
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4886,20 +4887,20 @@ function OutreachPage() {
                                                                                                             className: "w-4 h-4 text-chart-2"
                                                                                                         }, void 0, false, {
                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                            lineNumber: 1248,
+                                                                                                            lineNumber: 1247,
                                                                                                             columnNumber: 43
                                                                                                         }, this),
                                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                                                             children: "ICP score threshold met (≥80)"
                                                                                                         }, void 0, false, {
                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                            lineNumber: 1249,
+                                                                                                            lineNumber: 1248,
                                                                                                             columnNumber: 43
                                                                                                         }, this)
                                                                                                     ]
                                                                                                 }, void 0, true, {
                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                    lineNumber: 1247,
+                                                                                                    lineNumber: 1246,
                                                                                                     columnNumber: 41
                                                                                                 }, this),
                                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4909,20 +4910,20 @@ function OutreachPage() {
                                                                                                             className: "w-4 h-4 text-chart-2"
                                                                                                         }, void 0, false, {
                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                            lineNumber: 1254,
+                                                                                                            lineNumber: 1253,
                                                                                                             columnNumber: 43
                                                                                                         }, this),
                                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                                                             children: "Engagement signals met (2+ channels)"
                                                                                                         }, void 0, false, {
                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                            lineNumber: 1255,
+                                                                                                            lineNumber: 1254,
                                                                                                             columnNumber: 43
                                                                                                         }, this)
                                                                                                     ]
                                                                                                 }, void 0, true, {
                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                    lineNumber: 1253,
+                                                                                                    lineNumber: 1252,
                                                                                                     columnNumber: 41
                                                                                                 }, this),
                                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4932,20 +4933,20 @@ function OutreachPage() {
                                                                                                             className: "w-4 h-4 text-chart-2"
                                                                                                         }, void 0, false, {
                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                            lineNumber: 1260,
+                                                                                                            lineNumber: 1259,
                                                                                                             columnNumber: 43
                                                                                                         }, this),
                                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                                                             children: "Guardrails passed"
                                                                                                         }, void 0, false, {
                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                            lineNumber: 1261,
+                                                                                                            lineNumber: 1260,
                                                                                                             columnNumber: 43
                                                                                                         }, this)
                                                                                                     ]
                                                                                                 }, void 0, true, {
                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                    lineNumber: 1259,
+                                                                                                    lineNumber: 1258,
                                                                                                     columnNumber: 41
                                                                                                 }, this),
                                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4955,7 +4956,7 @@ function OutreachPage() {
                                                                                                             className: "w-4 h-4 text-muted-foreground"
                                                                                                         }, void 0, false, {
                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                            lineNumber: 1264,
+                                                                                                            lineNumber: 1263,
                                                                                                             columnNumber: 43
                                                                                                         }, this),
                                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4963,19 +4964,19 @@ function OutreachPage() {
                                                                                                             children: "Human approval: Not required"
                                                                                                         }, void 0, false, {
                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                            lineNumber: 1265,
+                                                                                                            lineNumber: 1264,
                                                                                                             columnNumber: 43
                                                                                                         }, this)
                                                                                                     ]
                                                                                                 }, void 0, true, {
                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                    lineNumber: 1263,
+                                                                                                    lineNumber: 1262,
                                                                                                     columnNumber: 41
                                                                                                 }, this)
                                                                                             ]
                                                                                         }, void 0, true, {
                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                            lineNumber: 1246,
+                                                                                            lineNumber: 1245,
                                                                                             columnNumber: 39
                                                                                         }, this),
                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4983,48 +4984,48 @@ function OutreachPage() {
                                                                                             children: "Voice is conditional and used only for high-intent leads. This is not a voice-first approach."
                                                                                         }, void 0, false, {
                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                            lineNumber: 1270,
+                                                                                            lineNumber: 1269,
                                                                                             columnNumber: 39
                                                                                         }, this)
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                    lineNumber: 1239,
+                                                                                    lineNumber: 1238,
                                                                                     columnNumber: 37
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                            lineNumber: 1134,
+                                                                            lineNumber: 1133,
                                                                             columnNumber: 33
                                                                         }, this)
                                                                     ]
                                                                 }, idx, true, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 1113,
+                                                                    lineNumber: 1112,
                                                                     columnNumber: 31
                                                                 }, this);
                                                             })
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 1094,
+                                                            lineNumber: 1093,
                                                             columnNumber: 25
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 1036,
+                                                    lineNumber: 1035,
                                                     columnNumber: 23
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 1035,
+                                                lineNumber: 1034,
                                                 columnNumber: 21
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 987,
+                                        lineNumber: 986,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -5042,14 +5043,14 @@ function OutreachPage() {
                                                                             className: "w-5 h-5"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                            lineNumber: 1293,
+                                                                            lineNumber: 1292,
                                                                             columnNumber: 27
                                                                         }, this),
                                                                         "Conversation & Activity History"
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 1292,
+                                                                    lineNumber: 1291,
                                                                     columnNumber: 25
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardDescription"], {
@@ -5057,13 +5058,13 @@ function OutreachPage() {
                                                                     children: "Full timeline of messages and AI decisions for auditability"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 1296,
+                                                                    lineNumber: 1295,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 1291,
+                                                            lineNumber: 1290,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Tabs"], {
@@ -5077,7 +5078,7 @@ function OutreachPage() {
                                                                         children: "Executive Summary"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 1308,
+                                                                        lineNumber: 1307,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
@@ -5086,29 +5087,29 @@ function OutreachPage() {
                                                                         children: "Full Audit Trail"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 1311,
+                                                                        lineNumber: 1310,
                                                                         columnNumber: 27
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 1307,
+                                                                lineNumber: 1306,
                                                                 columnNumber: 25
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 1301,
+                                                            lineNumber: 1300,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 1290,
+                                                    lineNumber: 1289,
                                                     columnNumber: 21
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 1289,
+                                                lineNumber: 1288,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -5122,7 +5123,7 @@ function OutreachPage() {
                                                                     className: "w-4 h-4 text-chart-2"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 1323,
+                                                                    lineNumber: 1322,
                                                                     columnNumber: 27
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5130,18 +5131,18 @@ function OutreachPage() {
                                                                     children: "Timeline locked for audit. All events are timestamped and cannot be modified."
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 1324,
+                                                                    lineNumber: 1323,
                                                                     columnNumber: 27
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 1322,
+                                                            lineNumber: 1321,
                                                             columnNumber: 25
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 1321,
+                                                        lineNumber: 1320,
                                                         columnNumber: 23
                                                     }, this),
                                                     outreachStatus === "active" && viewMode === "full" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5153,7 +5154,7 @@ function OutreachPage() {
                                                                     className: "w-2 h-2 rounded-full bg-primary animate-pulse"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 1334,
+                                                                    lineNumber: 1333,
                                                                     columnNumber: 27
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5161,18 +5162,18 @@ function OutreachPage() {
                                                                     children: "Outreach in progress. Events logged in real time as they occur."
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 1335,
+                                                                    lineNumber: 1334,
                                                                     columnNumber: 27
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 1333,
+                                                            lineNumber: 1332,
                                                             columnNumber: 25
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 1332,
+                                                        lineNumber: 1331,
                                                         columnNumber: 23
                                                     }, this),
                                                     outreachStatus === "stopped" && viewMode === "full" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5184,7 +5185,7 @@ function OutreachPage() {
                                                                     className: "w-4 h-4 text-destructive"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 1345,
+                                                                    lineNumber: 1344,
                                                                     columnNumber: 27
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5192,18 +5193,18 @@ function OutreachPage() {
                                                                     children: "Outreach stopped automatically. Timeline locked for audit."
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 1346,
+                                                                    lineNumber: 1345,
                                                                     columnNumber: 27
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 1344,
+                                                            lineNumber: 1343,
                                                             columnNumber: 25
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 1343,
+                                                        lineNumber: 1342,
                                                         columnNumber: 23
                                                     }, this),
                                                     viewMode === "executive" ? /* Executive Summary View */ /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5218,34 +5219,34 @@ function OutreachPage() {
                                                                                 className: "w-4 h-4"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1373,
+                                                                                lineNumber: 1372,
                                                                                 columnNumber: 35
                                                                             }, this),
                                                                             event.eventType === "decision" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$target$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Target$3e$__["Target"], {
                                                                                 className: "w-4 h-4"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1376,
+                                                                                lineNumber: 1375,
                                                                                 columnNumber: 35
                                                                             }, this),
                                                                             event.eventType === "outreach" && event.metadata?.channel === "voice" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$phone$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Phone$3e$__["Phone"], {
                                                                                 className: "w-4 h-4"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1380,
+                                                                                lineNumber: 1379,
                                                                                 columnNumber: 37
                                                                             }, this),
                                                                             event.eventType === "engagement" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$message$2d$square$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__MessageSquare$3e$__["MessageSquare"], {
                                                                                 className: "w-4 h-4"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1383,
+                                                                                lineNumber: 1382,
                                                                                 columnNumber: 35
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 1363,
+                                                                        lineNumber: 1362,
                                                                         columnNumber: 31
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5265,7 +5266,7 @@ function OutreachPage() {
                                                                                                     children: event.badge
                                                                                                 }, void 0, false, {
                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                    lineNumber: 1390,
+                                                                                                    lineNumber: 1389,
                                                                                                     columnNumber: 39
                                                                                                 }, this),
                                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -5274,7 +5275,7 @@ function OutreachPage() {
                                                                                                     children: event.actor
                                                                                                 }, void 0, false, {
                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                    lineNumber: 1396,
+                                                                                                    lineNumber: 1395,
                                                                                                     columnNumber: 39
                                                                                                 }, this),
                                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
@@ -5282,18 +5283,18 @@ function OutreachPage() {
                                                                                                     children: event.title
                                                                                                 }, void 0, false, {
                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                    lineNumber: 1402,
+                                                                                                    lineNumber: 1401,
                                                                                                     columnNumber: 39
                                                                                                 }, this)
                                                                                             ]
                                                                                         }, void 0, true, {
                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                            lineNumber: 1389,
+                                                                                            lineNumber: 1388,
                                                                                             columnNumber: 37
                                                                                         }, this)
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 1388,
+                                                                                        lineNumber: 1387,
                                                                                         columnNumber: 35
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -5301,13 +5302,13 @@ function OutreachPage() {
                                                                                         children: event.timestamp
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 1407,
+                                                                                        lineNumber: 1406,
                                                                                         columnNumber: 35
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1387,
+                                                                                lineNumber: 1386,
                                                                                 columnNumber: 33
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5315,19 +5316,19 @@ function OutreachPage() {
                                                                                 children: event.description
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1411,
+                                                                                lineNumber: 1410,
                                                                                 columnNumber: 33
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 1386,
+                                                                        lineNumber: 1385,
                                                                         columnNumber: 31
                                                                     }, this)
                                                                 ]
                                                             }, event.id, true, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 1359,
+                                                                lineNumber: 1358,
                                                                 columnNumber: 29
                                                             }, this)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                             className: "text-center py-8",
@@ -5336,17 +5337,17 @@ function OutreachPage() {
                                                                 children: "No key events to display yet."
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 1419,
+                                                                lineNumber: 1418,
                                                                 columnNumber: 29
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 1418,
+                                                            lineNumber: 1417,
                                                             columnNumber: 27
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 1356,
+                                                        lineNumber: 1355,
                                                         columnNumber: 23
                                                     }, this) : /* Full Audit Trail View */ /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         className: "space-y-4",
@@ -5358,12 +5359,12 @@ function OutreachPage() {
                                                                     children: "Events shown in chronological order (oldest → newest)"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 1430,
+                                                                    lineNumber: 1429,
                                                                     columnNumber: 27
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 1429,
+                                                                lineNumber: 1428,
                                                                 columnNumber: 25
                                                             }, this),
                                                             fullAuditTrail.length > 0 ? fullAuditTrail.map((event)=>{
@@ -5395,7 +5396,7 @@ function OutreachPage() {
                                                                                 className: "w-5 h-5"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1463,
+                                                                                lineNumber: 1462,
                                                                                 columnNumber: 42
                                                                             }, this);
                                                                         case "research":
@@ -5403,7 +5404,7 @@ function OutreachPage() {
                                                                                 className: "w-5 h-5"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1465,
+                                                                                lineNumber: 1464,
                                                                                 columnNumber: 42
                                                                             }, this);
                                                                         case "outreach":
@@ -5411,7 +5412,7 @@ function OutreachPage() {
                                                                                 className: "w-5 h-5"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1467,
+                                                                                lineNumber: 1466,
                                                                                 columnNumber: 42
                                                                             }, this);
                                                                         case "engagement":
@@ -5419,7 +5420,7 @@ function OutreachPage() {
                                                                                 className: "w-5 h-5"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1469,
+                                                                                lineNumber: 1468,
                                                                                 columnNumber: 42
                                                                             }, this);
                                                                         case "decision":
@@ -5427,7 +5428,7 @@ function OutreachPage() {
                                                                                 className: "w-5 h-5"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1471,
+                                                                                lineNumber: 1470,
                                                                                 columnNumber: 42
                                                                             }, this);
                                                                         case "guardrail":
@@ -5435,7 +5436,7 @@ function OutreachPage() {
                                                                                 className: "w-5 h-5"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1473,
+                                                                                lineNumber: 1472,
                                                                                 columnNumber: 42
                                                                             }, this);
                                                                         case "outcome":
@@ -5443,7 +5444,7 @@ function OutreachPage() {
                                                                                 className: "w-5 h-5"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1475,
+                                                                                lineNumber: 1474,
                                                                                 columnNumber: 42
                                                                             }, this);
                                                                         default:
@@ -5451,7 +5452,7 @@ function OutreachPage() {
                                                                                 className: "w-5 h-5"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1477,
+                                                                                lineNumber: 1476,
                                                                                 columnNumber: 42
                                                                             }, this);
                                                                     }
@@ -5463,7 +5464,7 @@ function OutreachPage() {
                                                                             className: "absolute left-6 top-14 bottom-0 w-px bg-border"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                            lineNumber: 1484,
+                                                                            lineNumber: 1483,
                                                                             columnNumber: 33
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5474,7 +5475,7 @@ function OutreachPage() {
                                                                                     children: getEventIcon(event.eventType)
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                    lineNumber: 1488,
+                                                                                    lineNumber: 1487,
                                                                                     columnNumber: 35
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5497,7 +5498,7 @@ function OutreachPage() {
                                                                                                                         children: event.badge
                                                                                                                     }, void 0, false, {
                                                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                        lineNumber: 1503,
+                                                                                                                        lineNumber: 1502,
                                                                                                                         columnNumber: 45
                                                                                                                     }, this),
                                                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -5506,13 +5507,13 @@ function OutreachPage() {
                                                                                                                         children: event.actor
                                                                                                                     }, void 0, false, {
                                                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                        lineNumber: 1509,
+                                                                                                                        lineNumber: 1508,
                                                                                                                         columnNumber: 45
                                                                                                                     }, this)
                                                                                                                 ]
                                                                                                             }, void 0, true, {
                                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                lineNumber: 1502,
+                                                                                                                lineNumber: 1501,
                                                                                                                 columnNumber: 43
                                                                                                             }, this),
                                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
@@ -5520,13 +5521,13 @@ function OutreachPage() {
                                                                                                                 children: event.title
                                                                                                             }, void 0, false, {
                                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                lineNumber: 1522,
+                                                                                                                lineNumber: 1521,
                                                                                                                 columnNumber: 43
                                                                                                             }, this)
                                                                                                         ]
                                                                                                     }, void 0, true, {
                                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                        lineNumber: 1501,
+                                                                                                        lineNumber: 1500,
                                                                                                         columnNumber: 41
                                                                                                     }, this),
                                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -5534,13 +5535,13 @@ function OutreachPage() {
                                                                                                         children: event.timestamp
                                                                                                     }, void 0, false, {
                                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                        lineNumber: 1526,
+                                                                                                        lineNumber: 1525,
                                                                                                         columnNumber: 41
                                                                                                     }, this)
                                                                                                 ]
                                                                                             }, void 0, true, {
                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                lineNumber: 1500,
+                                                                                                lineNumber: 1499,
                                                                                                 columnNumber: 39
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5548,7 +5549,7 @@ function OutreachPage() {
                                                                                                 children: event.description
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                lineNumber: 1532,
+                                                                                                lineNumber: 1531,
                                                                                                 columnNumber: 39
                                                                                             }, this),
                                                                                             event.metadata && Object.keys(event.metadata).length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5559,7 +5560,7 @@ function OutreachPage() {
                                                                                                         children: "Event Details"
                                                                                                     }, void 0, false, {
                                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                        lineNumber: 1541,
+                                                                                                        lineNumber: 1540,
                                                                                                         columnNumber: 45
                                                                                                     }, this),
                                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5574,7 +5575,7 @@ function OutreachPage() {
                                                                                                                         ]
                                                                                                                     }, void 0, true, {
                                                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                        lineNumber: 1549,
+                                                                                                                        lineNumber: 1548,
                                                                                                                         columnNumber: 51
                                                                                                                     }, this),
                                                                                                                     " ",
@@ -5583,24 +5584,24 @@ function OutreachPage() {
                                                                                                                         children: Array.isArray(value) ? value.join(", ") : typeof value === "boolean" ? value ? "Yes" : "No" : String(value)
                                                                                                                     }, void 0, false, {
                                                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                        lineNumber: 1558,
+                                                                                                                        lineNumber: 1557,
                                                                                                                         columnNumber: 51
                                                                                                                     }, this)
                                                                                                                 ]
                                                                                                             }, key, true, {
                                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                lineNumber: 1548,
+                                                                                                                lineNumber: 1547,
                                                                                                                 columnNumber: 49
                                                                                                             }, this))
                                                                                                     }, void 0, false, {
                                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                        lineNumber: 1544,
+                                                                                                        lineNumber: 1543,
                                                                                                         columnNumber: 45
                                                                                                     }, this)
                                                                                                 ]
                                                                                             }, void 0, true, {
                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                lineNumber: 1540,
+                                                                                                lineNumber: 1539,
                                                                                                 columnNumber: 43
                                                                                             }, this),
                                                                                             (event.eventType === "outreach" || event.eventType === "engagement") && event.metadata?.channel && (()=>{
@@ -5619,7 +5620,7 @@ function OutreachPage() {
                                                                                                                 className: "w-3 h-3 mr-2"
                                                                                                             }, void 0, false, {
                                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                lineNumber: 1595,
+                                                                                                                lineNumber: 1594,
                                                                                                                 columnNumber: 47
                                                                                                             }, this),
                                                                                                             expandedMessageContent.has(event.id) ? "Hide" : "View",
@@ -5629,19 +5630,19 @@ function OutreachPage() {
                                                                                                                 className: "w-3 h-3 ml-auto"
                                                                                                             }, void 0, false, {
                                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                lineNumber: 1605,
+                                                                                                                lineNumber: 1604,
                                                                                                                 columnNumber: 49
                                                                                                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$down$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronDown$3e$__["ChevronDown"], {
                                                                                                                 className: "w-3 h-3 ml-auto"
                                                                                                             }, void 0, false, {
                                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                lineNumber: 1607,
+                                                                                                                lineNumber: 1606,
                                                                                                                 columnNumber: 49
                                                                                                             }, this)
                                                                                                         ]
                                                                                                     }, void 0, true, {
                                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                        lineNumber: 1587,
+                                                                                                        lineNumber: 1586,
                                                                                                         columnNumber: 45
                                                                                                     }, this),
                                                                                                     expandedMessageContent.has(event.id) && (()=>{
@@ -5659,7 +5660,7 @@ function OutreachPage() {
                                                                                                                             children: message.channel === "email" ? "Email Content" : message.channel === "linkedin" ? "LinkedIn Message" : message.channel === "voice" ? "Voice Call" : "Message Content"
                                                                                                                         }, void 0, false, {
                                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                            lineNumber: 1624,
+                                                                                                                            lineNumber: 1623,
                                                                                                                             columnNumber: 55
                                                                                                                         }, this),
                                                                                                                         message.aiGenerated && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -5668,13 +5669,13 @@ function OutreachPage() {
                                                                                                                             children: "AI-generated"
                                                                                                                         }, void 0, false, {
                                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                            lineNumber: 1640,
+                                                                                                                            lineNumber: 1639,
                                                                                                                             columnNumber: 57
                                                                                                                         }, this)
                                                                                                                     ]
                                                                                                                 }, void 0, true, {
                                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                    lineNumber: 1623,
+                                                                                                                    lineNumber: 1622,
                                                                                                                     columnNumber: 53
                                                                                                                 }, this),
                                                                                                                 message.subject && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5684,7 +5685,7 @@ function OutreachPage() {
                                                                                                                             children: "Subject"
                                                                                                                         }, void 0, false, {
                                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                            lineNumber: 1651,
+                                                                                                                            lineNumber: 1650,
                                                                                                                             columnNumber: 57
                                                                                                                         }, this),
                                                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5692,13 +5693,13 @@ function OutreachPage() {
                                                                                                                             children: message.subject
                                                                                                                         }, void 0, false, {
                                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                            lineNumber: 1654,
+                                                                                                                            lineNumber: 1653,
                                                                                                                             columnNumber: 57
                                                                                                                         }, this)
                                                                                                                     ]
                                                                                                                 }, void 0, true, {
                                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                    lineNumber: 1650,
+                                                                                                                    lineNumber: 1649,
                                                                                                                     columnNumber: 55
                                                                                                                 }, this),
                                                                                                                 message.body && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5708,7 +5709,7 @@ function OutreachPage() {
                                                                                                                             children: message.channel === "email" ? "Email Body" : message.channel === "linkedin" ? "LinkedIn Message" : "Message Content"
                                                                                                                         }, void 0, false, {
                                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                            lineNumber: 1662,
+                                                                                                                            lineNumber: 1661,
                                                                                                                             columnNumber: 57
                                                                                                                         }, this),
                                                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5718,18 +5719,18 @@ function OutreachPage() {
                                                                                                                                 children: message.body
                                                                                                                             }, void 0, false, {
                                                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                                lineNumber: 1672,
+                                                                                                                                lineNumber: 1671,
                                                                                                                                 columnNumber: 59
                                                                                                                             }, this)
                                                                                                                         }, void 0, false, {
                                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                            lineNumber: 1671,
+                                                                                                                            lineNumber: 1670,
                                                                                                                             columnNumber: 57
                                                                                                                         }, this)
                                                                                                                     ]
                                                                                                                 }, void 0, true, {
                                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                    lineNumber: 1661,
+                                                                                                                    lineNumber: 1660,
                                                                                                                     columnNumber: 55
                                                                                                                 }, this),
                                                                                                                 message.scriptUsed && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5739,7 +5740,7 @@ function OutreachPage() {
                                                                                                                             children: "Voice Call Script (AI-Generated)"
                                                                                                                         }, void 0, false, {
                                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                            lineNumber: 1681,
+                                                                                                                            lineNumber: 1680,
                                                                                                                             columnNumber: 57
                                                                                                                         }, this),
                                                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5749,18 +5750,18 @@ function OutreachPage() {
                                                                                                                                 children: message.scriptUsed
                                                                                                                             }, void 0, false, {
                                                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                                lineNumber: 1686,
+                                                                                                                                lineNumber: 1685,
                                                                                                                                 columnNumber: 59
                                                                                                                             }, this)
                                                                                                                         }, void 0, false, {
                                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                            lineNumber: 1685,
+                                                                                                                            lineNumber: 1684,
                                                                                                                             columnNumber: 57
                                                                                                                         }, this)
                                                                                                                     ]
                                                                                                                 }, void 0, true, {
                                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                    lineNumber: 1680,
+                                                                                                                    lineNumber: 1679,
                                                                                                                     columnNumber: 55
                                                                                                                 }, this),
                                                                                                                 message.personalizationTokens && message.personalizationTokens.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5770,7 +5771,7 @@ function OutreachPage() {
                                                                                                                             children: "Personalization Tokens"
                                                                                                                         }, void 0, false, {
                                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                            lineNumber: 1698,
+                                                                                                                            lineNumber: 1697,
                                                                                                                             columnNumber: 59
                                                                                                                         }, this),
                                                                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5781,18 +5782,18 @@ function OutreachPage() {
                                                                                                                                     children: token
                                                                                                                                 }, tidx, false, {
                                                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                                    lineNumber: 1708,
+                                                                                                                                    lineNumber: 1707,
                                                                                                                                     columnNumber: 65
                                                                                                                                 }, this))
                                                                                                                         }, void 0, false, {
                                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                            lineNumber: 1702,
+                                                                                                                            lineNumber: 1701,
                                                                                                                             columnNumber: 59
                                                                                                                         }, this)
                                                                                                                     ]
                                                                                                                 }, void 0, true, {
                                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                    lineNumber: 1697,
+                                                                                                                    lineNumber: 1696,
                                                                                                                     columnNumber: 57
                                                                                                                 }, this),
                                                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5800,43 +5801,43 @@ function OutreachPage() {
                                                                                                                     children: "This shows the exact content sent to the lead for full transparency and auditability."
                                                                                                                 }, void 0, false, {
                                                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                                    lineNumber: 1721,
+                                                                                                                    lineNumber: 1720,
                                                                                                                     columnNumber: 53
                                                                                                                 }, this)
                                                                                                             ]
                                                                                                         }, void 0, true, {
                                                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                            lineNumber: 1622,
+                                                                                                            lineNumber: 1621,
                                                                                                             columnNumber: 51
                                                                                                         }, this);
                                                                                                     })()
                                                                                                 ]
                                                                                             }, void 0, true, {
                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                lineNumber: 1586,
+                                                                                                lineNumber: 1585,
                                                                                                 columnNumber: 43
                                                                                             }, this)
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 1498,
+                                                                                        lineNumber: 1497,
                                                                                         columnNumber: 37
                                                                                     }, this)
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                    lineNumber: 1497,
+                                                                                    lineNumber: 1496,
                                                                                     columnNumber: 35
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                            lineNumber: 1486,
+                                                                            lineNumber: 1485,
                                                                             columnNumber: 33
                                                                         }, this)
                                                                     ]
                                                                 }, event.id, true, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 1482,
+                                                                    lineNumber: 1481,
                                                                     columnNumber: 31
                                                                 }, this);
                                                             }) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5850,12 +5851,12 @@ function OutreachPage() {
                                                                                 className: "w-8 h-8 text-muted-foreground"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1742,
+                                                                                lineNumber: 1741,
                                                                                 columnNumber: 33
                                                                             }, this)
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                            lineNumber: 1741,
+                                                                            lineNumber: 1740,
                                                                             columnNumber: 31
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5865,7 +5866,7 @@ function OutreachPage() {
                                                                                     children: "No audit trail available"
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                    lineNumber: 1745,
+                                                                                    lineNumber: 1744,
                                                                                     columnNumber: 33
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -5873,24 +5874,24 @@ function OutreachPage() {
                                                                                     children: "This lead is still in research phase. Full audit trail will be available once outreach begins."
                                                                                 }, void 0, false, {
                                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                    lineNumber: 1748,
+                                                                                    lineNumber: 1747,
                                                                                     columnNumber: 33
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                                            lineNumber: 1744,
+                                                                            lineNumber: 1743,
                                                                             columnNumber: 31
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 1740,
+                                                                    lineNumber: 1739,
                                                                     columnNumber: 29
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 1739,
+                                                                lineNumber: 1738,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5900,30 +5901,30 @@ function OutreachPage() {
                                                                     children: "This is an immutable audit log. All events are timestamped and cannot be modified."
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 1760,
+                                                                    lineNumber: 1759,
                                                                     columnNumber: 27
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 1759,
+                                                                lineNumber: 1758,
                                                                 columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 1427,
+                                                        lineNumber: 1426,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 1318,
+                                                lineNumber: 1317,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 1288,
+                                        lineNumber: 1287,
                                         columnNumber: 17
                                     }, this),
                                     outreachStatus === "active" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -5937,20 +5938,20 @@ function OutreachPage() {
                                                                 children: "Human Controls"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 1776,
+                                                                lineNumber: 1775,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardDescription"], {
                                                                 children: "Override AI decisions or adjust outreach strategy"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 1777,
+                                                                lineNumber: 1776,
                                                                 columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 1775,
+                                                        lineNumber: 1774,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -5970,14 +5971,14 @@ function OutreachPage() {
                                                                                 className: "w-4 h-4"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1790,
+                                                                                lineNumber: 1789,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             "Pause Outreach"
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 1783,
+                                                                        lineNumber: 1782,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -5991,14 +5992,14 @@ function OutreachPage() {
                                                                                 className: "w-4 h-4"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1800,
+                                                                                lineNumber: 1799,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             "Force Voice Escalation"
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 1793,
+                                                                        lineNumber: 1792,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -6012,14 +6013,14 @@ function OutreachPage() {
                                                                                 className: "w-4 h-4"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1810,
+                                                                                lineNumber: 1809,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             "Stop Outreach"
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 1803,
+                                                                        lineNumber: 1802,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -6032,20 +6033,20 @@ function OutreachPage() {
                                                                                 className: "w-4 h-4"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1819,
+                                                                                lineNumber: 1818,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             "Send to AE for Review"
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 1813,
+                                                                        lineNumber: 1812,
                                                                         columnNumber: 27
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 1782,
+                                                                lineNumber: 1781,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -6053,7 +6054,7 @@ function OutreachPage() {
                                                                 children: "All control actions are logged for audit purposes and require confirmation."
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 1824,
+                                                                lineNumber: 1823,
                                                                 columnNumber: 25
                                                             }, this),
                                                             statusNote && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -6063,24 +6064,24 @@ function OutreachPage() {
                                                                     children: statusNote
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 1830,
+                                                                    lineNumber: 1829,
                                                                     columnNumber: 29
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 1829,
+                                                                lineNumber: 1828,
                                                                 columnNumber: 27
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 1781,
+                                                        lineNumber: 1780,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 1774,
+                                                lineNumber: 1773,
                                                 columnNumber: 21
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -6098,27 +6099,27 @@ function OutreachPage() {
                                                                                 className: "w-5 h-5 text-chart-4"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1843,
+                                                                                lineNumber: 1842,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             "Outreach Guardrails"
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 1842,
+                                                                        lineNumber: 1841,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardDescription"], {
                                                                         children: "Automated safety controls to maintain quality and compliance"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 1846,
+                                                                        lineNumber: 1845,
                                                                         columnNumber: 27
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 1841,
+                                                                lineNumber: 1840,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -6144,20 +6145,20 @@ function OutreachPage() {
                                                                         className: "h-3 w-3"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 1878,
+                                                                        lineNumber: 1877,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     "Edit"
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 1851,
+                                                                lineNumber: 1850,
                                                                 columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 1840,
+                                                        lineNumber: 1839,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -6170,7 +6171,7 @@ function OutreachPage() {
                                                                         children: "Frequency Limits"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 1885,
+                                                                        lineNumber: 1884,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -6184,7 +6185,7 @@ function OutreachPage() {
                                                                                         children: "Maximum Touches"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 1890,
+                                                                                        lineNumber: 1889,
                                                                                         columnNumber: 31
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -6196,7 +6197,7 @@ function OutreachPage() {
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 1893,
+                                                                                        lineNumber: 1892,
                                                                                         columnNumber: 31
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -6204,13 +6205,13 @@ function OutreachPage() {
                                                                                         children: "After this, outreach stops automatically"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 1898,
+                                                                                        lineNumber: 1897,
                                                                                         columnNumber: 31
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1889,
+                                                                                lineNumber: 1888,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -6221,7 +6222,7 @@ function OutreachPage() {
                                                                                         children: "Voice Escalation"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 1903,
+                                                                                        lineNumber: 1902,
                                                                                         columnNumber: 31
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -6229,7 +6230,7 @@ function OutreachPage() {
                                                                                         children: outreachData?.guardrails?.voice_escalation_allowed ?? strategy.guardrails.voiceEscalationAllowed ? "Allowed" : "Not Allowed"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 1906,
+                                                                                        lineNumber: 1905,
                                                                                         columnNumber: 31
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -6237,25 +6238,25 @@ function OutreachPage() {
                                                                                         children: outreachData?.guardrails?.voice_escalation_trigger || strategy.guardrails.voiceEscalationTrigger || "Configured in Agent Instructions"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 1913,
+                                                                                        lineNumber: 1912,
                                                                                         columnNumber: 31
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1902,
+                                                                                lineNumber: 1901,
                                                                                 columnNumber: 29
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 1888,
+                                                                        lineNumber: 1887,
                                                                         columnNumber: 27
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 1884,
+                                                                lineNumber: 1883,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -6265,7 +6266,7 @@ function OutreachPage() {
                                                                         children: "AI Auto-Stop Conditions"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 1925,
+                                                                        lineNumber: 1924,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -6277,7 +6278,7 @@ function OutreachPage() {
                                                                                         className: "w-4 h-4 text-destructive mt-0.5 shrink-0"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 1938,
+                                                                                        lineNumber: 1937,
                                                                                         columnNumber: 33
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -6287,7 +6288,7 @@ function OutreachPage() {
                                                                                                 children: condition
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                lineNumber: 1940,
+                                                                                                lineNumber: 1939,
                                                                                                 columnNumber: 35
                                                                                             }, this),
                                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -6295,30 +6296,30 @@ function OutreachPage() {
                                                                                                 children: "Jazon will immediately stop outreach when this occurs"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                                lineNumber: 1943,
+                                                                                                lineNumber: 1942,
                                                                                                 columnNumber: 35
                                                                                             }, this)
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 1939,
+                                                                                        lineNumber: 1938,
                                                                                         columnNumber: 33
                                                                                     }, this)
                                                                                 ]
                                                                             }, idx, true, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1934,
+                                                                                lineNumber: 1933,
                                                                                 columnNumber: 31
                                                                             }, this))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 1928,
+                                                                        lineNumber: 1927,
                                                                         columnNumber: 27
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 1924,
+                                                                lineNumber: 1923,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -6328,7 +6329,7 @@ function OutreachPage() {
                                                                         children: "Compliance Rules"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 1955,
+                                                                        lineNumber: 1954,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -6344,43 +6345,43 @@ function OutreachPage() {
                                                                                         className: "w-4 h-4 text-chart-2 mt-0.5 shrink-0"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 1970,
+                                                                                        lineNumber: 1969,
                                                                                         columnNumber: 33
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                                         children: rule
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 1971,
+                                                                                        lineNumber: 1970,
                                                                                         columnNumber: 33
                                                                                     }, this)
                                                                                 ]
                                                                             }, idx, true, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1966,
+                                                                                lineNumber: 1965,
                                                                                 columnNumber: 31
                                                                             }, this))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 1958,
+                                                                        lineNumber: 1957,
                                                                         columnNumber: 27
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 1954,
+                                                                lineNumber: 1953,
                                                                 columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 1882,
+                                                        lineNumber: 1881,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 1839,
+                                                lineNumber: 1838,
                                                 columnNumber: 21
                                             }, this)
                                         ]
@@ -6397,12 +6398,12 @@ function OutreachPage() {
                                                             children: "Channel Mix"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 1987,
+                                                            lineNumber: 1986,
                                                             columnNumber: 25
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 1986,
+                                                        lineNumber: 1985,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -6418,7 +6419,7 @@ function OutreachPage() {
                                                                                 children: "Email"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1992,
+                                                                                lineNumber: 1991,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -6426,13 +6427,13 @@ function OutreachPage() {
                                                                                 children: "40%"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1993,
+                                                                                lineNumber: 1992,
                                                                                 columnNumber: 29
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 1991,
+                                                                        lineNumber: 1990,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -6443,7 +6444,7 @@ function OutreachPage() {
                                                                                 children: "LinkedIn"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1996,
+                                                                                lineNumber: 1995,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -6451,13 +6452,13 @@ function OutreachPage() {
                                                                                 children: "35%"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 1999,
+                                                                                lineNumber: 1998,
                                                                                 columnNumber: 29
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 1995,
+                                                                        lineNumber: 1994,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -6468,7 +6469,7 @@ function OutreachPage() {
                                                                                 children: "Voice"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 2002,
+                                                                                lineNumber: 2001,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -6476,19 +6477,19 @@ function OutreachPage() {
                                                                                 children: "25%"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 2003,
+                                                                                lineNumber: 2002,
                                                                                 columnNumber: 29
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 2001,
+                                                                        lineNumber: 2000,
                                                                         columnNumber: 27
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 1990,
+                                                                lineNumber: 1989,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -6496,19 +6497,19 @@ function OutreachPage() {
                                                                 children: "Optimized based on ICP segment patterns"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 2006,
+                                                                lineNumber: 2005,
                                                                 columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 1989,
+                                                        lineNumber: 1988,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 1985,
+                                                lineNumber: 1984,
                                                 columnNumber: 21
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -6520,12 +6521,12 @@ function OutreachPage() {
                                                             children: "Response Rate"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 2014,
+                                                            lineNumber: 2013,
                                                             columnNumber: 25
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2013,
+                                                        lineNumber: 2012,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -6538,20 +6539,20 @@ function OutreachPage() {
                                                                         children: "32%"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 2018,
+                                                                        lineNumber: 2017,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$up$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingUp$3e$__["TrendingUp"], {
                                                                         className: "w-4 h-4 text-chart-2"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 2021,
+                                                                        lineNumber: 2020,
                                                                         columnNumber: 27
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 2017,
+                                                                lineNumber: 2016,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -6559,7 +6560,7 @@ function OutreachPage() {
                                                                 children: "Above average for this ICP segment"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 2023,
+                                                                lineNumber: 2022,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -6567,19 +6568,19 @@ function OutreachPage() {
                                                                 children: "Team benchmark: 24% • Segment avg: 28%"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 2026,
+                                                                lineNumber: 2025,
                                                                 columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2016,
+                                                        lineNumber: 2015,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2012,
+                                                lineNumber: 2011,
                                                 columnNumber: 21
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -6591,12 +6592,12 @@ function OutreachPage() {
                                                             children: "Avg. Time to Response"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 2034,
+                                                            lineNumber: 2033,
                                                             columnNumber: 25
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2033,
+                                                        lineNumber: 2032,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -6606,7 +6607,7 @@ function OutreachPage() {
                                                                 children: "18h"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 2039,
+                                                                lineNumber: 2038,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -6614,7 +6615,7 @@ function OutreachPage() {
                                                                 children: "Median response time"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 2040,
+                                                                lineNumber: 2039,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -6622,25 +6623,25 @@ function OutreachPage() {
                                                                 children: "Faster than enterprise avg: 36h"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 2043,
+                                                                lineNumber: 2042,
                                                                 columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2038,
+                                                        lineNumber: 2037,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2032,
+                                                lineNumber: 2031,
                                                 columnNumber: 21
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 1984,
+                                        lineNumber: 1983,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -6650,12 +6651,12 @@ function OutreachPage() {
                                             children: "All actions shown are part of a demo environment and do not affect real systems."
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                            lineNumber: 2053,
+                                            lineNumber: 2052,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 2052,
+                                        lineNumber: 2051,
                                         columnNumber: 17
                                     }, this)
                                 ]
@@ -6663,17 +6664,17 @@ function OutreachPage() {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/outreach/page.tsx",
-                        lineNumber: 691,
+                        lineNumber: 690,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/app/outreach/page.tsx",
-                    lineNumber: 690,
+                    lineNumber: 689,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/outreach/page.tsx",
-                lineNumber: 689,
+                lineNumber: 688,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Dialog"], {
@@ -6691,20 +6692,20 @@ function OutreachPage() {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                    lineNumber: 2071,
+                                    lineNumber: 2070,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogDescription"], {
                                     children: "This action will be logged for audit purposes and require confirmation."
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                    lineNumber: 2076,
+                                    lineNumber: 2075,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/outreach/page.tsx",
-                            lineNumber: 2070,
+                            lineNumber: 2069,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -6715,7 +6716,7 @@ function OutreachPage() {
                                     children: "Reason for override (optional):"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                    lineNumber: 2082,
+                                    lineNumber: 2081,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -6725,13 +6726,13 @@ function OutreachPage() {
                                     rows: 3
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                    lineNumber: 2085,
+                                    lineNumber: 2084,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/outreach/page.tsx",
-                            lineNumber: 2081,
+                            lineNumber: 2080,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogFooter"], {
@@ -6742,7 +6743,7 @@ function OutreachPage() {
                                     children: "Cancel"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                    lineNumber: 2093,
+                                    lineNumber: 2092,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -6763,24 +6764,24 @@ function OutreachPage() {
                                     children: "Confirm"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                    lineNumber: 2099,
+                                    lineNumber: 2098,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/outreach/page.tsx",
-                            lineNumber: 2092,
+                            lineNumber: 2091,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/outreach/page.tsx",
-                    lineNumber: 2069,
+                    lineNumber: 2068,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/outreach/page.tsx",
-                lineNumber: 2065,
+                lineNumber: 2064,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$sheet$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Sheet"], {
@@ -6801,26 +6802,26 @@ function OutreachPage() {
                                                 className: "w-5 h-5 text-blue-600"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2134,
+                                                lineNumber: 2133,
                                                 columnNumber: 19
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                            lineNumber: 2133,
+                                            lineNumber: 2132,
                                             columnNumber: 17
                                         }, this),
                                         selectedStepCopy?.channel === "LinkedIn" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "p-2 rounded-lg bg-indigo-500/10",
-                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Linkedin, {
+                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$linkedin$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Linkedin$3e$__["Linkedin"], {
                                                 className: "w-5 h-5 text-indigo-600"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2139,
+                                                lineNumber: 2138,
                                                 columnNumber: 19
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                            lineNumber: 2138,
+                                            lineNumber: 2137,
                                             columnNumber: 17
                                         }, this),
                                         selectedStepCopy?.channel === "Voice" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -6829,12 +6830,12 @@ function OutreachPage() {
                                                 className: "w-5 h-5 text-purple-600"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2144,
+                                                lineNumber: 2143,
                                                 columnNumber: 19
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                            lineNumber: 2143,
+                                            lineNumber: 2142,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -6852,7 +6853,7 @@ function OutreachPage() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2149,
+                                                        lineNumber: 2148,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -6861,24 +6862,24 @@ function OutreachPage() {
                                                         children: editingCopy ? "Editing" : "AI-Generated"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2153,
+                                                        lineNumber: 2152,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2148,
+                                                lineNumber: 2147,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                            lineNumber: 2147,
+                                            lineNumber: 2146,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                    lineNumber: 2131,
+                                    lineNumber: 2130,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$sheet$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SheetDescription"], {
@@ -6886,13 +6887,13 @@ function OutreachPage() {
                                     children: editingCopy ? "Edit the AI-generated copy below. Your changes will override the AI suggestions." : "View the AI-generated copy for this outreach step. Click 'Edit Copy' to make changes."
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                    lineNumber: 2159,
+                                    lineNumber: 2158,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/outreach/page.tsx",
-                            lineNumber: 2130,
+                            lineNumber: 2129,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -6906,27 +6907,27 @@ function OutreachPage() {
                                                 className: "w-4 h-4"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2171,
+                                                lineNumber: 2170,
                                                 columnNumber: 21
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertTitle"], {
                                                 children: "No Draft Available"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2172,
+                                                lineNumber: 2171,
                                                 columnNumber: 21
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDescription"], {
                                                 children: "No AI draft found for this step yet. Regenerate outreach to generate drafts, or edit and save your own copy."
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2173,
+                                                lineNumber: 2172,
                                                 columnNumber: 21
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 2170,
+                                        lineNumber: 2169,
                                         columnNumber: 19
                                     }, this),
                                     selectedStepCopy.channel === "Email" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -6942,7 +6943,7 @@ function OutreachPage() {
                                                                 children: "Subject Line Options"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 2185,
+                                                                lineNumber: 2184,
                                                                 columnNumber: 25
                                                             }, this),
                                                             !editingCopy && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -6955,13 +6956,13 @@ function OutreachPage() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 2189,
+                                                                lineNumber: 2188,
                                                                 columnNumber: 27
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2184,
+                                                        lineNumber: 2183,
                                                         columnNumber: 23
                                                     }, this),
                                                     editingCopy ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -6975,7 +6976,7 @@ function OutreachPage() {
                                                         className: "text-sm resize-none"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2196,
+                                                        lineNumber: 2195,
                                                         columnNumber: 25
                                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         className: "space-y-2",
@@ -6988,28 +6989,28 @@ function OutreachPage() {
                                                                         children: subject
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 2221,
+                                                                        lineNumber: 2220,
                                                                         columnNumber: 35
                                                                     }, this)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 2220,
+                                                                    lineNumber: 2219,
                                                                     columnNumber: 33
                                                                 }, this)
                                                             }, idx, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 2216,
+                                                                lineNumber: 2215,
                                                                 columnNumber: 31
                                                             }, this))
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2213,
+                                                        lineNumber: 2212,
                                                         columnNumber: 25
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2183,
+                                                lineNumber: 2182,
                                                 columnNumber: 21
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7020,7 +7021,7 @@ function OutreachPage() {
                                                         children: "Email Body"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2233,
+                                                        lineNumber: 2232,
                                                         columnNumber: 23
                                                     }, this),
                                                     editingCopy ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -7034,7 +7035,7 @@ function OutreachPage() {
                                                         className: "text-sm resize-none"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2237,
+                                                        lineNumber: 2236,
                                                         columnNumber: 25
                                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
                                                         className: "bg-muted/30 border-border/50",
@@ -7045,23 +7046,23 @@ function OutreachPage() {
                                                                 children: selectedStepCopy.body
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 2252,
+                                                                lineNumber: 2251,
                                                                 columnNumber: 29
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 2251,
+                                                            lineNumber: 2250,
                                                             columnNumber: 27
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2250,
+                                                        lineNumber: 2249,
                                                         columnNumber: 25
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2232,
+                                                lineNumber: 2231,
                                                 columnNumber: 21
                                             }, this)
                                         ]
@@ -7074,7 +7075,7 @@ function OutreachPage() {
                                                 children: "LinkedIn Connection Message"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2265,
+                                                lineNumber: 2264,
                                                 columnNumber: 21
                                             }, this),
                                             editingCopy ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -7088,7 +7089,7 @@ function OutreachPage() {
                                                 className: "text-sm resize-none"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2269,
+                                                lineNumber: 2268,
                                                 columnNumber: 23
                                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
                                                 className: "bg-muted/30 border-border/50",
@@ -7099,23 +7100,23 @@ function OutreachPage() {
                                                         children: selectedStepCopy.body
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2284,
+                                                        lineNumber: 2283,
                                                         columnNumber: 27
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 2283,
+                                                    lineNumber: 2282,
                                                     columnNumber: 25
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2282,
+                                                lineNumber: 2281,
                                                 columnNumber: 23
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 2264,
+                                        lineNumber: 2263,
                                         columnNumber: 19
                                     }, this),
                                     selectedStepCopy.channel === "Voice" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7129,7 +7130,7 @@ function OutreachPage() {
                                                         children: "Voice Call Script & Talking Points"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2297,
+                                                        lineNumber: 2296,
                                                         columnNumber: 23
                                                     }, this),
                                                     !editingCopy && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -7141,13 +7142,13 @@ function OutreachPage() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2301,
+                                                        lineNumber: 2300,
                                                         columnNumber: 25
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2296,
+                                                lineNumber: 2295,
                                                 columnNumber: 21
                                             }, this),
                                             editingCopy ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7158,7 +7159,7 @@ function OutreachPage() {
                                                         children: "Enter each talking point separated by a blank line"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2308,
+                                                        lineNumber: 2307,
                                                         columnNumber: 25
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -7172,13 +7173,13 @@ function OutreachPage() {
                                                         className: "text-sm resize-none"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2311,
+                                                        lineNumber: 2310,
                                                         columnNumber: 25
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2307,
+                                                lineNumber: 2306,
                                                 columnNumber: 23
                                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
                                                 className: "bg-muted/30 border-border/50",
@@ -7192,7 +7193,7 @@ function OutreachPage() {
                                                                     children: idx + 1
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 2334,
+                                                                    lineNumber: 2333,
                                                                     columnNumber: 33
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -7200,29 +7201,29 @@ function OutreachPage() {
                                                                     children: point
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                                    lineNumber: 2337,
+                                                                    lineNumber: 2336,
                                                                     columnNumber: 33
                                                                 }, this)
                                                             ]
                                                         }, idx, true, {
                                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                                            lineNumber: 2333,
+                                                            lineNumber: 2332,
                                                             columnNumber: 31
                                                         }, this))
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 2330,
+                                                    lineNumber: 2329,
                                                     columnNumber: 25
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2329,
+                                                lineNumber: 2328,
                                                 columnNumber: 23
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 2295,
+                                        lineNumber: 2294,
                                         columnNumber: 19
                                     }, this),
                                     selectedStepCopy.personalization_used && selectedStepCopy.personalization_used.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7233,7 +7234,7 @@ function OutreachPage() {
                                                 children: "Personalization Signals Used"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2353,
+                                                lineNumber: 2352,
                                                 columnNumber: 23
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7244,18 +7245,18 @@ function OutreachPage() {
                                                         children: signal
                                                     }, idx, false, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2359,
+                                                        lineNumber: 2358,
                                                         columnNumber: 29
                                                     }, this))
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2356,
+                                                lineNumber: 2355,
                                                 columnNumber: 23
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 2352,
+                                        lineNumber: 2351,
                                         columnNumber: 21
                                     }, this),
                                     selectedStepCopy.strategy_alignment && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7266,7 +7267,7 @@ function OutreachPage() {
                                                 children: "Strategy Alignment"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2375,
+                                                lineNumber: 2374,
                                                 columnNumber: 21
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -7280,7 +7281,7 @@ function OutreachPage() {
                                                                 className: "w-5 h-5 text-primary flex-shrink-0 mt-0.5"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 2381,
+                                                                lineNumber: 2380,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -7288,40 +7289,40 @@ function OutreachPage() {
                                                                 children: selectedStepCopy.strategy_alignment
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 2382,
+                                                                lineNumber: 2381,
                                                                 columnNumber: 27
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2380,
+                                                        lineNumber: 2379,
                                                         columnNumber: 25
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 2379,
+                                                    lineNumber: 2378,
                                                     columnNumber: 23
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2378,
+                                                lineNumber: 2377,
                                                 columnNumber: 21
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 2374,
+                                        lineNumber: 2373,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                lineNumber: 2168,
+                                lineNumber: 2167,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/outreach/page.tsx",
-                            lineNumber: 2166,
+                            lineNumber: 2165,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$sheet$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SheetFooter"], {
@@ -7336,7 +7337,7 @@ function OutreachPage() {
                                         children: "Close"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 2397,
+                                        lineNumber: 2396,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -7347,20 +7348,20 @@ function OutreachPage() {
                                                 className: "w-4 h-4"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2408,
+                                                lineNumber: 2407,
                                                 columnNumber: 19
                                             }, this),
                                             "Edit Copy"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 2404,
+                                        lineNumber: 2403,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                lineNumber: 2396,
+                                lineNumber: 2395,
                                 columnNumber: 15
                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "flex items-center gap-2 w-full",
@@ -7377,7 +7378,7 @@ function OutreachPage() {
                                         children: "Cancel"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 2414,
+                                        lineNumber: 2413,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -7433,42 +7434,42 @@ function OutreachPage() {
                                                 className: "w-4 h-4 animate-spin"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2496,
+                                                lineNumber: 2495,
                                                 columnNumber: 21
                                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$check$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__CheckCircle2$3e$__["CheckCircle2"], {
                                                 className: "w-4 h-4"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                lineNumber: 2498,
+                                                lineNumber: 2497,
                                                 columnNumber: 21
                                             }, this),
                                             "Save Changes"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 2426,
+                                        lineNumber: 2425,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                lineNumber: 2413,
+                                lineNumber: 2412,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/outreach/page.tsx",
-                            lineNumber: 2394,
+                            lineNumber: 2393,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/outreach/page.tsx",
-                    lineNumber: 2129,
+                    lineNumber: 2128,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/outreach/page.tsx",
-                lineNumber: 2128,
+                lineNumber: 2127,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$sheet$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Sheet"], {
@@ -7492,7 +7493,7 @@ function OutreachPage() {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                    lineNumber: 2515,
+                                    lineNumber: 2514,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$sheet$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SheetDescription"], {
@@ -7500,13 +7501,13 @@ function OutreachPage() {
                                     children: "Update the fields below. All fields are prefilled and can be edited."
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                    lineNumber: 2523,
+                                    lineNumber: 2522,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/outreach/page.tsx",
-                            lineNumber: 2514,
+                            lineNumber: 2513,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7523,7 +7524,7 @@ function OutreachPage() {
                                                     children: "Maximum Touches"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 2533,
+                                                    lineNumber: 2532,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -7538,13 +7539,13 @@ function OutreachPage() {
                                                     className: "w-full"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 2536,
+                                                    lineNumber: 2535,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                            lineNumber: 2532,
+                                            lineNumber: 2531,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7561,7 +7562,7 @@ function OutreachPage() {
                                                     className: "h-4 w-4"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 2552,
+                                                    lineNumber: 2551,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Label"], {
@@ -7570,13 +7571,13 @@ function OutreachPage() {
                                                     children: "Voice Escalation Allowed"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 2564,
+                                                    lineNumber: 2563,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                            lineNumber: 2551,
+                                            lineNumber: 2550,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7588,7 +7589,7 @@ function OutreachPage() {
                                                     children: "Voice Escalation Trigger"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 2573,
+                                                    lineNumber: 2572,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -7603,13 +7604,13 @@ function OutreachPage() {
                                                     className: "w-full resize-none"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 2579,
+                                                    lineNumber: 2578,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                            lineNumber: 2572,
+                                            lineNumber: 2571,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7621,7 +7622,7 @@ function OutreachPage() {
                                                     children: "AI Auto-Stop Conditions (one per line)"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 2595,
+                                                    lineNumber: 2594,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -7636,13 +7637,13 @@ function OutreachPage() {
                                                     className: "w-full resize-none"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 2601,
+                                                    lineNumber: 2600,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                            lineNumber: 2594,
+                                            lineNumber: 2593,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7654,7 +7655,7 @@ function OutreachPage() {
                                                     children: "Compliance Rules (one per line)"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 2617,
+                                                    lineNumber: 2616,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -7669,13 +7670,13 @@ function OutreachPage() {
                                                     className: "w-full resize-none"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 2623,
+                                                    lineNumber: 2622,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                            lineNumber: 2616,
+                                            lineNumber: 2615,
                                             columnNumber: 17
                                         }, this)
                                     ]
@@ -7691,7 +7692,7 @@ function OutreachPage() {
                                                     children: "Strategy Summary"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 2643,
+                                                    lineNumber: 2642,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -7706,13 +7707,13 @@ function OutreachPage() {
                                                     className: "w-full resize-none"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 2646,
+                                                    lineNumber: 2645,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                            lineNumber: 2642,
+                                            lineNumber: 2641,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7723,7 +7724,7 @@ function OutreachPage() {
                                                     children: "Strategy Steps"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/outreach/page.tsx",
-                                                    lineNumber: 2662,
+                                                    lineNumber: 2661,
                                                     columnNumber: 19
                                                 }, this),
                                                 (editFormData.steps || []).map((step, stepIdx)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7741,7 +7742,7 @@ function OutreachPage() {
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 2670,
+                                                                        lineNumber: 2669,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -7750,13 +7751,13 @@ function OutreachPage() {
                                                                         children: step.channel
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 2673,
+                                                                        lineNumber: 2672,
                                                                         columnNumber: 27
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 2669,
+                                                                lineNumber: 2668,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7770,7 +7771,7 @@ function OutreachPage() {
                                                                                 children: "Goal"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 2680,
+                                                                                lineNumber: 2679,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -7789,13 +7790,13 @@ function OutreachPage() {
                                                                                 className: "w-full"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 2681,
+                                                                                lineNumber: 2680,
                                                                                 columnNumber: 29
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 2679,
+                                                                        lineNumber: 2678,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7806,7 +7807,7 @@ function OutreachPage() {
                                                                                 children: "Reasoning"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 2697,
+                                                                                lineNumber: 2696,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -7826,13 +7827,13 @@ function OutreachPage() {
                                                                                 className: "w-full resize-none"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 2700,
+                                                                                lineNumber: 2699,
                                                                                 columnNumber: 29
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 2696,
+                                                                        lineNumber: 2695,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7846,7 +7847,7 @@ function OutreachPage() {
                                                                                         children: "Delay (hours)"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 2718,
+                                                                                        lineNumber: 2717,
                                                                                         columnNumber: 31
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -7866,13 +7867,13 @@ function OutreachPage() {
                                                                                         className: "w-full"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 2721,
+                                                                                        lineNumber: 2720,
                                                                                         columnNumber: 31
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 2717,
+                                                                                lineNumber: 2716,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7883,7 +7884,7 @@ function OutreachPage() {
                                                                                         children: "Send Window"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 2739,
+                                                                                        lineNumber: 2738,
                                                                                         columnNumber: 31
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -7902,19 +7903,19 @@ function OutreachPage() {
                                                                                         className: "w-full"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                        lineNumber: 2742,
+                                                                                        lineNumber: 2741,
                                                                                         columnNumber: 31
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 2738,
+                                                                                lineNumber: 2737,
                                                                                 columnNumber: 29
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 2716,
+                                                                        lineNumber: 2715,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7925,7 +7926,7 @@ function OutreachPage() {
                                                                                 children: "Personalization Signals (one per line)"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 2760,
+                                                                                lineNumber: 2759,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -7945,13 +7946,13 @@ function OutreachPage() {
                                                                                 className: "w-full resize-none"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 2763,
+                                                                                lineNumber: 2762,
                                                                                 columnNumber: 29
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 2759,
+                                                                        lineNumber: 2758,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     step.channel === "Voice" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -7962,7 +7963,7 @@ function OutreachPage() {
                                                                                 children: "Gating Conditions (one per line)"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 2782,
+                                                                                lineNumber: 2781,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -7982,31 +7983,31 @@ function OutreachPage() {
                                                                                 className: "w-full resize-none"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                                lineNumber: 2785,
+                                                                                lineNumber: 2784,
                                                                                 columnNumber: 31
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                                        lineNumber: 2781,
+                                                                        lineNumber: 2780,
                                                                         columnNumber: 29
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                                                lineNumber: 2678,
+                                                                lineNumber: 2677,
                                                                 columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, stepIdx, true, {
                                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                                        lineNumber: 2665,
+                                                        lineNumber: 2664,
                                                         columnNumber: 23
                                                     }, this))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/outreach/page.tsx",
-                                            lineNumber: 2661,
+                                            lineNumber: 2660,
                                             columnNumber: 17
                                         }, this)
                                     ]
@@ -8014,7 +8015,7 @@ function OutreachPage() {
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/outreach/page.tsx",
-                            lineNumber: 2529,
+                            lineNumber: 2528,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$sheet$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SheetFooter"], {
@@ -8033,7 +8034,7 @@ function OutreachPage() {
                                         children: "Cancel"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 2813,
+                                        lineNumber: 2812,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -8163,35 +8164,35 @@ function OutreachPage() {
                                         children: isSaving ? "Saving..." : "Save All Changes"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/outreach/page.tsx",
-                                        lineNumber: 2821,
+                                        lineNumber: 2820,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/outreach/page.tsx",
-                                lineNumber: 2812,
+                                lineNumber: 2811,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/outreach/page.tsx",
-                            lineNumber: 2811,
+                            lineNumber: 2810,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/outreach/page.tsx",
-                    lineNumber: 2513,
+                    lineNumber: 2512,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/outreach/page.tsx",
-                lineNumber: 2509,
+                lineNumber: 2508,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/outreach/page.tsx",
-        lineNumber: 680,
+        lineNumber: 679,
         columnNumber: 5
     }, this);
 }

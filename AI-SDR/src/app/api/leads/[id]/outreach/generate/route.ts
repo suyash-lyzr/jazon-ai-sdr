@@ -16,9 +16,12 @@ export const maxDuration = 300;
 
 const LYXR_AGENT_API_URL =
   "https://agent-prod.studio.lyzr.ai/v3/inference/chat/";
-const LYXR_API_KEY = process.env.LYZR_API_KEY || "sk-default-eE6EHcdIhXl61H4mK4YKZFqISTGrruf1";
-const OUTREACH_STRATEGY_AGENT_ID = process.env.OUTREACH_STRATEGY_AGENT_ID || "69453743f6d93e181164e4d0";
-const OUTREACH_COPY_AGENT_ID = process.env.OUTREACH_COPY_AGENT_ID || "6948162d2be72f04a7d64f65";
+const LYXR_API_KEY =
+  process.env.LYZR_API_KEY || "sk-default-eE6EHcdIhXl61H4mK4YKZFqISTGrruf1";
+const OUTREACH_STRATEGY_AGENT_ID =
+  process.env.OUTREACH_STRATEGY_AGENT_ID || "69453743f6d93e181164e4d0";
+const OUTREACH_COPY_AGENT_ID =
+  process.env.OUTREACH_COPY_AGENT_ID || "6948162d2be72f04a7d64f65";
 const USER_ID = process.env.LYZR_USER_ID || "suyash@lyzr.ai";
 
 interface RouteParams {
@@ -49,7 +52,7 @@ function parseFencedJsonOrThrow(raw: unknown, label: string): any {
         continue;
       }
 
-      if (ch === "\"") {
+      if (ch === '"') {
         inString = !inString;
         out += ch;
         continue;
@@ -86,7 +89,7 @@ function parseFencedJsonOrThrow(raw: unknown, label: string): any {
     const isCloser = (ch: string) => ch === "}" || ch === "]";
 
     for (let i = 0; i < input.length; i++) {
-      let ch = input[i];
+      const ch = input[i];
 
       if (escaped) {
         out += ch;
@@ -100,7 +103,7 @@ function parseFencedJsonOrThrow(raw: unknown, label: string): any {
         continue;
       }
 
-      if (ch === "\"") {
+      if (ch === '"') {
         inString = !inString;
         out += ch;
         continue;
@@ -326,7 +329,10 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     console.log(`💾 Strategy response saved to: ${strategyFilePath}`);
 
-    console.log("📊 Parsed Strategy Output:", JSON.stringify(strategyOutput, null, 2));
+    console.log(
+      "📊 Parsed Strategy Output:",
+      JSON.stringify(strategyOutput, null, 2)
+    );
 
     // Save strategy run
     if (!strategyOutput || typeof strategyOutput !== "object") {
@@ -494,8 +500,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     console.log(`✅ Outreach Copy saved (status: ${copyOutput.status})`);
 
     // Step 3: Update campaign
-    const totalSteps =
-      strategyOutput.recommended_channel_sequence?.length || 0;
+    const totalSteps = strategyOutput.recommended_channel_sequence?.length || 0;
     const firstStep = strategyOutput.recommended_channel_sequence?.[0];
 
     await OutreachCampaign.findOneAndUpdate(
@@ -520,7 +525,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     // Step 4: Create initial events
     const campaign = await OutreachCampaign.findOne({ lead_id: leadId });
-    
+
     // Get current max sort_order
     const lastEvent = await OutreachEvent.findOne({ lead_id: leadId }).sort({
       sort_order: -1,
@@ -559,7 +564,9 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       timestamp: new Date(),
       sort_order: sortOrder++,
       title: "Outreach copy generated",
-      summary: `AI-generated personalized copy for ${copyOutput.drafts?.length || 0} outreach steps. Copy confidence: ${copyOutput.confidence_level}.`,
+      summary: `AI-generated personalized copy for ${
+        copyOutput.drafts?.length || 0
+      } outreach steps. Copy confidence: ${copyOutput.confidence_level}.`,
       badge: "Outreach Prepared",
       metadata: {
         copy_run_id: copyRun._id,
@@ -577,7 +584,9 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       timestamp: new Date(),
       sort_order: sortOrder++,
       title: "Outreach campaign ready",
-      summary: `Campaign configured and ready to execute. Next step: ${firstStep?.goal || "Begin outreach"}`,
+      summary: `Campaign configured and ready to execute. Next step: ${
+        firstStep?.goal || "Begin outreach"
+      }`,
       badge: "Campaign Ready",
       metadata: {
         next_step: firstStep?.goal,
@@ -612,4 +621,3 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     );
   }
 }
-

@@ -63,13 +63,12 @@ import {
   Search,
   Send,
   Eye,
-  Ban,
-  Calendar,
   FileText,
   ChevronDown,
   ChevronUp,
   Edit3,
   Loader2,
+  Linkedin,
 } from "lucide-react";
 
 export default function OutreachPage() {
