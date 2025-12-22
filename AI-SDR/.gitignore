@@ -1,3 +1,8 @@
 
 # Output directory for agent responses
 output/
+
+node_modules/
+.next/
+
+.env.local
