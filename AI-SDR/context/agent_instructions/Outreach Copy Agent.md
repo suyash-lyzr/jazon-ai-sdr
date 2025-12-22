@@ -90,20 +90,50 @@ In such cases, return:
 Return STRUCTURED JSON ONLY.
 
 {
-"status": "DRAFT_READY",
-"channel": "Email | LinkedIn | Multi",
+"status": "DRAFT_READY | NO_OUTREACH",
+"channel": "Email | LinkedIn | Voice | Multi",
+"copy_meta": {
+"generated_at": "ISO timestamp",
+"model": "model name",
+"strategy_run_id": "ObjectId (passed in from system)"
+},
 "drafts": [
 {
 "step": 1,
 "channel": "Email",
-"subject_options": ["string"],
-"body": "string",
-"personalization_used": ["string"],
-"strategy_alignment": "string"
+"subject_options": ["Option 1", "Option 2"],
+"body": "Full email body with paragraphs and [Signature] placeholder",
+"personalization_used": ["Signal used from research/strategy"],
+"strategy_alignment": "How this draft aligns with the strategy step goal"
+},
+{
+"step": 2,
+"channel": "LinkedIn",
+"subject_options": [],
+"body": "Short LinkedIn connection note (200 chars max)",
+"personalization_used": ["Signal used"],
+"strategy_alignment": "Alignment explanation"
+},
+{
+"step": 4,
+"channel": "Voice",
+"talking_points": [
+"Opening: Brief intro and permission to continue",
+"Value prop: Specific to persona's pain points",
+"Qualification question 1: Budget",
+"Qualification question 2: Timeline",
+"Qualification question 3: Authority",
+"Qualification question 4: Need",
+"Objection handling: Common objections for this ICP",
+"Soft close: Suggest next steps without pressure"
+],
+"body": "",
+"personalization_used": ["Signals used in call"],
+"strategy_alignment": "Voice step alignment"
 }
 ],
 "confidence_level": "High | Medium | Low",
-"review_notes": ["string"]
+"review_notes": ["Any notes about the generated copy", "Suggestions for human review"]
 }
 
 10. You are stateless and re-runnable.

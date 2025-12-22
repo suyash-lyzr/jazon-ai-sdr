@@ -41,8 +41,21 @@ async function connectDB() {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then(async (mongoose) => {
       console.log('✅ MongoDB connected successfully');
+      
+      // Ensure models are registered (Next.js hot reload fix)
+      // Dynamically import models to ensure they're registered after connection
+      if (!mongoose.models.Company) {
+        await import('@/models/Company');
+      }
+      if (!mongoose.models.Persona) {
+        await import('@/models/Persona');
+      }
+      if (!mongoose.models.Lead) {
+        await import('@/models/Lead');
+      }
+      
       return mongoose;
     });
   }

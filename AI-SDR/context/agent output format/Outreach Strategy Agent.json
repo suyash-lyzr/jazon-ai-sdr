@@ -1,0 +1,103 @@
+{
+  "strategy_status": "READY",
+  "strategy_meta": {
+    "generated_at": "2025-12-22T10:30:00.000Z",
+    "model": "gpt-4",
+    "inputs_used": {
+      "research_run_id": "507f1f77bcf86cd799439011",
+      "icp_score_id": "507f191e810c19729de860ea"
+    }
+  },
+  "plan_summary": "Multi-channel sequence with email warmup, LinkedIn engagement, and conditional voice escalation for high-fit enterprise lead",
+  "target_persona": {
+    "title": "VP of Sales Operations",
+    "seniority": "VP",
+    "department": "Sales"
+  },
+  "recommended_channel_sequence": [
+    {
+      "step": 1,
+      "channel": "Email",
+      "intent": "Initial value proposition",
+      "goal": "Introduce solution and establish relevance",
+      "reasoning": "Email is appropriate for initial contact with VP-level persona; allows async review and sharing with team",
+      "recommended_delay_hours": 0,
+      "send_window": "Business hours only (9 AM - 5 PM in lead's timezone)",
+      "personalization_signals": [
+        "Recent CRM migration signal",
+        "Company size indicates complex sales process",
+        "Persona responsibility for sales technology stack"
+      ],
+      "content_request": "Professional email with value proposition focused on sales process optimization",
+      "gating_conditions": []
+    },
+    {
+      "step": 2,
+      "channel": "LinkedIn",
+      "intent": "Social engagement and credibility building",
+      "goal": "Build relationship on professional platform",
+      "reasoning": "LinkedIn engagement signals professional interest; persona is active on platform based on research",
+      "recommended_delay_hours": 48,
+      "send_window": "Business hours preferred",
+      "personalization_signals": [
+        "LinkedIn profile shows active engagement",
+        "Recent posts about sales team challenges"
+      ],
+      "content_request": "LinkedIn connection request with brief value-focused note (200 chars max)",
+      "gating_conditions": [
+        "Email opened (if tracking available)"
+      ]
+    },
+    {
+      "step": 3,
+      "channel": "Email",
+      "intent": "Follow-up engagement with additional value",
+      "goal": "Provide specific use case and deepen engagement",
+      "reasoning": "Second email touchpoint with more specific value proposition based on research insights",
+      "recommended_delay_hours": 72,
+      "send_window": "Business hours only",
+      "personalization_signals": [
+        "Specific pain point: manual sales qualification processes",
+        "Company growth indicates scaling challenges"
+      ],
+      "content_request": "Follow-up email with case study or specific use case relevant to persona's responsibilities",
+      "gating_conditions": []
+    },
+    {
+      "step": 4,
+      "channel": "Voice",
+      "intent": "Deep qualification and objection handling",
+      "goal": "Qualify lead via conversation and address specific concerns",
+      "reasoning": "High ICP score (92) and engagement signals warrant personal touch; voice enables real-time qualification",
+      "recommended_delay_hours": 96,
+      "send_window": "Business hours only (avoid Monday mornings and Friday afternoons)",
+      "personalization_signals": [
+        "Strong ICP fit indicates high conversion probability",
+        "Multiple engagement touchpoints show interest",
+        "Buying signals detected in research"
+      ],
+      "content_request": "Voice call talking points covering: value prop, qualification questions (BANT), objection handling",
+      "gating_conditions": [
+        "ICP score >= 80",
+        "Engagement on 2+ previous channels (email open or LinkedIn connection)",
+        "No explicit opt-out received",
+        "Voice escalation guardrail passed"
+      ]
+    }
+  ],
+  "voice_readiness": {
+    "thresholds": {
+      "icp_min": 80,
+      "engagement_channels_min": 2
+    },
+    "human_approval_required": false,
+    "rationale": "This lead meets all criteria for voice escalation: ICP score of 92, VP-level persona with confirmed decision authority, active buying signals detected, and engagement expected across email/LinkedIn. Voice is appropriate for deep qualification."
+  },
+  "sequencing_logic": {
+    "rationale": "Progressive engagement strategy starting with async channels (email/LinkedIn) to build credibility, followed by voice for high-value leads showing engagement. Delays calibrated for enterprise buying cycles.",
+    "recommended_delays": "48-72 hours between email touches; 96+ hours before voice to allow time for multi-channel engagement assessment"
+  },
+  "risk_flags": [],
+  "confidence_level": "High"
+}
+

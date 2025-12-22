@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
-import Lead from "@/models/Lead";
+import mongoose from "mongoose";
+// Import models in order to ensure they're registered before use
 import Company from "@/models/Company";
 import Persona from "@/models/Persona";
+import Lead from "@/models/Lead";
 import Technographic from "@/models/Technographic";
 import DetectedSignal from "@/models/DetectedSignal";
 import ICPScore from "@/models/ICPScore";
@@ -14,6 +16,15 @@ export async function GET() {
   try {
     await connectDB();
     console.log("✅ Database connected for GET /api/leads");
+
+    // Ensure models are registered (Next.js hot reload fix)
+    // Access the models to ensure they're registered
+    const _companyModel = mongoose.models.Company || Company;
+    const _personaModel = mongoose.models.Persona || Persona;
+    
+    if (!_companyModel || !_personaModel) {
+      throw new Error("Required models (Company, Persona) are not registered");
+    }
 
     // Fetch only leads that have completed research and ICP scoring
     const leads = await Lead.find({ status: "icp_scored" })

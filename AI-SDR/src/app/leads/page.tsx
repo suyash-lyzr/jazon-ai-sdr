@@ -233,7 +233,7 @@ export default function LeadsPage() {
   };
 
   const handleDeleteLead = async (leadId: string) => {
-    if (!confirm("Are you sure you want to delete this lead? This will remove all related data including research, ICP scores, and signals.")) {
+    if (!confirm("Are you sure you want to delete this lead? This will PERMANENTLY remove ALL related data including:\n\n• Research & ICP scores\n• Detected signals\n• Outreach campaigns\n• Outreach strategy & copy\n• Outreach events\n• Field overrides\n• Company & Persona (if not used by other leads)\n\nThis action cannot be undone.")) {
       return;
     }
 
@@ -255,7 +255,7 @@ export default function LeadsPage() {
           setSelectedLead(null);
         }
 
-        alert("Lead and all related data deleted successfully");
+        alert("✅ Lead and ALL related data deleted successfully!\n\nDeleted:\n• Lead\n• Research & ICP scores\n• Outreach campaigns\n• Outreach strategy & copy\n• Outreach events\n• Field overrides\n• Company & Persona (if not shared)");
         
         // Refresh the leads list
         const refreshResponse = await fetch("/api/leads");

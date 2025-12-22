@@ -9,6 +9,11 @@ import Citation from "@/models/Citation";
 import DetectedSignal from "@/models/DetectedSignal";
 import ICPScore from "@/models/ICPScore";
 import ICPFactorBreakdown from "@/models/ICPFactorBreakdown";
+import OutreachCampaign from "@/models/OutreachCampaign";
+import OutreachStrategyRun from "@/models/OutreachStrategyRun";
+import OutreachCopyRun from "@/models/OutreachCopyRun";
+import OutreachEvent from "@/models/OutreachEvent";
+import FieldOverride from "@/models/FieldOverride";
 
 export const runtime = "nodejs";
 
@@ -227,7 +232,97 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       `  ✓ Deleted ${researchRunDeleted.deletedCount} research run`
     );
 
-    // Step 6: Check if company and persona are used by other leads
+    // Step 6: Delete all outreach-related data
+    console.log(`  🗑️ Deleting outreach data for lead ${leadId}...`);
+
+    // 6a. Find outreach campaign to get its ID for field overrides
+    const campaign = await OutreachCampaign.findOne({ lead_id: leadId });
+    const campaignId = campaign?._id;
+
+    // 6b. Find strategy and copy runs to get their IDs for field overrides
+    const strategyRuns = await OutreachStrategyRun.find({ lead_id: leadId });
+    const copyRuns = await OutreachCopyRun.find({ lead_id: leadId });
+
+    // 6c. Delete field overrides for outreach entities
+    if (campaignId) {
+      const campaignOverridesDeleted = await FieldOverride.deleteMany({
+        entity_type: "outreach_campaign",
+        entity_id: campaignId,
+      });
+      console.log(
+        `  ✓ Deleted ${campaignOverridesDeleted.deletedCount} campaign field overrides`
+      );
+    }
+
+    for (const strategyRun of strategyRuns) {
+      const strategyOverridesDeleted = await FieldOverride.deleteMany({
+        entity_type: "outreach_strategy",
+        entity_id: strategyRun._id,
+      });
+      if (strategyOverridesDeleted.deletedCount > 0) {
+        console.log(
+          `  ✓ Deleted ${strategyOverridesDeleted.deletedCount} strategy field overrides`
+        );
+      }
+    }
+
+    for (const copyRun of copyRuns) {
+      const copyOverridesDeleted = await FieldOverride.deleteMany({
+        entity_type: "outreach_copy",
+        entity_id: copyRun._id,
+      });
+      if (copyOverridesDeleted.deletedCount > 0) {
+        console.log(
+          `  ✓ Deleted ${copyOverridesDeleted.deletedCount} copy field overrides`
+        );
+      }
+    }
+
+    // 6d. Delete outreach events
+    const eventsDeleted = await OutreachEvent.deleteMany({
+      lead_id: leadId,
+    });
+    console.log(`  ✓ Deleted ${eventsDeleted.deletedCount} outreach events`);
+
+    // 6e. Delete outreach copy runs
+    const copyRunsDeleted = await OutreachCopyRun.deleteMany({
+      lead_id: leadId,
+    });
+    console.log(`  ✓ Deleted ${copyRunsDeleted.deletedCount} outreach copy runs`);
+
+    // 6f. Delete outreach strategy runs
+    const strategyRunsDeleted = await OutreachStrategyRun.deleteMany({
+      lead_id: leadId,
+    });
+    console.log(
+      `  ✓ Deleted ${strategyRunsDeleted.deletedCount} outreach strategy runs`
+    );
+
+    // 6g. Delete outreach campaign
+    const campaignDeleted = await OutreachCampaign.deleteOne({
+      lead_id: leadId,
+    });
+    console.log(`  ✓ Deleted ${campaignDeleted.deletedCount} outreach campaign`);
+
+    // 6h. Delete outreach guardrails (if lead-specific)
+    // Note: Guardrails might be global, so we only delete if they're lead-specific
+    // This depends on your OutreachGuardrails model structure
+    try {
+      const OutreachGuardrails = (await import("@/models/OutreachGuardrails")).default;
+      const guardrailsDeleted = await OutreachGuardrails.deleteMany({
+        lead_id: leadId,
+      });
+      if (guardrailsDeleted.deletedCount > 0) {
+        console.log(
+          `  ✓ Deleted ${guardrailsDeleted.deletedCount} outreach guardrails`
+        );
+      }
+    } catch (e) {
+      // Guardrails might not have lead_id field, skip if error
+      console.log(`  ⚠️ Skipped guardrails deletion (may be global)`);
+    }
+
+    // Step 7: Check if company and persona are used by other leads
     const companyId = lead.company_id;
     const personaId = lead.persona_id;
 
@@ -243,11 +338,11 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       _id: { $ne: leadId },
     });
 
-    // Step 7: Delete the lead
+    // Step 8: Delete the lead
     await Lead.findByIdAndDelete(leadId);
     console.log(`  ✓ Deleted lead`);
 
-    // Step 8: Delete company if no other leads use it
+    // Step 9: Delete company if no other leads use it
     if (otherLeadsWithCompany === 0) {
       // Delete technographics for this company
       const techsDeleted = await Technographic.deleteMany({
@@ -264,7 +359,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    // Step 9: Delete persona if no other leads use it
+    // Step 10: Delete persona if no other leads use it
     if (otherLeadsWithPersona === 0) {
       await Persona.findByIdAndDelete(personaId);
       console.log(`  ✓ Deleted persona (no other leads using it)`);
@@ -287,6 +382,11 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
           research_run: researchRunDeleted.deletedCount > 0,
           citations: researchRun ? true : false,
           detected_signals: signalsDeleted.deletedCount > 0,
+          outreach_campaign: campaignDeleted.deletedCount > 0,
+          outreach_strategy_runs: strategyRunsDeleted.deletedCount,
+          outreach_copy_runs: copyRunsDeleted.deletedCount,
+          outreach_events: eventsDeleted.deletedCount,
+          field_overrides: true, // Counted above
           company: otherLeadsWithCompany === 0,
           persona: otherLeadsWithPersona === 0,
           technographics: otherLeadsWithCompany === 0,

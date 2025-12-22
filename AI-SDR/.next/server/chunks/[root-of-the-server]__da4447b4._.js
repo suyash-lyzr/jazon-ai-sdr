@@ -88,8 +88,19 @@ async function connectDB() {
         const opts = {
             bufferCommands: false
         };
-        cached.promise = __TURBOPACK__imported__module__$5b$externals$5d2f$mongoose__$5b$external$5d$__$28$mongoose$2c$__cjs$29$__["default"].connect(MONGODB_URI, opts).then((mongoose)=>{
+        cached.promise = __TURBOPACK__imported__module__$5b$externals$5d2f$mongoose__$5b$external$5d$__$28$mongoose$2c$__cjs$29$__["default"].connect(MONGODB_URI, opts).then(async (mongoose)=>{
             console.log('✅ MongoDB connected successfully');
+            // Ensure models are registered (Next.js hot reload fix)
+            // Dynamically import models to ensure they're registered after connection
+            if (!mongoose.models.Company) {
+                await __turbopack_context__.A("[project]/src/models/Company.ts [app-route] (ecmascript, async loader)");
+            }
+            if (!mongoose.models.Persona) {
+                await __turbopack_context__.A("[project]/src/models/Persona.ts [app-route] (ecmascript, async loader)");
+            }
+            if (!mongoose.models.Lead) {
+                await __turbopack_context__.A("[project]/src/models/Lead.ts [app-route] (ecmascript, async loader)");
+            }
             return mongoose;
         });
     }

@@ -678,15 +678,15 @@ export default function ResearchPage() {
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           <div className="flex items-center gap-1">
-                            <Badge variant="secondary" className="text-xs">
-                              LinkedIn
-                            </Badge>
-                            <Badge variant="secondary" className="text-xs">
-                              CRM
-                            </Badge>
-                            <Badge variant="outline" className="text-xs">
-                              Perplexity
-                            </Badge>
+                          <Badge variant="secondary" className="text-xs">
+                            LinkedIn
+                          </Badge>
+                          <Badge variant="secondary" className="text-xs">
+                            CRM
+                          </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            Perplexity
+                          </Badge>
                           </div>
                           {selectedLeadData && (
                             <Button
@@ -789,12 +789,12 @@ export default function ResearchPage() {
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           <div className="flex items-center gap-1">
-                            <Badge variant="secondary" className="text-xs">
-                              LinkedIn
-                            </Badge>
-                            <Badge variant="outline" className="text-xs">
-                              Conversations
-                            </Badge>
+                          <Badge variant="secondary" className="text-xs">
+                            LinkedIn
+                          </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            Conversations
+                          </Badge>
                           </div>
                           {selectedLeadData && (
                             <Button

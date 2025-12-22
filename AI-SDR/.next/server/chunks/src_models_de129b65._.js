@@ -1,0 +1,30 @@
+module.exports = [
+"[project]/src/models/Company.ts [app-route] (ecmascript, async loader)", ((__turbopack_context__) => {
+
+__turbopack_context__.v((parentImport) => {
+    return Promise.all([
+  "server/chunks/src_models_Company_ts_32edde99._.js"
+].map((chunk) => __turbopack_context__.l(chunk))).then(() => {
+        return parentImport("[project]/src/models/Company.ts [app-route] (ecmascript)");
+    });
+});
+}),
+"[project]/src/models/Persona.ts [app-route] (ecmascript, async loader)", ((__turbopack_context__) => {
+
+__turbopack_context__.v((parentImport) => {
+    return Promise.all([
+  "server/chunks/src_models_Persona_ts_b99443cf._.js"
+].map((chunk) => __turbopack_context__.l(chunk))).then(() => {
+        return parentImport("[project]/src/models/Persona.ts [app-route] (ecmascript)");
+    });
+});
+}),
+"[project]/src/models/Lead.ts [app-route] (ecmascript, async loader)", ((__turbopack_context__) => {
+
+__turbopack_context__.v((parentImport) => {
+    return Promise.resolve().then(() => {
+        return parentImport("[project]/src/models/Lead.ts [app-route] (ecmascript)");
+    });
+});
+}),
+];

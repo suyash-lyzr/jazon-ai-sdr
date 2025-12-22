@@ -149,6 +149,15 @@ Your output MUST be structured JSON only and MUST include:
 
 {
 "strategy_status": "READY | NO_OUTREACH | NEEDS_REVIEW",
+"strategy_meta": {
+"generated_at": "ISO timestamp",
+"model": "model name",
+"inputs_used": {
+"research_run_id": "ObjectId",
+"icp_score_id": "ObjectId"
+}
+},
+"plan_summary": "One-line summary of the outreach strategy",
 "target_persona": {
 "title": "",
 "seniority": "",
@@ -157,16 +166,30 @@ Your output MUST be structured JSON only and MUST include:
 "recommended_channel_sequence": [
 {
 "step": 1,
-"channel": "",
-"intent": "",
-"personalization_signals": []
+"channel": "Email | LinkedIn | Voice",
+"intent": "Initial value proposition | Follow-up engagement | Deep qualification",
+"goal": "Short description of what this step achieves",
+"reasoning": "Why this step exists and why this channel",
+"recommended_delay_hours": 48,
+"send_window": "Business hours only | Anytime",
+"personalization_signals": ["Signal from research", "Another signal"],
+"content_request": "Email with value prop | LinkedIn connection note | Voice talking points for qualification",
+"gating_conditions": ["ICP score >= 80", "Engagement on 2+ previous channels"]
 }
 ],
-"sequencing_logic": {
-"rationale": "",
-"recommended_delays": ""
+"voice_readiness": {
+"thresholds": {
+"icp_min": 80,
+"engagement_channels_min": 2
 },
-"risk_flags": [],
+"human_approval_required": false,
+"rationale": "Why voice is or is not appropriate for this lead"
+},
+"sequencing_logic": {
+"rationale": "Overall sequencing strategy explanation",
+"recommended_delays": "48h between email steps, 24h for LinkedIn follow-up"
+},
+"risk_flags": ["Flag if any risks identified"],
 "confidence_level": "High | Medium | Low"
 }
 
@@ -193,10 +216,6 @@ You are stateless
 You are re-runnable
 
 Each run must produce a complete outreach strategy snapshot
-
-Your output is intended for:
-
-SDR Orchestrator Agent
 
 Outreach Guardrails Agent
 

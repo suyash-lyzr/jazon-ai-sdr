@@ -1,14 +1,20 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/api/leads/[id]/route": "app/api/leads/[id]/route.js",
-  "/api/leads/refresh/route": "app/api/leads/refresh/route.js",
+  "/api/leads/[id]/outreach/route": "app/api/leads/[id]/outreach/route.js",
   "/api/leads/route": "app/api/leads/route.js",
-  "/api/leads/upload/route": "app/api/leads/upload/route.js",
   "/conversations/page": "app/conversations/page.js",
+  "/crm-sync/page": "app/crm-sync/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/integrations/page": "app/integrations/page.js",
   "/leads/page": "app/leads/page.js",
+  "/learning/page": "app/learning/page.js",
   "/meetings/page": "app/meetings/page.js",
   "/outreach/page": "app/outreach/page.js",
+  "/page": "app/page.js",
+  "/qualification/page": "app/qualification/page.js",
   "/research/page": "app/research/page.js",
-  "/setup/page": "app/setup/page.js"
+  "/settings/page": "app/settings/page.js",
+  "/setup/page": "app/setup/page.js",
+  "/workflow/page": "app/workflow/page.js"
 }

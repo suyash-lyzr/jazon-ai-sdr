@@ -149,6 +149,30 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   handler satisfies AppPageConfig<"/workflow">
 }
 
+// Validate ../../src/app/api/leads/[id]/outreach/control/route.ts
+{
+  const handler = {} as typeof import("../../src/app/api/leads/[id]/outreach/control/route.js")
+  handler satisfies RouteHandlerConfig<"/api/leads/[id]/outreach/control">
+}
+
+// Validate ../../src/app/api/leads/[id]/outreach/generate/route.ts
+{
+  const handler = {} as typeof import("../../src/app/api/leads/[id]/outreach/generate/route.js")
+  handler satisfies RouteHandlerConfig<"/api/leads/[id]/outreach/generate">
+}
+
+// Validate ../../src/app/api/leads/[id]/outreach/override/route.ts
+{
+  const handler = {} as typeof import("../../src/app/api/leads/[id]/outreach/override/route.js")
+  handler satisfies RouteHandlerConfig<"/api/leads/[id]/outreach/override">
+}
+
+// Validate ../../src/app/api/leads/[id]/outreach/route.ts
+{
+  const handler = {} as typeof import("../../src/app/api/leads/[id]/outreach/route.js")
+  handler satisfies RouteHandlerConfig<"/api/leads/[id]/outreach">
+}
+
 // Validate ../../src/app/api/leads/[id]/route.ts
 {
   const handler = {} as typeof import("../../src/app/api/leads/[id]/route.js")
