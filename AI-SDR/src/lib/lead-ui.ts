@@ -20,6 +20,10 @@ export interface LeadRow {
   ingestedAt: string;
   importedBy: string;
   originTrigger: string;
+  sourceMetadata?: {
+    apolloListName?: string;
+    [key: string]: any;
+  };
   _dbLead?: any; // Full DB object reference for detailed views
 }
 
@@ -40,7 +44,7 @@ export function dbLeadToLeadRow(enrichedLead: any): LeadRow {
     lastContact: "Not contacted yet",
     aiRecommendation: enrichedLead.icp_score?.strengths?.[0] || "Processing...",
     industry: enrichedLead.company?.industry || "Unknown",
-    companySize: enrichedLead.company?.company_size?.employee_count 
+    companySize: enrichedLead.company?.company_size?.employee_count
       ? `${enrichedLead.company.company_size.employee_count.toLocaleString()} employees`
       : "Unknown",
     triggers: enrichedLead.detected_signals?.map((s: any) => s.signal) || [],
@@ -48,6 +52,7 @@ export function dbLeadToLeadRow(enrichedLead: any): LeadRow {
     ingestedAt: new Date(enrichedLead.createdAt).toLocaleDateString(),
     importedBy: "CSV Upload",
     originTrigger: "CSV upload from Setup page",
+    sourceMetadata: enrichedLead.sourceMetadata,
     _dbLead: enrichedLead, // Keep full reference
   };
 }
@@ -75,6 +80,7 @@ export function mockLeadToLeadRow(mockLead: any): LeadRow {
     ingestedAt: mockLead.ingestedAt || new Date().toLocaleDateString(),
     importedBy: mockLead.importedBy || "System",
     originTrigger: mockLead.originTrigger || "Mock data",
+    sourceMetadata: mockLead.sourceMetadata,
     _dbLead: null, // Mock leads don't have DB object
   };
 }
@@ -109,13 +115,20 @@ export function getIcpScoreLabel(score: number): string {
 /**
  * Get stage badge variant color
  */
-export function getStageColor(stage: string): "default" | "secondary" | "outline" {
+export function getStageColor(
+  stage: string
+): "default" | "secondary" | "outline" {
   switch (stage) {
-    case "Qualification": return "default";
-    case "Meeting Scheduled": return "default";
-    case "Engaged": return "secondary";
-    case "Disqualified": return "outline";
-    default: return "outline";
+    case "Qualification":
+      return "default";
+    case "Meeting Scheduled":
+      return "default";
+    case "Engaged":
+      return "secondary";
+    case "Disqualified":
+      return "outline";
+    default:
+      return "outline";
   }
 }
 
@@ -124,12 +137,17 @@ export function getStageColor(stage: string): "default" | "secondary" | "outline
  */
 export function getStageExplanation(stage: string): string {
   switch (stage) {
-    case "Research": return "AI validating ICP fit before initiating outreach";
-    case "Engaged": return "AI nurturing with multi-channel sequence";
-    case "Qualification": return "AI validating BANT signals (Need, Authority, Timeline, Budget)";
-    case "Meeting Scheduled": return "Fully qualified - AI prepared AE handoff";
-    case "Disqualified": return "AI determined low fit - saved AE time";
-    default: return "AI processing lead";
+    case "Research":
+      return "AI validating ICP fit before initiating outreach";
+    case "Engaged":
+      return "AI nurturing with multi-channel sequence";
+    case "Qualification":
+      return "AI validating BANT signals (Need, Authority, Timeline, Budget)";
+    case "Meeting Scheduled":
+      return "Fully qualified - AI prepared AE handoff";
+    case "Disqualified":
+      return "AI determined low fit - saved AE time";
+    default:
+      return "AI processing lead";
   }
 }
-
