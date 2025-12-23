@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { JazonSidebar } from "@/components/jazon-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -56,7 +56,7 @@ import {
   Plus,
 } from "lucide-react";
 
-export default function ResearchPage() {
+function ResearchPage() {
   const { leads: mockLeads } = useJazonApp();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -1563,5 +1563,13 @@ export default function ResearchPage() {
         </Sheet>
       </SidebarInset>
     </SidebarProvider>
+  );
+}
+
+export default function ResearchPageWrapper() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="text-muted-foreground">Loading...</div></div>}>
+      <ResearchPage />
+    </Suspense>
   );
 }

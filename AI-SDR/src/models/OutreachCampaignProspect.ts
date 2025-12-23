@@ -4,6 +4,7 @@ export interface IOutreachCampaignProspect extends Document {
   campaign_id: mongoose.Types.ObjectId;
   lead_id: mongoose.Types.ObjectId;
   status: "active" | "paused" | "replied" | "booked" | "disqualified" | "finished";
+  aiStatus?: "actively_pursue" | "pause_low_intent" | "escalate_to_call" | "remove_from_campaign";
   current_step: number;
   
   // Per-prospect metrics
@@ -43,6 +44,11 @@ const OutreachCampaignProspectSchema = new Schema<IOutreachCampaignProspect>(
       type: String,
       enum: ["active", "paused", "replied", "booked", "disqualified", "finished"],
       default: "active",
+    },
+    aiStatus: {
+      type: String,
+      enum: ["actively_pursue", "pause_low_intent", "escalate_to_call", "remove_from_campaign"],
+      default: "actively_pursue",
     },
     current_step: {
       type: Number,

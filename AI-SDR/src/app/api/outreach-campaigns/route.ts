@@ -113,9 +113,25 @@ export async function POST(request: NextRequest) {
           })}`
         : "Untitled Campaign");
 
+    // Check for duplicate campaign name (case-insensitive)
+    const existingCampaign = await OutreachCampaignV2.findOne({
+      name: { $regex: new RegExp(`^${campaignName.trim()}$`, "i") },
+    });
+
+    if (existingCampaign) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Duplicate campaign name",
+          message: `A campaign with the name "${campaignName}" already exists. Please choose a different name.`,
+        },
+        { status: 409 }
+      );
+    }
+
     // Create campaign
     const campaign = await OutreachCampaignV2.create({
-      name: campaignName,
+      name: campaignName.trim(),
       createdBy: createdBy || "user@example.com",
       status: "active",
     });
@@ -136,6 +152,58 @@ export async function POST(request: NextRequest) {
         },
       },
       { status: 201 }
+    );
+  } catch (error: unknown) {
+    console.error("❌ API Error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Internal server error",
+        message: error instanceof Error ? error.message : "An unexpected error occurred",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE /api/outreach-campaigns - Bulk delete campaigns
+export async function DELETE(request: NextRequest) {
+  try {
+    await connectDB();
+    console.log("✅ Database connected for DELETE /api/outreach-campaigns (bulk)");
+
+    const body = await request.json();
+    const { campaignIds } = body;
+
+    if (!campaignIds || !Array.isArray(campaignIds) || campaignIds.length === 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid request",
+          message: "campaignIds array is required",
+        },
+        { status: 400 }
+      );
+    }
+
+    // Delete campaigns and all related prospects
+    const deleteResult = await OutreachCampaignV2.deleteMany({
+      _id: { $in: campaignIds },
+    });
+
+    await OutreachCampaignProspect.deleteMany({
+      campaign_id: { $in: campaignIds },
+    });
+
+    console.log(`✅ Deleted ${deleteResult.deletedCount} campaign(s) and related data`);
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: `Successfully deleted ${deleteResult.deletedCount} campaign(s)`,
+        deletedCount: deleteResult.deletedCount,
+      },
+      { status: 200 }
     );
   } catch (error: unknown) {
     console.error("❌ API Error:", error);

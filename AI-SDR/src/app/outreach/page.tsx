@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { JazonSidebar } from "@/components/jazon-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -28,6 +28,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -49,8 +56,22 @@ import {
   Users,
   Activity,
   TrendingUp,
+  Trash2,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { LeadsTable } from "@/components/leads/LeadsTable";
+import { LeadRow, dbLeadToLeadRow, mockLeadToLeadRow } from "@/lib/lead-ui";
+import { useJazonApp } from "@/context/jazon-app-context";
 
 interface Campaign {
   _id: string;
@@ -70,6 +91,13 @@ interface Campaign {
 
 interface CampaignDetails extends Campaign {
   createdBy: string;
+  aiReasoning?: {
+    objective: string;
+    avgICPScore: number;
+    explanation: string;
+    approach: string;
+    riskFlags: string[];
+  };
   scheduling: {
     max_touches: number;
     interval_days: number;
@@ -102,6 +130,9 @@ interface CampaignDetails extends Campaign {
     linkedin_template: string;
     voice_template: string;
   };
+  strategyType?: string;
+  primaryGoal?: string;
+  channelMix?: string[];
 }
 
 interface Prospect {
@@ -112,6 +143,7 @@ interface Prospect {
   lead_title: string;
   lead_company: string;
   status: string;
+  aiStatus?: "actively_pursue" | "pause_low_intent" | "escalate_to_call" | "remove_from_campaign";
   current_step: number;
   metrics: {
     emails_sent: number;
@@ -133,9 +165,10 @@ interface KnowledgeItem {
   createdAt: string;
 }
 
-export default function OutreachCampaignPage() {
+function OutreachCampaignPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { leads: mockLeads } = useJazonApp(); // Get mock leads from context
   
   // State
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -155,11 +188,38 @@ export default function OutreachCampaignPage() {
   const [addKnowledgeDialog, setAddKnowledgeDialog] = useState(false);
   const [knowledgeType, setKnowledgeType] = useState<"file" | "url" | "note">("url");
   const [urlInput, setUrlInput] = useState("");
+  
+  // Unified leads (DB + mock) - system of record
+  const [dbLeads, setDbLeads] = useState<any[]>([]);
+  const [unifiedLeads, setUnifiedLeads] = useState<LeadRow[]>([]);
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
+  
+  // Add Leads functionality
+  const [availableLeads, setAvailableLeads] = useState<LeadRow[]>([]);
+  const [selectedLeadIds, setSelectedLeadIds] = useState<string[]>([]);
+  const [isLoadingLeads, setIsLoadingLeads] = useState(false);
+  const [isAddingLeads, setIsAddingLeads] = useState(false);
+  const [showLeadsSelection, setShowLeadsSelection] = useState(false);
 
-  // Fetch campaigns on mount
+  // Delete functionality
+  const [selectedCampaignIds, setSelectedCampaignIds] = useState<string[]>([]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [campaignToDelete, setCampaignToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [createError, setCreateError] = useState<string>("");
+
+  // Fetch campaigns and leads on mount
   useEffect(() => {
     fetchCampaigns();
+    fetchAllLeads();
   }, []);
+  
+  // Merge DB leads + mock leads whenever they change
+  useEffect(() => {
+    const dbLeadRows = dbLeads.map(dbLeadToLeadRow);
+    const mockLeadRows = mockLeads.map(mockLeadToLeadRow);
+    setUnifiedLeads([...mockLeadRows, ...dbLeadRows]);
+  }, [dbLeads, mockLeads]);
 
   // Handle deep link with leadId
   useEffect(() => {
@@ -169,6 +229,20 @@ export default function OutreachCampaignPage() {
       handleAutoCreateCampaign(leadId);
     }
   }, [searchParams, campaigns]);
+
+  const fetchAllLeads = async () => {
+    try {
+      const res = await fetch("/api/leads");
+      const data = await res.json();
+      if (data.success && data.leads) {
+        // Filter only icp_scored leads (same as /leads page)
+        const scoredLeads = data.leads.filter((lead: any) => lead.status === "icp_scored");
+        setDbLeads(scoredLeads);
+      }
+    } catch (error) {
+      console.error("Failed to fetch leads:", error);
+    }
+  };
 
   const fetchCampaigns = async () => {
     try {
@@ -218,6 +292,7 @@ export default function OutreachCampaignPage() {
     if (!newCampaignName.trim()) return;
     
     setIsSaving(true);
+    setCreateError("");
     try {
       const res = await fetch("/api/outreach-campaigns", {
         method: "POST",
@@ -231,11 +306,86 @@ export default function OutreachCampaignPage() {
         setSelectedCampaignId(data.campaign._id);
         setCreateCampaignDialog(false);
         setNewCampaignName("");
+        setCreateError("");
+      } else {
+        setCreateError(data.message || data.error || "Failed to create campaign");
       }
     } catch (error) {
       console.error("Failed to create campaign:", error);
+      setCreateError("An unexpected error occurred. Please try again.");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDeleteCampaign = async (campaignId: string) => {
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/outreach-campaigns/${campaignId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        await fetchCampaigns();
+        // Clear selection if deleted campaign was selected
+        if (selectedCampaignId === campaignId) {
+          setSelectedCampaignId(null);
+        }
+        // Remove from selected list if it was there
+        setSelectedCampaignIds(prev => prev.filter(id => id !== campaignId));
+      }
+    } catch (error) {
+      console.error("Failed to delete campaign:", error);
+    } finally {
+      setIsDeleting(false);
+      setDeleteDialogOpen(false);
+      setCampaignToDelete(null);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedCampaignIds.length === 0) return;
+    
+    setIsDeleting(true);
+    try {
+      const res = await fetch("/api/outreach-campaigns", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ campaignIds: selectedCampaignIds }),
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        await fetchCampaigns();
+        // Clear selection if deleted campaign was selected
+        if (selectedCampaignId && selectedCampaignIds.includes(selectedCampaignId)) {
+          setSelectedCampaignId(null);
+        }
+        setSelectedCampaignIds([]);
+      }
+    } catch (error) {
+      console.error("Failed to delete campaigns:", error);
+    } finally {
+      setIsDeleting(false);
+      setDeleteDialogOpen(false);
+      setCampaignToDelete(null);
+    }
+  };
+
+  const handleToggleCampaignSelection = (campaignId: string) => {
+    setSelectedCampaignIds(prev => 
+      prev.includes(campaignId)
+        ? prev.filter(id => id !== campaignId)
+        : [...prev, campaignId]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedCampaignIds.length === filteredCampaigns.length) {
+      setSelectedCampaignIds([]);
+    } else {
+      setSelectedCampaignIds(filteredCampaigns.map(c => c._id));
     }
   };
 
@@ -338,12 +488,106 @@ export default function OutreachCampaignPage() {
     }
   };
 
+  const fetchAvailableLeads = () => {
+    setIsLoadingLeads(true);
+    try {
+      // Filter out leads that are already in the campaign
+      const currentProspectLeadIds = prospects.map(p => p.lead_id);
+      const filteredLeads = unifiedLeads.filter(lead => 
+        !currentProspectLeadIds.includes(lead.id)
+      );
+      setAvailableLeads(filteredLeads);
+    } catch (error) {
+      console.error("Failed to fetch available leads:", error);
+    } finally {
+      setIsLoadingLeads(false);
+    }
+  };
+
+  const handleOpenLeadsSelection = () => {
+    setShowLeadsSelection(true);
+    fetchAvailableLeads();
+  };
+
+  const handleToggleLeadSelection = (leadId: string) => {
+    setSelectedLeadIds(prev => 
+      prev.includes(leadId) 
+        ? prev.filter(id => id !== leadId)
+        : [...prev, leadId]
+    );
+  };
+
+  const handleAddSelectedLeads = async () => {
+    if (!selectedCampaignId || selectedLeadIds.length === 0) return;
+    
+    setIsAddingLeads(true);
+    try {
+      const res = await fetch(`/api/outreach-campaigns/${selectedCampaignId}/prospects`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ leadIds: selectedLeadIds }),
+      });
+      
+      const data = await res.json();
+      if (data.success) {
+        // Refresh campaign details and prospects
+        await fetchCampaignDetails(selectedCampaignId);
+        // Reset state
+        setSelectedLeadIds([]);
+        setShowLeadsSelection(false);
+        setAddProspectsDialog(false);
+      }
+    } catch (error) {
+      console.error("Failed to add leads:", error);
+    } finally {
+      setIsAddingLeads(false);
+    }
+  };
+
   const filteredCampaigns = useMemo(() => {
     if (!searchQuery) return campaigns;
     return campaigns.filter((c) =>
       c.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [campaigns, searchQuery]);
+
+  // Join prospects with unified leads to get full lead data + campaign context
+  const campaignLeadRows = useMemo(() => {
+    if (prospects.length === 0 || unifiedLeads.length === 0) return [];
+    
+    // Create a map of leads by ID for quick lookup
+    const leadMap = new Map(unifiedLeads.map(lead => [lead.id, lead]));
+    
+    // Join prospects with their corresponding lead details
+    return prospects
+      .map(prospect => {
+        const leadRow = leadMap.get(prospect.lead_id);
+        if (!leadRow) return null; // Skip if lead not found in unified leads
+        
+        return {
+          ...leadRow,
+          // Add campaign-specific fields
+          _prospectId: prospect._id,
+          _prospectStatus: prospect.status,
+          _aiStatus: prospect.aiStatus || "actively_pursue",
+          _currentStep: prospect.current_step,
+          _emailsSent: prospect.metrics?.emails_sent || 0,
+        };
+      })
+      .filter(Boolean) as (LeadRow & {
+        _prospectId: string;
+        _prospectStatus: string;
+        _aiStatus: string;
+        _currentStep: number;
+        _emailsSent: number;
+      })[];
+  }, [prospects, unifiedLeads]);
+
+  // Get selected lead full data
+  const selectedLead = useMemo(() => {
+    if (!selectedLeadId) return null;
+    return unifiedLeads.find(lead => lead.id === selectedLeadId) || null;
+  }, [selectedLeadId, unifiedLeads]);
 
   return (
     <SidebarProvider
@@ -386,28 +630,47 @@ export default function OutreachCampaignPage() {
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-9"
                     />
-                  </div>
-                </div>
+                      </div>
+                  {selectedCampaignIds.length > 0 && (
+                    <Button
+                      variant="destructive"
+                      onClick={() => {
+                        setCampaignToDelete(null);
+                        setDeleteDialogOpen(true);
+                      }}
+                      className="gap-2"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Delete Selected ({selectedCampaignIds.length})
+                    </Button>
+                  )}
+                        </div>
 
-                <Card>
-                  <CardHeader>
+                  <Card>
+                    <CardHeader>
                     <CardTitle>All Campaigns</CardTitle>
                       <CardDescription>
                         {filteredCampaigns.length} campaign(s)
                       </CardDescription>
-                  </CardHeader>
-                  <CardContent>
+                    </CardHeader>
+                    <CardContent>
                     {filteredCampaigns.length === 0 ? (
                       <div className="text-center py-12">
                         <p className="text-muted-foreground">
                           No campaigns yet. Create your first campaign to get started.
                         </p>
-                            </div>
+                          </div>
                     ) : (
                       <div className="border rounded-md">
                         <table className="w-full">
                           <thead className="bg-muted/40 border-b">
                             <tr>
+                              <th className="px-4 py-3 text-left w-12">
+                                <Checkbox
+                                  checked={filteredCampaigns.length > 0 && selectedCampaignIds.length === filteredCampaigns.length}
+                                  onCheckedChange={handleSelectAll}
+                                />
+                              </th>
                               <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">
                                 Campaign Name
                               </th>
@@ -432,11 +695,25 @@ export default function OutreachCampaignPage() {
                             {filteredCampaigns.map((campaign) => (
                               <tr
                                 key={campaign._id}
-                                className="border-b hover:bg-muted/20 cursor-pointer"
-                                onClick={() => setSelectedCampaignId(campaign._id)}
+                                className="border-b hover:bg-muted/20"
                               >
-                                <td className="px-4 py-3 font-medium">{campaign.name}</td>
                                 <td className="px-4 py-3">
+                                  <Checkbox
+                                    checked={selectedCampaignIds.includes(campaign._id)}
+                                    onCheckedChange={() => handleToggleCampaignSelection(campaign._id)}
+                                    onClick={(e) => e.stopPropagation()}
+                                  />
+                                </td>
+                                <td 
+                                  className="px-4 py-3 font-medium cursor-pointer"
+                                  onClick={() => setSelectedCampaignId(campaign._id)}
+                                >
+                                  {campaign.name}
+                                </td>
+                                <td 
+                                  className="px-4 py-3 cursor-pointer"
+                                  onClick={() => setSelectedCampaignId(campaign._id)}
+                                >
                                   <Badge
                                     variant={
                                       campaign.status === "active"
@@ -447,39 +724,62 @@ export default function OutreachCampaignPage() {
                                     {campaign.status}
                                   </Badge>
                                 </td>
-                                <td className="px-4 py-3 text-sm text-muted-foreground">
+                                <td 
+                                  className="px-4 py-3 text-sm text-muted-foreground cursor-pointer"
+                                  onClick={() => setSelectedCampaignId(campaign._id)}
+                                >
                                   {campaign.metrics.total_prospects} total,{" "}
                                   {campaign.metrics.active_prospects} active
                                 </td>
-                                <td className="px-4 py-3">
+                                <td 
+                                  className="px-4 py-3 cursor-pointer"
+                                  onClick={() => setSelectedCampaignId(campaign._id)}
+                                >
                                   <span className="text-sm font-medium">
                                     {campaign.metrics.response_rate}%
                                   </span>
                                 </td>
-                                <td className="px-4 py-3 text-sm text-muted-foreground">
+                                <td 
+                                  className="px-4 py-3 text-sm text-muted-foreground cursor-pointer"
+                                  onClick={() => setSelectedCampaignId(campaign._id)}
+                                >
                                   {new Date(campaign.createdAt).toLocaleDateString()}
                                 </td>
                                 <td className="px-4 py-3">
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setSelectedCampaignId(campaign._id);
-                                    }}
-                                  >
-                                    View
-                                  </Button>
+                                  <div className="flex items-center gap-2">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedCampaignId(campaign._id);
+                                      }}
+                                    >
+                                      View
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setCampaignToDelete(campaign._id);
+                                        setDeleteDialogOpen(true);
+                                      }}
+                                      className="text-destructive hover:text-destructive"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                    </div>
                                 </td>
                               </tr>
                             ))}
                           </tbody>
                         </table>
-                            </div>
-                    )}
+                                  </div>
+                                )}
                     </CardContent>
                   </Card>
-                        </div>
+                                    </div>
             ) : (
               /* Campaign Detail View with Tabs */
               <div className="space-y-6">
@@ -498,8 +798,8 @@ export default function OutreachCampaignPage() {
                       </h2>
                       <p className="text-sm text-muted-foreground">
                         {campaignDetails?.mode || ""}
-                      </p>
-                    </div>
+                                    </p>
+                                  </div>
                     <Badge
                       variant={
                         campaignDetails?.status === "active" ? "default" : "outline"
@@ -507,14 +807,102 @@ export default function OutreachCampaignPage() {
                     >
                       {campaignDetails?.status}
                     </Badge>
-                  </div>
-                </div>
+                              </div>
+                            </div>
+
+                {/* AI Campaign Reasoning */}
+                <Card className="border-primary/20 bg-primary/5">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="flex items-center gap-2">
+                          <TrendingUp className="h-5 w-5 text-primary" />
+                          AI Campaign Reasoning
+                        </CardTitle>
+                        <CardDescription>
+                          Why this campaign exists and Jazon's strategic approach
+                        </CardDescription>
+                      </div>
+                      <Button variant="outline" size="sm" disabled>
+                        <Settings2 className="h-4 w-4 mr-2" />
+                        Override Strategy
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Campaign Objective</Label>
+                          <p className="text-sm font-medium mt-1">
+                            {campaignDetails?.aiReasoning?.objective || "Net-new outbound"}
+                          </p>
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Average ICP Score</Label>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge variant={
+                              (campaignDetails?.aiReasoning?.avgICPScore || 75) >= 80 ? "default" : 
+                              (campaignDetails?.aiReasoning?.avgICPScore || 75) >= 60 ? "secondary" : "outline"
+                            }>
+                              {campaignDetails?.aiReasoning?.avgICPScore || 75}/100
+                            </Badge>
+                            <span className="text-xs text-muted-foreground">
+                              {(campaignDetails?.aiReasoning?.avgICPScore || 75) >= 80 ? "High fit" : 
+                               (campaignDetails?.aiReasoning?.avgICPScore || 75) >= 60 ? "Medium fit" : "Lower fit"}
+                            </span>
+                      </div>
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Chosen Outreach Approach</Label>
+                          <p className="text-sm font-medium mt-1">
+                            {campaignDetails?.aiReasoning?.approach || "Value-led"}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="space-y-4">
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Why This Campaign Exists</Label>
+                          <p className="text-sm mt-1 leading-relaxed">
+                            {campaignDetails?.aiReasoning?.explanation || 
+                             "Early-stage founders need fast, cost-effective AI infrastructure. This campaign targets high-intent prospects with resource constraints who value speed to market."}
+                          </p>
+                              </div>
+                        {(campaignDetails?.aiReasoning?.riskFlags && campaignDetails.aiReasoning.riskFlags.length > 0) && (
+                          <div>
+                            <Label className="text-xs text-muted-foreground">Risk Flags</Label>
+                            <div className="flex flex-wrap gap-2 mt-1">
+                              {campaignDetails.aiReasoning.riskFlags.map((flag, i) => (
+                                <Badge key={i} variant="outline" className="text-xs">
+                                  {flag}
+                                </Badge>
+                              ))}
+                                    </div>
+                                  </div>
+                        )}
+                        {(!campaignDetails?.aiReasoning?.riskFlags || campaignDetails.aiReasoning.riskFlags.length === 0) && (
+                          <div>
+                            <Label className="text-xs text-muted-foreground">Risk Flags</Label>
+                            <div className="flex flex-wrap gap-2 mt-1">
+                              <Badge variant="outline" className="text-xs">
+                                Early-stage founders (limited budget)
+                              </Badge>
+                              <Badge variant="outline" className="text-xs">
+                                Low historical reply rate for similar ICPs
+                              </Badge>
+                                </div>
+                          </div>
+                        )}
+                      </div>
+                        </div>
+                  </CardContent>
+                </Card>
 
                 <Tabs defaultValue="campaign" className="w-full">
                   <TabsList>
                     <TabsTrigger value="campaign">Campaign</TabsTrigger>
                     <TabsTrigger value="knowledge">Knowledge Base</TabsTrigger>
-                    <TabsTrigger value="mode">Mode</TabsTrigger>
+                    <TabsTrigger value="strategy">Strategy</TabsTrigger>
                     <TabsTrigger value="prospects">Leads</TabsTrigger>
                     <TabsTrigger value="scheduling">Scheduling</TabsTrigger>
                     <TabsTrigger value="activity">Activity</TabsTrigger>
@@ -659,7 +1047,7 @@ export default function OutreachCampaignPage() {
                         <p className="text-sm text-muted-foreground">
                           {knowledgeItems.length} item(s)
                         </p>
-                                  </div>
+                                          </div>
                       <Button onClick={() => setAddKnowledgeDialog(true)}>
                         <Upload className="h-4 w-4 mr-2" />
                         Upload
@@ -704,8 +1092,52 @@ export default function OutreachCampaignPage() {
                                                 )}
                   </TabsContent>
 
-                  {/* Mode Tab */}
-                  <TabsContent value="mode" className="space-y-4 mt-4">
+                  {/* Strategy Tab */}
+                  <TabsContent value="strategy" className="space-y-4 mt-4">
+                    {/* Strategy Summary */}
+                    <Card className="mb-4">
+                      <CardHeader>
+                        <CardTitle className="text-base">Campaign Strategy Overview</CardTitle>
+                        <CardDescription>AI-determined strategy for this campaign</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid md:grid-cols-3 gap-4">
+                                                  <div>
+                            <Label className="text-xs text-muted-foreground">Strategy Type</Label>
+                            <p className="text-sm font-medium mt-1">
+                              {campaignDetails?.strategyType || "Net-new Outbound"}
+                            </p>
+                                                    </div>
+                                                  <div>
+                            <Label className="text-xs text-muted-foreground">Primary Goal</Label>
+                            <p className="text-sm font-medium mt-1">
+                              {campaignDetails?.primaryGoal || "Book Meeting"}
+                                                    </p>
+                                                    </div>
+                                                  <div>
+                            <Label className="text-xs text-muted-foreground">Channel Mix (AI-chosen)</Label>
+                            <div className="flex gap-2 mt-1">
+                              {(campaignDetails?.channelMix || ["Email", "LinkedIn", "Call"]).map((channel, i) => (
+                                <Badge key={i} variant="outline" className="text-xs">
+                                  {channel}
+                                                        </Badge>
+                                                      ))}
+                                                    </div>
+                                                  </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Email Steps Section */}
+                    <div className="flex items-center gap-2 px-1 mb-2">
+                      <Badge variant="secondary" className="text-xs">
+                        AI Generated
+                      </Badge>
+                      <span className="text-sm text-muted-foreground">
+                        Email steps generated by AI based on campaign strategy
+                      </span>
+                                                </div>
+
                     <div className="flex gap-6">
                       <div className="w-64 shrink-0">
                         <Card>
@@ -727,7 +1159,7 @@ export default function OutreachCampaignPage() {
                                   {step.step_name}
                                 </button>
                               ))}
-                                                    </div>
+                                              </div>
                           </CardContent>
                         </Card>
                                                   </div>
@@ -863,19 +1295,19 @@ export default function OutreachCampaignPage() {
                   {/* Leads Tab */}
                   <TabsContent value="prospects" className="space-y-4 mt-4">
                     <div className="flex justify-between items-center">
-                              <div>
+                      <div>
                         <h3 className="text-lg font-semibold">Leads</h3>
-                                <p className="text-sm text-muted-foreground">
-                          {prospects.length} lead(s) in campaign
-                                </p>
-                              </div>
+                        <p className="text-sm text-muted-foreground">
+                          {campaignLeadRows.length} lead(s) in campaign
+                        </p>
+                      </div>
                       <Button onClick={() => setAddProspectsDialog(true)}>
                         <Plus className="h-4 w-4 mr-2" />
                         Add Leads
                       </Button>
-                            </div>
+                    </div>
 
-                    {prospects.length === 0 ? (
+                    {campaignLeadRows.length === 0 ? (
                       <Card>
                         <CardContent className="py-12 text-center">
                           <p className="text-muted-foreground">
@@ -886,66 +1318,82 @@ export default function OutreachCampaignPage() {
                     ) : (
                       <Card>
                         <CardContent className="p-0">
-                          <div className="border rounded-md">
-                            <table className="w-full">
-                              <thead className="bg-muted/40 border-b">
-                                <tr>
-                                  <th className="px-4 py-3 text-left text-xs font-medium">
-                                    Name
-                                  </th>
-                                  <th className="px-4 py-3 text-left text-xs font-medium">
-                                    Email
-                                  </th>
-                                  <th className="px-4 py-3 text-left text-xs font-medium">
-                                    Company
-                                  </th>
-                                  <th className="px-4 py-3 text-left text-xs font-medium">
-                                    Status
-                                  </th>
-                                  <th className="px-4 py-3 text-left text-xs font-medium">
-                                    Step
-                                  </th>
-                                  <th className="px-4 py-3 text-left text-xs font-medium">
-                                    Emails Sent
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {prospects.map((prospect) => (
-                                  <tr key={prospect._id} className="border-b">
-                                    <td className="px-4 py-3">{prospect.lead_name}</td>
-                                    <td className="px-4 py-3 text-sm text-muted-foreground">
-                                      {prospect.lead_email}
-                                    </td>
-                                    <td className="px-4 py-3 text-sm">
-                                      {prospect.lead_company}
-                                    </td>
-                                    <td className="px-4 py-3">
-                                      <Badge variant="outline">{prospect.status}</Badge>
-                                    </td>
-                                    <td className="px-4 py-3 text-sm">
-                                      {prospect.current_step}
-                                    </td>
-                                    <td className="px-4 py-3 text-sm">
-                                      {prospect.metrics.emails_sent}
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                        </div>
-                  </CardContent>
-                </Card>
+                          <LeadsTable
+                            leads={campaignLeadRows}
+                            onRowClick={setSelectedLeadId}
+                            extraColumns={{
+                              headers: [
+                                <th key="ai-status" className="px-4 py-3 text-left text-xs font-medium">
+                                  <div className="flex items-center gap-1">
+                                    AI Status
+                                    <Badge variant="secondary" className="text-[10px] px-1">AI</Badge>
+                                  </div>
+                                </th>,
+                                <th key="step" className="px-4 py-3 text-left text-xs font-medium">
+                                  Step
+                                </th>,
+                                <th key="emails-sent" className="px-4 py-3 text-left text-xs font-medium">
+                                  Emails Sent
+                                </th>,
+                              ],
+                              renderCells: (lead: any) => [
+                                <td key="ai-status" className="px-4 py-3">
+                                  {lead._aiStatus === "actively_pursue" && (
+                                    <Badge variant="default" className="text-xs">
+                                      Actively pursue
+                                    </Badge>
+                                  )}
+                                  {lead._aiStatus === "pause_low_intent" && (
+                                    <Badge variant="secondary" className="text-xs">
+                                      Pause (low intent)
+                                    </Badge>
+                                  )}
+                                  {lead._aiStatus === "escalate_to_call" && (
+                                    <Badge variant="outline" className="text-xs border-blue-500 text-blue-600">
+                                      Escalate to call
+                                    </Badge>
+                                  )}
+                                  {lead._aiStatus === "remove_from_campaign" && (
+                                    <Badge variant="outline" className="text-xs border-red-500 text-red-600">
+                                      Remove from campaign
+                                    </Badge>
+                                  )}
+                                </td>,
+                                <td key="step" className="px-4 py-3 text-sm">
+                                  {lead._currentStep}
+                                </td>,
+                                <td key="emails-sent" className="px-4 py-3 text-sm">
+                                  {lead._emailsSent}
+                                </td>,
+                              ],
+                            }}
+                          />
+                        </CardContent>
+                      </Card>
                     )}
                   </TabsContent>
 
                   {/* Scheduling Tab */}
                   <TabsContent value="scheduling" className="space-y-4 mt-4">
+                    {/* AI Override Notice */}
+                    <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                      <TrendingUp className="h-5 w-5 text-blue-600 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                          AI-Adaptive Scheduling
+                        </p>
+                        <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
+                          Jazon may override timing per lead based on engagement patterns and intent signals. 
+                          High-engagement leads may be contacted sooner, while low-engagement leads may be paused.
+                          </p>
+                        </div>
+                      </div>
+
                     <Card>
                       <CardHeader>
                         <CardTitle>Max. outreach email count</CardTitle>
                         <CardDescription>
-                          Maximum outreach emails sent to a lead
+                          Maximum outreach emails sent to a lead (AI may adjust per lead)
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
@@ -972,8 +1420,8 @@ export default function OutreachCampaignPage() {
                             )
                           }
                         />
-                      </CardContent>
-                    </Card>
+                  </CardContent>
+                </Card>
 
                     <Card>
                       <CardHeader>
@@ -1285,6 +1733,86 @@ export default function OutreachCampaignPage() {
                         )}
                       </CardContent>
                     </Card>
+
+                    {/* AI Decisions Log */}
+                    <Card>
+                      <CardHeader>
+                        <div className="flex items-center gap-2">
+                          <TrendingUp className="h-5 w-5 text-primary" />
+                          <CardTitle>AI Decisions Log</CardTitle>
+                  </div>
+                        <CardDescription>
+                          Automated decisions made by Jazon based on engagement and intent
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-3">
+                          {/* Sample AI decisions */}
+                          <div className="p-3 border rounded-lg bg-muted/30">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <Badge variant="default" className="text-xs">
+                                  Decision
+                                </Badge>
+                                <span className="text-sm font-medium">
+                                  Paused outreach to John Smith
+                                </span>
+                              </div>
+                              <span className="text-xs text-muted-foreground">
+                                2 hours ago
+                              </span>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              <strong>Reason:</strong> No opens after 3 emails. Low intent signal detected.
+                            </p>
+                          </div>
+
+                          <div className="p-3 border rounded-lg bg-muted/30">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <Badge variant="outline" className="text-xs border-blue-500 text-blue-600">
+                                  Escalate
+                                </Badge>
+                                <span className="text-sm font-medium">
+                                  Escalated Emily Davis to call
+                                </span>
+                              </div>
+                              <span className="text-xs text-muted-foreground">
+                                1 day ago
+                              </span>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              <strong>Reason:</strong> Replied twice with positive signals. High intent detected.
+                  </p>
+                </div>
+
+                          <div className="p-3 border rounded-lg bg-muted/30">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <Badge variant="secondary" className="text-xs">
+                                  Timing Adjusted
+                                </Badge>
+                                <span className="text-sm font-medium">
+                                  Advanced next touch for Michael Chen
+                                </span>
+                              </div>
+                              <span className="text-xs text-muted-foreground">
+                                3 days ago
+                              </span>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              <strong>Reason:</strong> Engagement spike detected. Opened email 3 times.
+                            </p>
+                          </div>
+
+                          {(!activityData?.aiDecisions || activityData.aiDecisions.length === 0) && (
+                            <p className="text-center py-4 text-sm text-muted-foreground">
+                              AI decisions will appear here as Jazon optimizes the campaign
+                            </p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
                   </TabsContent>
                 </Tabs>
               </div>
@@ -1294,7 +1822,13 @@ export default function OutreachCampaignPage() {
       </SidebarInset>
 
       {/* Create Campaign Dialog */}
-      <Dialog open={createCampaignDialog} onOpenChange={setCreateCampaignDialog}>
+      <Dialog open={createCampaignDialog} onOpenChange={(open) => {
+        setCreateCampaignDialog(open);
+        if (!open) {
+          setNewCampaignName("");
+          setCreateError("");
+        }
+      }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create New Campaign</DialogTitle>
@@ -1308,19 +1842,29 @@ export default function OutreachCampaignPage() {
               <Input
                 id="campaign-name"
                 value={newCampaignName}
-                onChange={(e) => setNewCampaignName(e.target.value)}
+                onChange={(e) => {
+                  setNewCampaignName(e.target.value);
+                  setCreateError("");
+                }}
                 placeholder="e.g., Q1 Enterprise Outbound"
               />
+              {createError && (
+                <p className="text-sm text-destructive">{createError}</p>
+              )}
             </div>
           </div>
           <DialogFooter>
             <Button
               variant="outline"
-              onClick={() => setCreateCampaignDialog(false)}
+              onClick={() => {
+                setCreateCampaignDialog(false);
+                setNewCampaignName("");
+                setCreateError("");
+              }}
             >
               Cancel
             </Button>
-            <Button onClick={handleCreateCampaign} disabled={isSaving}>
+            <Button onClick={handleCreateCampaign} disabled={isSaving || !newCampaignName.trim()}>
               {isSaving ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -1333,6 +1877,50 @@ export default function OutreachCampaignPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {campaignToDelete
+                ? "This will permanently delete the campaign and all associated data. This action cannot be undone."
+                : `This will permanently delete ${selectedCampaignIds.length} campaign(s) and all associated data. This action cannot be undone.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={() => {
+                setDeleteDialogOpen(false);
+                setCampaignToDelete(null);
+              }}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (campaignToDelete) {
+                  handleDeleteCampaign(campaignToDelete);
+                } else {
+                  handleBulkDelete();
+                }
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Add Knowledge Dialog */}
       <Dialog open={addKnowledgeDialog} onOpenChange={setAddKnowledgeDialog}>
@@ -1399,40 +1987,330 @@ export default function OutreachCampaignPage() {
       </Dialog>
 
       {/* Add Leads Dialog */}
-      <Dialog open={addProspectsDialog} onOpenChange={setAddProspectsDialog}>
-        <DialogContent>
+      <Dialog open={addProspectsDialog} onOpenChange={(open) => {
+        setAddProspectsDialog(open);
+        if (!open) {
+          setShowLeadsSelection(false);
+          setSelectedLeadIds([]);
+        }
+      }}>
+        <DialogContent className="max-w-4xl max-h-[80vh]">
           <DialogHeader>
-            <DialogTitle>Add Leads</DialogTitle>
+            <DialogTitle>Add Leads to Campaign</DialogTitle>
             <DialogDescription>
-              Add leads to this campaign from existing leads or CSV upload
+              {showLeadsSelection 
+                ? "Select leads from your database to add to this campaign"
+                : "Choose how you want to add leads to this campaign"}
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" className="h-20">
-                <div className="flex flex-col items-center gap-2">
-                  <Users className="h-5 w-5" />
-                  <span className="text-xs">From Existing Leads</span>
-                </div>
-              </Button>
-              <Button variant="outline" className="h-20">
-                <div className="flex flex-col items-center gap-2">
-                  <Upload className="h-5 w-5" />
-                  <span className="text-xs">CSV Upload</span>
-                </div>
-              </Button>
+
+          {!showLeadsSelection ? (
+            // Method Selection
+            <div className="space-y-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <Button 
+                  variant="outline" 
+                  className="h-24 hover:border-primary hover:bg-primary/5 transition-colors"
+                  onClick={handleOpenLeadsSelection}
+                >
+                  <div className="flex flex-col items-center gap-2">
+                    <Users className="h-6 w-6 text-primary" />
+                    <span className="text-sm font-medium">From Existing Leads</span>
+                    <span className="text-xs text-muted-foreground">Select from database</span>
+                  </div>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="h-24 hover:border-primary hover:bg-primary/5 transition-colors"
+                  disabled
+                >
+                  <div className="flex flex-col items-center gap-2">
+                    <Upload className="h-6 w-6" />
+                    <span className="text-sm font-medium">CSV Upload</span>
+                    <span className="text-xs text-muted-foreground">Coming soon</span>
+                  </div>
+                </Button>
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground text-center">
-              Demo: Select method to add leads
-            </p>
-          </div>
+          ) : (
+            // Leads Selection
+            <div className="space-y-4 py-4">
+              {/* Search and Stats */}
+              <div className="flex items-center justify-between">
+                <div className="relative flex-1 max-w-md">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search leads..."
+                    className="pl-9"
+                  />
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {selectedLeadIds.length} selected
+                </div>
+              </div>
+
+              {/* Leads List */}
+              <div className="border rounded-lg overflow-hidden max-h-[400px] overflow-y-auto">
+                {isLoadingLeads ? (
+                  <div className="flex items-center justify-center py-12">
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  </div>
+                ) : availableLeads.length === 0 ? (
+                  <div className="py-12 text-center">
+                    <p className="text-sm text-muted-foreground">
+                      No available leads. All leads are already in this campaign.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-muted/40 border-b sticky top-0">
+                        <tr>
+                          <th className="px-4 py-3 text-left w-12">
+                            <Checkbox
+                              checked={selectedLeadIds.length === availableLeads.length && availableLeads.length > 0}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  setSelectedLeadIds(availableLeads.map(l => l.id));
+                                } else {
+                                  setSelectedLeadIds([]);
+                                }
+                              }}
+                            />
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium">Name</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium">Company</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium">Title</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium">ICP Score</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium">Stage</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium">Source</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {availableLeads.map((lead) => (
+                          <tr 
+                            key={lead.id}
+                            className="border-b hover:bg-muted/30 transition-colors cursor-pointer"
+                            onClick={() => handleToggleLeadSelection(lead.id)}
+                          >
+                            <td className="px-4 py-3">
+                              <Checkbox
+                                checked={selectedLeadIds.includes(lead.id)}
+                                onCheckedChange={() => handleToggleLeadSelection(lead.id)}
+                              />
+                            </td>
+                            <td className="px-4 py-3">
+                              <p className="font-medium text-sm">{lead.name}</p>
+                            </td>
+                            <td className="px-4 py-3 text-sm">{lead.company}</td>
+                            <td className="px-4 py-3 text-xs text-muted-foreground">{lead.title}</td>
+                            <td className="px-4 py-3">
+                              <Badge variant={
+                                lead.icpScore >= 80 ? "default" : 
+                                lead.icpScore >= 60 ? "secondary" : "outline"
+                              }>
+                                {lead.icpScore}
+                              </Badge>
+                            </td>
+                            <td className="px-4 py-3">
+                              <Badge variant="outline" className="text-xs">
+                                {lead.stage}
+                              </Badge>
+                            </td>
+                            <td className="px-4 py-3">
+                              <Badge variant="outline" className="text-xs">
+                                {lead.source}
+                              </Badge>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           <DialogFooter>
-            <Button variant="outline" onClick={() => setAddProspectsDialog(false)}>
-              Close
-            </Button>
+            {showLeadsSelection ? (
+              <>
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    setShowLeadsSelection(false);
+                    setSelectedLeadIds([]);
+                  }}
+                >
+                  Back
+                </Button>
+                <Button 
+                  onClick={handleAddSelectedLeads}
+                  disabled={selectedLeadIds.length === 0 || isAddingLeads}
+                >
+                  {isAddingLeads ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Adding...
+                    </>
+                  ) : (
+                    `Add ${selectedLeadIds.length} Lead${selectedLeadIds.length !== 1 ? 's' : ''}`
+                  )}
+                </Button>
+              </>
+            ) : (
+              <Button variant="outline" onClick={() => setAddProspectsDialog(false)}>
+                Cancel
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Lead Details Sheet */}
+      <Sheet open={!!selectedLeadId} onOpenChange={(open) => !open && setSelectedLeadId(null)}>
+        <SheetContent className="w-[600px] sm:w-[700px] overflow-y-auto">
+          {selectedLead && (
+            <>
+              <SheetHeader>
+                <SheetTitle className="flex items-center gap-2">
+                  {selectedLead.name}
+                  <Badge variant={
+                    selectedLead.icpScore >= 85 ? "default" : 
+                    selectedLead.icpScore >= 70 ? "secondary" : "outline"
+                  }>
+                    ICP: {selectedLead.icpScore}
+                  </Badge>
+                </SheetTitle>
+                <SheetDescription>
+                  {selectedLead.title} at {selectedLead.company}
+                </SheetDescription>
+              </SheetHeader>
+
+              <div className="space-y-6 mt-6">
+                {/* Campaign Context Section */}
+                {campaignDetails && (
+                  <Card className="border-primary/20 bg-primary/5">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm flex items-center gap-2">
+                        <TrendingUp className="h-4 w-4" />
+                        Campaign Context
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div>
+                        <Label className="text-xs text-muted-foreground">Campaign</Label>
+                        <p className="text-sm font-medium">{campaignDetails.name}</p>
+                      </div>
+                      <div>
+                        <Label className="text-xs text-muted-foreground">AI Inclusion Reasoning</Label>
+                        <p className="text-sm">
+                          {campaignDetails.aiReasoning?.explanation || 
+                           "This lead was added to the campaign based on ICP fit and strategic alignment with campaign objectives."}
+                        </p>
+                      </div>
+                      {campaignLeadRows.find(l => l.id === selectedLeadId) && (
+                        <div>
+                          <Label className="text-xs text-muted-foreground">AI Status</Label>
+                          <div className="mt-1">
+                            {(() => {
+                              const aiStatus = campaignLeadRows.find(l => l.id === selectedLeadId)?._aiStatus;
+                              if (aiStatus === "actively_pursue") return <Badge variant="default" className="text-xs">Actively pursue</Badge>;
+                              if (aiStatus === "pause_low_intent") return <Badge variant="secondary" className="text-xs">Pause (low intent)</Badge>;
+                              if (aiStatus === "escalate_to_call") return <Badge variant="outline" className="text-xs border-blue-500 text-blue-600">Escalate to call</Badge>;
+                              if (aiStatus === "remove_from_campaign") return <Badge variant="outline" className="text-xs border-red-500 text-red-600">Remove from campaign</Badge>;
+                              return <Badge variant="default" className="text-xs">Actively pursue</Badge>;
+                            })()}
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Lead Details */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm">Lead Information</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-xs text-muted-foreground">Email</Label>
+                        <p className="text-sm">{selectedLead.email}</p>
+                      </div>
+                      <div>
+                        <Label className="text-xs text-muted-foreground">Company</Label>
+                        <p className="text-sm">{selectedLead.company}</p>
+                      </div>
+                      <div>
+                        <Label className="text-xs text-muted-foreground">Title</Label>
+                        <p className="text-sm">{selectedLead.title}</p>
+                      </div>
+                      <div>
+                        <Label className="text-xs text-muted-foreground">Industry</Label>
+                        <p className="text-sm">{selectedLead.industry}</p>
+                      </div>
+                      <div>
+                        <Label className="text-xs text-muted-foreground">ICP Score</Label>
+                        <p className="text-sm font-semibold">{selectedLead.icpScore}/100 - {
+                          selectedLead.icpScore >= 85 ? "High fit" : 
+                          selectedLead.icpScore >= 70 ? "Medium fit" : "Low fit"
+                        }</p>
+                      </div>
+                      <div>
+                        <Label className="text-xs text-muted-foreground">Source</Label>
+                        <p className="text-sm">{selectedLead.source}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* AI Recommendation */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm">AI Recommendation</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm">{selectedLead.aiRecommendation}</p>
+                    {selectedLead.triggers && selectedLead.triggers.length > 0 && (
+                      <div className="mt-3">
+                        <Label className="text-xs text-muted-foreground">Detected Signals</Label>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {selectedLead.triggers.map((trigger, i) => (
+                            <Badge key={i} variant="secondary" className="text-xs">
+                              {trigger}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Quick Actions */}
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={() => router.push(`/research?leadId=${selectedLeadId}`)}
+                  >
+                    View Research & ICP
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </SheetContent>
+      </Sheet>
     </SidebarProvider>
+  );
+}
+
+export default function OutreachCampaignPageWrapper() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="text-muted-foreground">Loading...</div></div>}>
+      <OutreachCampaignPage />
+    </Suspense>
   );
 }

@@ -46,6 +46,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         lead_title: lead.title || "",
         lead_company: lead.company_name || "",
         status: prospect.status,
+        aiStatus: prospect.aiStatus || "actively_pursue",
         current_step: prospect.current_step,
         metrics: prospect.metrics,
         notes: prospect.notes,
@@ -84,13 +85,13 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     );
 
     const body = await request.json();
-    const { lead_ids } = body; // Array of lead IDs to add
+    const leadIds = body.leadIds || body.lead_ids; // Support both formats
 
-    if (!Array.isArray(lead_ids) || lead_ids.length === 0) {
+    if (!Array.isArray(leadIds) || leadIds.length === 0) {
       return NextResponse.json(
         {
           success: false,
-          error: "lead_ids must be a non-empty array",
+          error: "leadIds must be a non-empty array",
         },
         { status: 400 }
       );
@@ -108,8 +109,8 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     }
 
     // Validate all leads exist
-    const leads = await Lead.find({ _id: { $in: lead_ids } });
-    if (leads.length !== lead_ids.length) {
+    const leads = await Lead.find({ _id: { $in: leadIds } });
+    if (leads.length !== leadIds.length) {
       return NextResponse.json(
         {
           success: false,
@@ -119,11 +120,12 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    // Add prospects (skip duplicates)
-    const prospectsToCreate = lead_ids.map((lead_id) => ({
+    // Add prospects (skip duplicates) with AI status
+    const prospectsToCreate = leadIds.map((lead_id: string) => ({
       campaign_id: id,
       lead_id: lead_id,
       status: "active",
+      aiStatus: "actively_pursue",
       current_step: 0,
     }));
 

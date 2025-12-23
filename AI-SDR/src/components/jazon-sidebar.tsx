@@ -4,15 +4,15 @@ import * as React from "react";
 import Image from "next/image";
 import {
   IconAdjustments,
-  IconBrain,
+  // IconBrain, // Commented out - AI Intelligence section hidden
   IconCalendar,
   IconDatabase,
-  IconHome,
-  IconMessage,
+  // IconHome, // Commented out - Dashboard section hidden
+  // IconMessage, // Commented out - Conversations section hidden
   IconRocket,
   IconSearch,
   IconSettings,
-  IconTarget,
+  // IconTarget, // Commented out - AI Intelligence section hidden
   IconUsers,
 } from "@tabler/icons-react";
 
@@ -38,10 +38,15 @@ const data = {
     avatar: "/avatars/user.jpg",
   },
   navExecution: [
+    // {
+    //   title: "Dashboard",
+    //   url: "/",
+    //   icon: IconHome,
+    // },
     {
-      title: "Dashboard",
-      url: "/",
-      icon: IconHome,
+      title: "Campaigns",
+      url: "/outreach",
+      icon: IconRocket,
     },
     {
       title: "Leads",
@@ -54,20 +59,15 @@ const data = {
       icon: IconSearch,
     },
     {
-      title: "Outreach Campaign",
-      url: "/outreach",
-      icon: IconRocket,
-    },
-    {
-      title: "Conversations",
-      url: "/conversations",
-      icon: IconMessage,
-    },
-    {
       title: "Meetings & Handoffs",
       url: "/meetings",
       icon: IconCalendar,
     },
+    // {
+    //   title: "Conversations",
+    //   url: "/conversations",
+    //   icon: IconMessage,
+    // },
   ],
   navSystem: [
     {
@@ -86,23 +86,23 @@ const data = {
       icon: IconDatabase,
     },
   ],
-  navAI: [
-    {
-      title: "Qualification",
-      url: "/qualification",
-      icon: IconTarget,
-    },
-    {
-      title: "Workflow",
-      url: "/workflow",
-      icon: IconTarget,
-    },
-    {
-      title: "Learning Loop",
-      url: "/learning",
-      icon: IconBrain,
-    },
-  ],
+  // navAI: [
+  //   {
+  //     title: "Qualification",
+  //     url: "/qualification",
+  //     icon: IconTarget,
+  //   },
+  //   {
+  //     title: "Workflow",
+  //     url: "/workflow",
+  //     icon: IconTarget,
+  //   },
+  //   {
+  //     title: "Learning Loop",
+  //     url: "/learning",
+  //     icon: IconBrain,
+  //   },
+  // ],
   navSecondary: [
     {
       title: "Settings",
@@ -149,7 +149,7 @@ export function JazonSidebar({
       <SidebarContent>
         <NavMain items={data.navExecution} />
         <NavMain items={data.navSystem} label="System Configuration" />
-        <NavMain items={data.navAI} label="AI Intelligence" />
+        {/* <NavMain items={data.navAI} label="AI Intelligence" /> */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

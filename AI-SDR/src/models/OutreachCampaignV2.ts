@@ -6,6 +6,20 @@ export interface IOutreachCampaignV2 extends Document {
   createdBy: string;
   mode: string; // e.g., "Sales Mode", "Agitation Email", etc.
   
+  // AI Campaign Reasoning
+  aiReasoning?: {
+    objective: string;
+    avgICPScore: number;
+    explanation: string;
+    approach: string;
+    riskFlags: string[];
+  };
+  
+  // Strategy fields
+  strategyType?: string; // e.g., "Net-new Outbound", "Nurture", "Reactivation", "ABM"
+  primaryGoal?: string; // e.g., "Book Meeting", "Start Conversation", "Qualify"
+  channelMix?: string[]; // e.g., ["Email", "LinkedIn", "Call"]
+  
   // Scheduling configuration
   scheduling: {
     max_touches: number;
@@ -79,6 +93,25 @@ const OutreachCampaignV2Schema = new Schema<IOutreachCampaignV2>(
     mode: {
       type: String,
       default: "Sales Mode",
+    },
+    aiReasoning: {
+      objective: { type: String, default: "Net-new outbound" },
+      avgICPScore: { type: Number, default: 75 },
+      explanation: { type: String, default: "" },
+      approach: { type: String, default: "Value-led" },
+      riskFlags: { type: [String], default: [] },
+    },
+    strategyType: {
+      type: String,
+      default: "Net-new Outbound",
+    },
+    primaryGoal: {
+      type: String,
+      default: "Book Meeting",
+    },
+    channelMix: {
+      type: [String],
+      default: ["Email", "LinkedIn", "Call"],
     },
     scheduling: {
       max_touches: {
