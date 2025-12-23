@@ -57,6 +57,8 @@ import {
   Activity,
   TrendingUp,
   Trash2,
+  AlertCircle,
+  Rocket,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -72,6 +74,7 @@ import {
 import { LeadsTable } from "@/components/leads/LeadsTable";
 import { LeadRow, dbLeadToLeadRow, mockLeadToLeadRow } from "@/lib/lead-ui";
 import { useJazonApp } from "@/context/jazon-app-context";
+import { mockConversations, mockQualificationData, mockMeetings } from "@/lib/mock-data";
 
 interface Campaign {
   _id: string;
@@ -589,6 +592,29 @@ function OutreachCampaignPage() {
     return unifiedLeads.find(lead => lead.id === selectedLeadId) || null;
   }, [selectedLeadId, unifiedLeads]);
 
+  // Get mock data for selected lead
+  const conversations = selectedLeadId ? mockConversations[selectedLeadId] || [] : [];
+  const qualification = selectedLeadId ? mockQualificationData[selectedLeadId] : null;
+  const meeting = selectedLeadId ? mockMeetings.find((m) => m.leadId === selectedLeadId) : null;
+  const voiceMessages = conversations.filter((msg) => msg.channel === "voice");
+
+  // Helper functions
+  const getIcpScoreColor = (score: number) => {
+    if (score >= 85) return "text-chart-2";
+    if (score >= 70) return "text-chart-4";
+    return "text-muted-foreground";
+  };
+
+  const getStageColor = (stage: string) => {
+    switch (stage) {
+      case "Qualification": return "default";
+      case "Meeting Scheduled": return "default";
+      case "Engaged": return "secondary";
+      case "Disqualified": return "outline";
+      default: return "outline";
+    }
+  };
+
   return (
     <SidebarProvider
       style={
@@ -603,20 +629,22 @@ function OutreachCampaignPage() {
         <div className="flex flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-6 p-4 md:gap-8 md:p-6">
             {/* Page Header */}
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex flex-col gap-2">
-                <h1 className="text-3xl font-semibold text-foreground">
-                  Outreach Campaigns
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                  Manage multi-channel campaigns with AI-powered sequences
-                </p>
+            {!selectedCampaignId && (
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-col gap-2">
+                  <h1 className="text-3xl font-semibold text-foreground">
+                    Outreach Campaigns
+                  </h1>
+                  <p className="text-sm text-muted-foreground">
+                    Manage multi-channel campaigns with AI-powered sequences
+                  </p>
+                </div>
+                <Button onClick={() => setCreateCampaignDialog(true)} className="gap-2">
+                  <Plus className="h-4 w-4" />
+                  New Campaign
+                </Button>
               </div>
-              <Button onClick={() => setCreateCampaignDialog(true)} className="gap-2">
-                <Plus className="h-4 w-4" />
-                New Campaign
-              </Button>
-            </div>
+            )}
 
             {!selectedCampaignId ? (
               /* Campaign List View */
@@ -783,6 +811,25 @@ function OutreachCampaignPage() {
             ) : (
               /* Campaign Detail View with Tabs */
               <div className="space-y-6">
+                {/* Page Header */}
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex flex-col gap-2">
+                    <h1 className="text-3xl font-semibold text-foreground">
+                      {campaignDetails?.name || "Loading..."}
+                    </h1>
+                    <p className="text-sm text-muted-foreground">
+                      {campaignDetails?.mode || ""}
+                    </p>
+                  </div>
+                  <Badge
+                    variant={
+                      campaignDetails?.status === "active" ? "default" : "outline"
+                    }
+                  >
+                    {campaignDetails?.status}
+                  </Badge>
+                </div>
+
                 <div className="space-y-3">
                   <Button
                     variant="ghost"
@@ -791,27 +838,10 @@ function OutreachCampaignPage() {
                   >
                     ← Back to Campaigns
                   </Button>
-                  <div className="flex items-center gap-4">
-                    <div className="flex-1">
-                      <h2 className="text-2xl font-semibold">
-                        {campaignDetails?.name || "Loading..."}
-                      </h2>
-                      <p className="text-sm text-muted-foreground">
-                        {campaignDetails?.mode || ""}
-                                    </p>
-                                  </div>
-                    <Badge
-                      variant={
-                        campaignDetails?.status === "active" ? "default" : "outline"
-                      }
-                    >
-                      {campaignDetails?.status}
-                    </Badge>
-                              </div>
                             </div>
 
-                {/* AI Campaign Reasoning */}
-                <Card className="border-primary/20 bg-primary/5">
+                {/* AI Campaign Reasoning - Removed for now */}
+                {/* <Card className="border-primary/20 bg-primary/5">
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div>
@@ -890,13 +920,13 @@ function OutreachCampaignPage() {
                               <Badge variant="outline" className="text-xs">
                                 Low historical reply rate for similar ICPs
                               </Badge>
-                                </div>
-                          </div>
-                        )}
+                                    </div>
+                                  </div>
+                                )}
                       </div>
-                        </div>
+                    </div>
                   </CardContent>
-                </Card>
+                </Card> */}
 
                 <Tabs defaultValue="campaign" className="w-full">
                   <TabsList>
@@ -1317,7 +1347,7 @@ function OutreachCampaignPage() {
                       </Card>
                     ) : (
                       <Card>
-                        <CardContent className="p-0">
+                        <CardContent className="px-4 py-0">
                           <LeadsTable
                             leads={campaignLeadRows}
                             onRowClick={setSelectedLeadId}
@@ -2169,25 +2199,32 @@ function OutreachCampaignPage() {
 
       {/* Lead Details Sheet */}
       <Sheet open={!!selectedLeadId} onOpenChange={(open) => !open && setSelectedLeadId(null)}>
-        <SheetContent className="w-[600px] sm:w-[700px] overflow-y-auto">
+        <SheetContent className="sm:max-w-lg overflow-y-auto">
           {selectedLead && (
             <>
               <SheetHeader>
-                <SheetTitle className="flex items-center gap-2">
-                  {selectedLead.name}
-                  <Badge variant={
-                    selectedLead.icpScore >= 85 ? "default" : 
-                    selectedLead.icpScore >= 70 ? "secondary" : "outline"
-                  }>
-                    ICP: {selectedLead.icpScore}
-                  </Badge>
-                </SheetTitle>
-                <SheetDescription>
-                  {selectedLead.title} at {selectedLead.company}
-                </SheetDescription>
+                <SheetTitle>{selectedLead.name}</SheetTitle>
+                <SheetDescription>{selectedLead.title} at {selectedLead.company}</SheetDescription>
               </SheetHeader>
 
-              <div className="space-y-6 mt-6">
+              {/* Navigation Buttons */}
+              <div className="mt-4 px-4 md:px-6 flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 gap-2"
+                  onClick={() => {
+                    setSelectedLeadId(null);
+                    router.push(`/research?leadId=${selectedLead.id}`);
+                  }}
+                >
+                  <FileText className="w-4 h-4" />
+                  Research & ICP
+                </Button>
+                {/* Outreach Campaign button removed - already on outreach page */}
+              </div>
+
+              <div className="mt-6 space-y-6 px-4 md:px-6">
                 {/* Campaign Context Section */}
                 {campaignDetails && (
                   <Card className="border-primary/20 bg-primary/5">
@@ -2199,11 +2236,11 @@ function OutreachCampaignPage() {
                     </CardHeader>
                     <CardContent className="space-y-3">
                       <div>
-                        <Label className="text-xs text-muted-foreground">Campaign</Label>
+                        <p className="text-xs text-muted-foreground mb-1">Campaign</p>
                         <p className="text-sm font-medium">{campaignDetails.name}</p>
                       </div>
                       <div>
-                        <Label className="text-xs text-muted-foreground">AI Inclusion Reasoning</Label>
+                        <p className="text-xs text-muted-foreground mb-1">AI Inclusion Reasoning</p>
                         <p className="text-sm">
                           {campaignDetails.aiReasoning?.explanation || 
                            "This lead was added to the campaign based on ICP fit and strategic alignment with campaign objectives."}
@@ -2211,7 +2248,7 @@ function OutreachCampaignPage() {
                       </div>
                       {campaignLeadRows.find(l => l.id === selectedLeadId) && (
                         <div>
-                          <Label className="text-xs text-muted-foreground">AI Status</Label>
+                          <p className="text-xs text-muted-foreground mb-1">AI Status</p>
                           <div className="mt-1">
                             {(() => {
                               const aiStatus = campaignLeadRows.find(l => l.id === selectedLeadId)?._aiStatus;
@@ -2228,76 +2265,448 @@ function OutreachCampaignPage() {
                   </Card>
                 )}
 
-                {/* Lead Details */}
+                {/* Lead Source Context (Apollo-specific) */}
+                {selectedLead.source === "Apollo" && selectedLead.sourceMetadata?.apolloListName && (
+                  <Card className="border-chart-3/30 bg-chart-3/5">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm flex items-center gap-2">
+                        <Search className="w-4 h-4" />
+                        Lead Source
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1">Source</p>
+                          <div className="flex items-center gap-1.5">
+                            <Badge variant="outline" className="text-xs border-chart-3/30 bg-chart-3/10 text-chart-3">
+                              Apollo.io
+                            </Badge>
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1">List Name</p>
+                          <p className="text-sm font-medium">{selectedLead.sourceMetadata.apolloListName}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1">Imported Via</p>
+                          <p className="text-sm font-medium">Outbound Ingestion</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1">Last Synced</p>
+                          <p className="text-sm font-medium">{selectedLead.ingestedAt || "Unknown"}</p>
+                        </div>
+                      </div>
+                      <div className="mt-3 pt-3 border-t border-border/30">
+                        <p className="text-xs text-muted-foreground">
+                          This lead was sourced from Apollo and enriched by Jazon before outreach. All messaging is executed by Jazon (not Apollo sequences).
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Current AI Decision - Most Prominent */}
+                <Card className="border-primary/30 bg-primary/5 shadow-sm">
+                  <CardHeader>
+                    <CardTitle className="text-base font-semibold">Current AI Decision</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <p className="text-lg font-semibold text-foreground mb-2">
+                        {selectedLead.aiRecommendation}
+                      </p>
+                      <div className="flex items-center gap-3">
+                        <Badge variant="default" className="text-xs">
+                          {qualification && qualification.overallScore >= 80 ? "High" : qualification && qualification.overallScore >= 60 ? "Medium" : "Low"} Confidence
+                        </Badge>
+                        {qualification && (
+                          <span className="text-xs text-muted-foreground">
+                            {qualification.overallScore}% overall qualification score
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="pt-2 border-t border-border/50">
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                        Expected Outcome
+                      </p>
+                      <p className="text-sm text-foreground">
+                        {selectedLead.stage === "Qualification" && "Voice escalation will accelerate qualification and increase meeting booking probability by 30%."}
+                        {selectedLead.stage === "Meeting Scheduled" && "AE handoff prepared with full context. High probability of pipeline opportunity based on qualification profile."}
+                        {selectedLead.stage === "Engaged" && "Continuing nurture sequence to build engagement before qualification attempt."}
+                        {selectedLead.stage === "Disqualified" && "Early disqualification prevents wasted AE time and focuses resources on higher-fit leads."}
+                        {selectedLead.stage === "Research" && "ICP validation in progress. Outreach will begin once fit is confirmed."}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Why Jazon Recommended This - Compressed */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-sm">Lead Information</CardTitle>
+                    <CardTitle className="text-sm">Why Jazon Recommended This</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3">
+                  <CardContent>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-0.5">•</span>
+                        <span>
+                          <span className="font-medium">ICP Analysis:</span> Score of {selectedLead.icpScore} indicates {selectedLead.icpScore >= 85 ? "strong alignment" : selectedLead.icpScore >= 70 ? "moderate alignment" : "weak alignment"} with ideal customer profile.
+                        </span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary mt-0.5">•</span>
+                        <span>
+                          <span className="font-medium">Engagement Signals:</span>{" "}
+                          {selectedLead.stage === "Qualification" && "High engagement across multiple channels indicates readiness for deeper qualification."}
+                          {selectedLead.stage === "Meeting Scheduled" && "Fully qualified with confirmed need, authority, and timeline."}
+                          {selectedLead.stage === "Engaged" && "Positive initial responses, continuing nurture sequence."}
+                          {selectedLead.stage === "Disqualified" && "No alignment with ICP criteria or budget constraints identified."}
+                          {selectedLead.stage === "Research" && "Validating ICP fit before initiating outreach."}
+                        </span>
+                      </li>
+                      {qualification && qualification.overallScore >= 80 && (
+                        <li className="flex items-start gap-2">
+                          <span className="text-primary mt-0.5">•</span>
+                          <span>
+                            <span className="font-medium">Qualification Status:</span> {qualification.overallScore}% confidence with {[qualification.need, qualification.timeline, qualification.authority, qualification.budget].filter((v) => v.known).length} of 4 BANT criteria confirmed.
+                          </span>
+                        </li>
+                      )}
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                {/* Lead Snapshot - Combined Section */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm">Lead Snapshot</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label className="text-xs text-muted-foreground">Email</Label>
-                        <p className="text-sm">{selectedLead.email}</p>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                          ICP Score
+                        </p>
+                        <div className={`text-2xl font-bold ${getIcpScoreColor(selectedLead.icpScore)}`}>
+                          {selectedLead.icpScore}/100
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {selectedLead.icpScore >= 85 ? "Excellent fit" : selectedLead.icpScore >= 70 ? "Good fit" : "Poor fit"}
+                        </p>
                       </div>
                       <div>
-                        <Label className="text-xs text-muted-foreground">Company</Label>
-                        <p className="text-sm">{selectedLead.company}</p>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                          Current Stage
+                        </p>
+                        <Badge variant={getStageColor(selectedLead.stage)} className="text-sm mb-1">
+                          {selectedLead.stage}
+                        </Badge>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Last contact: {selectedLead.lastContact}
+                        </p>
                       </div>
+                    </div>
+
+                    {selectedLead.triggers && selectedLead.triggers.length > 0 && (
                       <div>
-                        <Label className="text-xs text-muted-foreground">Title</Label>
-                        <p className="text-sm">{selectedLead.title}</p>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+                          Detected Triggers
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedLead.triggers.map((trigger: string, idx: number) => (
+                            <Badge key={idx} variant="secondary" className="text-xs">{trigger}</Badge>
+                          ))}
+                        </div>
                       </div>
-                      <div>
-                        <Label className="text-xs text-muted-foreground">Industry</Label>
-                        <p className="text-sm">{selectedLead.industry}</p>
-                      </div>
-                      <div>
-                        <Label className="text-xs text-muted-foreground">ICP Score</Label>
-                        <p className="text-sm font-semibold">{selectedLead.icpScore}/100 - {
-                          selectedLead.icpScore >= 85 ? "High fit" : 
-                          selectedLead.icpScore >= 70 ? "Medium fit" : "Low fit"
-                        }</p>
-                      </div>
-                      <div>
-                        <Label className="text-xs text-muted-foreground">Source</Label>
-                        <p className="text-sm">{selectedLead.source}</p>
+                    )}
+
+                    <div className="pt-2 border-t border-border/50">
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+                        Lead Origin
+                      </p>
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <span className="text-muted-foreground">Source:</span>{" "}
+                          <span className="font-medium">{selectedLead.source || "Not specified"}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Ingested:</span>{" "}
+                          <span className="font-medium">{selectedLead.ingestedAt || "Not recorded"}</span>
+                        </div>
+                        {selectedLead.importedBy && (
+                          <div className="col-span-2">
+                            <span className="text-muted-foreground">Imported by:</span>{" "}
+                            <span className="font-medium">{selectedLead.importedBy}</span>
+                          </div>
+                        )}
+                        {selectedLead.originTrigger && (
+                          <div className="col-span-2 text-xs text-muted-foreground">
+                            {selectedLead.originTrigger}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* AI Recommendation */}
+                {/* Tabbed Interface for Lower Half */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-sm">AI Recommendation</CardTitle>
+                    <CardTitle className="text-sm">Details</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm">{selectedLead.aiRecommendation}</p>
-                    {selectedLead.triggers && selectedLead.triggers.length > 0 && (
-                      <div className="mt-3">
-                        <Label className="text-xs text-muted-foreground">Detected Signals</Label>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {selectedLead.triggers.map((trigger, i) => (
-                            <Badge key={i} variant="secondary" className="text-xs">
-                              {trigger}
-                            </Badge>
-                          ))}
+                    <Tabs defaultValue="activity" className="w-full">
+                      <TabsList className="w-full justify-start">
+                        <TabsTrigger value="activity">Activity</TabsTrigger>
+                        <TabsTrigger value="qualification">Qualification</TabsTrigger>
+                        {voiceMessages.length > 0 && (
+                          <TabsTrigger value="voice">Voice Summary</TabsTrigger>
+                        )}
+                        {meeting && (
+                          <TabsTrigger value="handoff">AE Handoff</TabsTrigger>
+                        )}
+                      </TabsList>
+
+                      <TabsContent value="activity" className="mt-4">
+                        <div className="space-y-4">
+                          {conversations.length > 0 ? (
+                            conversations.map((msg) => (
+                              <div key={msg.id} className="flex gap-3 pb-4 border-b last:border-0 last:pb-0">
+                                <div className={`p-2 rounded-full h-fit shrink-0 ${
+                                  msg.channel === "email" ? "bg-primary/10 text-primary" :
+                                  msg.channel === "voice" ? "bg-chart-2/10 text-chart-2" :
+                                  "bg-chart-3/10 text-chart-3"
+                                }`}>
+                                  {msg.channel === "email" && <Mail className="w-4 h-4" />}
+                                  {msg.channel === "voice" && <Phone className="w-4 h-4" />}
+                                  {msg.channel === "linkedin" && <MessageSquare className="w-4 h-4" />}
+                                </div>
+                                <div className="flex-1 space-y-1 min-w-0">
+                                  <div className="flex items-start justify-between gap-2">
+                                    <div className="min-w-0">
+                                      <Badge variant="outline" className="text-xs mb-1">
+                                        {msg.channel} • {msg.direction}
+                                      </Badge>
+                                      {msg.subject && (
+                                        <p className="font-medium text-sm truncate">{msg.subject}</p>
+                                      )}
+                                    </div>
+                                    <span className="text-xs text-muted-foreground shrink-0">{msg.timestamp}</span>
+                                  </div>
+                                  {msg.summary ? (
+                                    <div className="bg-muted/50 rounded p-2 space-y-2">
+                                      <p className="text-sm">{msg.summary}</p>
+                                      {msg.duration && (
+                                        <p className="text-xs text-muted-foreground">
+                                          Duration: {msg.duration} • Outcome: {msg.outcome}
+                                        </p>
+                                      )}
+                                      {msg.objections && msg.objections.length > 0 && (
+                                        <div>
+                                          <p className="text-xs font-medium mt-2 mb-1">Objections raised:</p>
+                                          <ul className="text-xs text-muted-foreground space-y-1">
+                                            {msg.objections.map((obj, idx) => (
+                                              <li key={idx}>• {obj}</li>
+                                            ))}
+                                          </ul>
+                                        </div>
+                                      )}
+                                    </div>
+                                  ) : (
+                                    <p className="text-sm text-muted-foreground">{msg.content}</p>
+                                  )}
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-sm text-muted-foreground">No conversation history yet</p>
+                          )}
                         </div>
-                      </div>
-                    )}
+                      </TabsContent>
+
+                      <TabsContent value="qualification" className="mt-4">
+                        {qualification ? (
+                          <div className="space-y-4">
+                            {Object.entries({
+                              "Need": qualification.need,
+                              "Timeline": qualification.timeline,
+                              "Authority": qualification.authority,
+                              "Budget": qualification.budget
+                            }).map(([key, data]) => (
+                              <div key={key} className="pb-3 border-b last:border-0 last:pb-0">
+                                <div className="flex items-center justify-between mb-1">
+                                  <p className="text-sm font-medium">{key}</p>
+                                  <div className="flex items-center gap-2">
+                                    <Badge variant={data.known ? "default" : "outline"} className="text-xs">
+                                      {data.known ? "Confirmed" : "Unknown"}
+                                    </Badge>
+                                    <span className="text-xs text-muted-foreground">
+                                      {data.confidence}% confidence
+                                    </span>
+                                  </div>
+                                </div>
+                                <p className="text-sm text-muted-foreground">{data.value}</p>
+                              </div>
+                            ))}
+                            <div className="pt-3 border-t">
+                              <div className="flex items-center justify-between">
+                                <p className="text-sm font-medium">Overall Qualification Score</p>
+                                <Badge variant="default" className="text-sm">
+                                  {qualification.overallScore}%
+                                </Badge>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                Recommendation: {qualification.recommendation === "book_meeting" ? "Book meeting" : qualification.recommendation === "nurture" ? "Continue nurture" : "Disqualify"}
+                              </p>
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-sm text-muted-foreground">Qualification in progress</p>
+                        )}
+                      </TabsContent>
+
+                      {voiceMessages.length > 0 && (
+                        <TabsContent value="voice" className="mt-4">
+                          <div className="space-y-4">
+                            <div className="bg-muted/30 rounded-lg p-3 border border-border/50">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Phone className="w-4 h-4 text-chart-2" />
+                                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                                  Voice Escalation (Conditional)
+                                </p>
+                              </div>
+                              <p className="text-xs text-muted-foreground mb-3">
+                                Voice was used as an escalation when engagement and ICP score crossed the configured threshold.
+                              </p>
+                            </div>
+                            {voiceMessages.map((msg) => (
+                              <div key={msg.id} className="space-y-3">
+                                <div className="flex items-center justify-between">
+                                  <Badge variant="outline" className="text-xs">
+                                    {msg.timestamp}
+                                  </Badge>
+                                  {msg.duration && (
+                                    <span className="text-xs text-muted-foreground">
+                                      Duration: {msg.duration}
+                                    </span>
+                                  )}
+                                </div>
+                                {msg.summary && (
+                                  <div className="bg-muted/50 rounded p-3 space-y-2">
+                                    <p className="text-sm font-medium mb-1">Call Summary</p>
+                                    <p className="text-sm text-foreground">{msg.summary}</p>
+                                    {msg.outcome && (
+                                      <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                                        <CheckCircle2 className="w-4 h-4 text-chart-2" />
+                                        <span className="text-sm font-medium">Outcome: {msg.outcome}</span>
+                                      </div>
+                                    )}
+                                    {msg.objections && msg.objections.length > 0 && (
+                                      <div className="pt-2 border-t border-border/50">
+                                        <p className="text-xs font-medium text-muted-foreground mb-2">Objections Raised:</p>
+                                        <ul className="space-y-1">
+                                          {msg.objections.map((obj, idx) => (
+                                            <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
+                                              <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+                                              <span>{obj}</span>
+                                            </li>
+                                          ))}
+                                        </ul>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </TabsContent>
+                      )}
+
+                      {meeting && (
+                        <TabsContent value="handoff" className="mt-4">
+                          <div className="space-y-4">
+                            <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
+                              <div className="flex items-center gap-2 mb-2">
+                                <CheckCircle2 className="w-4 h-4 text-primary" />
+                                <p className="text-sm font-semibold">Meeting Scheduled</p>
+                              </div>
+                              <p className="text-sm text-muted-foreground">
+                                {meeting.scheduledFor} • Status: {meeting.status}
+                              </p>
+                            </div>
+
+                            {meeting.handoffPack && (
+                              <>
+                                <div>
+                                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+                                    Research Summary
+                                  </p>
+                                  <p className="text-sm text-foreground">{meeting.handoffPack.researchSummary}</p>
+                                </div>
+
+                                <div>
+                                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+                                    Qualification Notes
+                                  </p>
+                                  <ul className="space-y-1">
+                                    {meeting.handoffPack.qualificationNotes.map((note, idx) => (
+                                      <li key={idx} className="flex items-start gap-2 text-sm">
+                                        <span className="text-primary mt-0.5">•</span>
+                                        <span>{note}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+
+                                {meeting.handoffPack.objectionsRaised.length > 0 && (
+                                  <div>
+                                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+                                      Objections Raised
+                                    </p>
+                                    <ul className="space-y-1">
+                                      {meeting.handoffPack.objectionsRaised.map((obj, idx) => (
+                                        <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
+                                          <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+                                          <span>{obj}</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
+
+                                {meeting.handoffPack.suggestedTalkTrack.length > 0 && (
+                                  <div>
+                                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+                                      Suggested Talk Track
+                                    </p>
+                                    <ul className="space-y-2">
+                                      {meeting.handoffPack.suggestedTalkTrack.map((track, idx) => (
+                                        <li key={idx} className="text-sm text-foreground">
+                                          {track}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
+
+                                {meeting.handoffPack.whyBooked && (
+                                  <div className="pt-3 border-t">
+                                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+                                      Why This Meeting Was Booked
+                                    </p>
+                                    <p className="text-sm text-foreground">{meeting.handoffPack.whyBooked}</p>
+                                  </div>
+                                )}
+                              </>
+                            )}
+                          </div>
+                        </TabsContent>
+                      )}
+                    </Tabs>
                   </CardContent>
                 </Card>
-
-                {/* Quick Actions */}
-                <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    className="flex-1"
-                    onClick={() => router.push(`/research?leadId=${selectedLeadId}`)}
-                  >
-                    View Research & ICP
-                  </Button>
-                </div>
               </div>
             </>
           )}

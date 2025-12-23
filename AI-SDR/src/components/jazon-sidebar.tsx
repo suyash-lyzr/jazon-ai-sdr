@@ -45,7 +45,7 @@ const data = {
     // },
     {
       title: "Campaigns",
-      url: "/outreach",
+      url: "/",
       icon: IconRocket,
     },
     {
