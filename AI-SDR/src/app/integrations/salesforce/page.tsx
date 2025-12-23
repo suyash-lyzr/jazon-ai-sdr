@@ -65,7 +65,9 @@ export default function SalesforceIntegrationPage() {
     status: "Status",
   });
 
-  const redirectUri = `${typeof window !== "undefined" ? window.location.origin : ""}/oauth/callback/salesforce`;
+  const redirectUri = `${
+    typeof window !== "undefined" ? window.location.origin : ""
+  }/oauth/callback/salesforce`;
 
   const handleSaveCredentials = () => {
     if (!salesforceUrl || !consumerKey) {
@@ -137,7 +139,8 @@ export default function SalesforceIntegrationPage() {
                   Salesforce Integration
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Connect your Salesforce CRM to sync leads, contacts, accounts, and activities
+                  Connect your Salesforce CRM to sync leads, contacts, accounts,
+                  and activities
                 </p>
               </div>
               <Badge variant={isConnected ? "default" : "outline"}>
@@ -151,7 +154,8 @@ export default function SalesforceIntegrationPage() {
                 <CardHeader>
                   <CardTitle>What this integration enables</CardTitle>
                   <CardDescription>
-                    Connect Salesforce to enable bidirectional sync between Jazon and your CRM
+                    Connect Salesforce to enable bidirectional sync between
+                    Jazon and your CRM
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -159,42 +163,61 @@ export default function SalesforceIntegrationPage() {
                     <li className="flex items-start gap-2">
                       <span className="text-primary mt-0.5">•</span>
                       <span>
-                        <strong className="text-foreground">Read leads, contacts, and accounts</strong> from Salesforce for lead enrichment and ICP scoring
+                        <strong className="text-foreground">
+                          Read leads, contacts, and accounts
+                        </strong>{" "}
+                        from Salesforce for lead enrichment and ICP scoring
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-primary mt-0.5">•</span>
                       <span>
-                        <strong className="text-foreground">Write qualification status and ICP scores</strong> back to Salesforce lead/contact records
+                        <strong className="text-foreground">
+                          Write qualification status and ICP scores
+                        </strong>{" "}
+                        back to Salesforce lead/contact records
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-primary mt-0.5">•</span>
                       <span>
-                        <strong className="text-foreground">Sync account data</strong> (industry, size, region) for better targeting
+                        <strong className="text-foreground">
+                          Sync account data
+                        </strong>{" "}
+                        (industry, size, region) for better targeting
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-primary mt-0.5">•</span>
                       <span>
-                        <strong className="text-foreground">Log activities</strong> (emails, calls, meetings, tasks) to Salesforce timeline
+                        <strong className="text-foreground">
+                          Log activities
+                        </strong>{" "}
+                        (emails, calls, meetings, tasks) to Salesforce timeline
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-primary mt-0.5">•</span>
                       <span>
-                        <strong className="text-foreground">Create and update opportunities</strong> when leads are qualified and ready for AE handoff
+                        <strong className="text-foreground">
+                          Create and update opportunities
+                        </strong>{" "}
+                        when leads are qualified and ready for AE handoff
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-primary mt-0.5">•</span>
                       <span>
-                        <strong className="text-foreground">Track email engagement</strong> and sync activity history for better outreach timing
+                        <strong className="text-foreground">
+                          Track email engagement
+                        </strong>{" "}
+                        and sync activity history for better outreach timing
                       </span>
                     </li>
                   </ul>
                   <p className="text-xs text-muted-foreground mt-4">
-                    Lyzr handles mapping, retries, and audit logging automatically.
+                    Lyzr handles mapping, retries, and audit logging
+                    automatically.
                   </p>
                 </CardContent>
               </Card>
@@ -204,7 +227,8 @@ export default function SalesforceIntegrationPage() {
                 <CardHeader>
                   <CardTitle>Salesforce OAuth Setup Instructions</CardTitle>
                   <CardDescription>
-                    Follow these steps to create a Connected App in Salesforce and connect it to Jazon
+                    Follow these steps to create a Connected App in Salesforce
+                    and connect it to Jazon
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -218,7 +242,8 @@ export default function SalesforceIntegrationPage() {
                           Navigate to Salesforce Setup
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          Log in to your Salesforce org and click the gear icon (⚙️) in the top right, then select{" "}
+                          Log in to your Salesforce org and click the gear icon
+                          (⚙️) in the top right, then select{" "}
                           <strong>Setup</strong>
                         </p>
                       </div>
@@ -238,12 +263,29 @@ export default function SalesforceIntegrationPage() {
                           <strong>"New Connected App"</strong> and configure:
                         </p>
                         <ul className="text-xs text-muted-foreground ml-4 space-y-1 mt-2">
-                          <li>• <strong>Connected App Name:</strong> Jazon Integration</li>
-                          <li>• <strong>API Name:</strong> Jazon_Integration (auto-populated)</li>
-                          <li>• <strong>Contact Email:</strong> Your email address</li>
-                          <li>• <strong>Enable OAuth Settings:</strong> Check this box</li>
-                          <li>• <strong>Callback URL:</strong> Copy the redirect URI below</li>
-                          <li>• <strong>Selected OAuth Scopes:</strong> Add required scopes (see Security & Permissions section)</li>
+                          <li>
+                            • <strong>Connected App Name:</strong> Jazon
+                            Integration
+                          </li>
+                          <li>
+                            • <strong>API Name:</strong> Jazon_Integration
+                            (auto-populated)
+                          </li>
+                          <li>
+                            • <strong>Contact Email:</strong> Your email address
+                          </li>
+                          <li>
+                            • <strong>Enable OAuth Settings:</strong> Check this
+                            box
+                          </li>
+                          <li>
+                            • <strong>Callback URL:</strong> Copy the redirect
+                            URI below
+                          </li>
+                          <li>
+                            • <strong>Selected OAuth Scopes:</strong> Add
+                            required scopes (see Security & Permissions section)
+                          </li>
                         </ul>
                       </div>
                     </div>
@@ -257,12 +299,22 @@ export default function SalesforceIntegrationPage() {
                           Configure OAuth Policies
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          After saving, click <strong>"Manage"</strong> → <strong>"Edit Policies"</strong>:
+                          After saving, click <strong>"Manage"</strong> →{" "}
+                          <strong>"Edit Policies"</strong>:
                         </p>
                         <ul className="text-xs text-muted-foreground ml-4 space-y-1 mt-2">
-                          <li>• <strong>Permitted Users:</strong> Admin approved users are pre-authorized</li>
-                          <li>• <strong>IP Relaxation:</strong> Relax IP restrictions (or configure as needed)</li>
-                          <li>• <strong>Refresh Token Policy:</strong> Refresh token is valid until revoked</li>
+                          <li>
+                            • <strong>Permitted Users:</strong> Admin approved
+                            users are pre-authorized
+                          </li>
+                          <li>
+                            • <strong>IP Relaxation:</strong> Relax IP
+                            restrictions (or configure as needed)
+                          </li>
+                          <li>
+                            • <strong>Refresh Token Policy:</strong> Refresh
+                            token is valid until revoked
+                          </li>
                         </ul>
                       </div>
                     </div>
@@ -276,8 +328,10 @@ export default function SalesforceIntegrationPage() {
                           Copy Consumer Key & Consumer Secret
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          After creating the Connected App, you'll see the <strong>Consumer Key</strong> (this is your Client ID) and{" "}
-                          <strong>Consumer Secret</strong> (this is your Client Secret). Copy both values.
+                          After creating the Connected App, you'll see the{" "}
+                          <strong>Consumer Key</strong> (this is your Client ID)
+                          and <strong>Consumer Secret</strong> (this is your
+                          Client Secret). Copy both values.
                         </p>
                       </div>
                     </div>
@@ -291,7 +345,9 @@ export default function SalesforceIntegrationPage() {
                           Enter credentials below
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          Paste your Salesforce instance URL, Consumer Key, and Consumer Secret in the form below and click "Save Credentials"
+                          Paste your Salesforce instance URL, Consumer Key, and
+                          Consumer Secret in the form below and click "Save
+                          Credentials"
                         </p>
                       </div>
                     </div>
@@ -305,7 +361,9 @@ export default function SalesforceIntegrationPage() {
                           Start OAuth authorization
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          Click "Start OAuth Setup" to authorize Jazon. After authorizing, you'll be redirected back to complete the connection
+                          Click "Start OAuth Setup" to authorize Jazon. After
+                          authorizing, you'll be redirected back to complete the
+                          connection
                         </p>
                       </div>
                     </div>
@@ -318,7 +376,8 @@ export default function SalesforceIntegrationPage() {
                 <CardHeader>
                   <CardTitle>Connect Salesforce</CardTitle>
                   <CardDescription>
-                    Enter your Salesforce OAuth credentials to establish the connection
+                    Enter your Salesforce OAuth credentials to establish the
+                    connection
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -345,7 +404,9 @@ export default function SalesforceIntegrationPage() {
                         onChange={(e) => setSalesforceUrl(e.target.value)}
                       />
                       <p className="text-xs text-muted-foreground">
-                        Your Salesforce org URL (e.g., https://yourinstance.salesforce.com or https://yourinstance.my.salesforce.com)
+                        Your Salesforce org URL (e.g.,
+                        https://yourinstance.salesforce.com or
+                        https://yourinstance.my.salesforce.com)
                       </p>
                     </div>
 
@@ -407,7 +468,8 @@ export default function SalesforceIntegrationPage() {
                         </Button>
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        Copy this and paste it in your Connected App's Callback URL field
+                        Copy this and paste it in your Connected App's Callback
+                        URL field
                       </p>
                     </div>
 
@@ -428,7 +490,9 @@ export default function SalesforceIntegrationPage() {
                       <Button
                         variant="outline"
                         onClick={handleStartOAuth}
-                        disabled={!credentialsSaved || isConnecting || isConnected}
+                        disabled={
+                          !credentialsSaved || isConnecting || isConnected
+                        }
                       >
                         {isConnecting ? (
                           <>
@@ -458,12 +522,16 @@ export default function SalesforceIntegrationPage() {
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 text-xs">
                         <span className="text-muted-foreground">Status:</span>
-                        <Badge variant={credentialsSaved ? "default" : "outline"}>
+                        <Badge
+                          variant={credentialsSaved ? "default" : "outline"}
+                        >
                           {credentialsSaved ? "Saved" : "Not saved"}
                         </Badge>
                       </div>
                       <div className="flex items-center gap-2 text-xs">
-                        <span className="text-muted-foreground">Integration:</span>
+                        <span className="text-muted-foreground">
+                          Integration:
+                        </span>
                         <Badge variant={isConnected ? "default" : "outline"}>
                           {isConnected ? "Connected" : "Not connected"}
                         </Badge>
@@ -503,14 +571,18 @@ export default function SalesforceIntegrationPage() {
 
               {/* Security & Permissions */}
               <Card>
-                <Collapsible open={securityExpanded} onOpenChange={setSecurityExpanded}>
+                <Collapsible
+                  open={securityExpanded}
+                  onOpenChange={setSecurityExpanded}
+                >
                   <CollapsibleTrigger asChild>
                     <CardHeader className="cursor-pointer">
                       <div className="flex items-center justify-between">
                         <div>
                           <CardTitle>Security & Permissions</CardTitle>
                           <CardDescription>
-                            Required OAuth scopes and permissions for this integration
+                            Required OAuth scopes and permissions for this
+                            integration
                           </CardDescription>
                         </div>
                         <ChevronDown
@@ -528,12 +600,27 @@ export default function SalesforceIntegrationPage() {
                           Required OAuth Scopes
                         </p>
                         <ul className="space-y-1 text-xs text-muted-foreground ml-4">
-                          <li>• <code className="bg-muted px-1 rounded">api</code> - Access and manage your data (api)</li>
-                          <li>• <code className="bg-muted px-1 rounded">refresh_token</code> - Perform requests on your behalf at any time (refresh_token, offline_access)</li>
-                          <li>• <code className="bg-muted px-1 rounded">full</code> - Full access (full)</li>
+                          <li>
+                            • <code className="bg-muted px-1 rounded">api</code>{" "}
+                            - Access and manage your data (api)
+                          </li>
+                          <li>
+                            •{" "}
+                            <code className="bg-muted px-1 rounded">
+                              refresh_token
+                            </code>{" "}
+                            - Perform requests on your behalf at any time
+                            (refresh_token, offline_access)
+                          </li>
+                          <li>
+                            •{" "}
+                            <code className="bg-muted px-1 rounded">full</code>{" "}
+                            - Full access (full)
+                          </li>
                         </ul>
                         <p className="text-xs text-muted-foreground mt-2">
-                          These scopes allow Jazon to read and write leads, contacts, accounts, and activities.
+                          These scopes allow Jazon to read and write leads,
+                          contacts, accounts, and activities.
                         </p>
                       </div>
                       <div className="space-y-2">
@@ -541,8 +628,11 @@ export default function SalesforceIntegrationPage() {
                           Data Access
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          Jazon will only access data necessary for lead management, qualification, and outreach tracking. 
-                          All API calls are logged for audit purposes. The integration respects Salesforce field-level security and sharing rules.
+                          Jazon will only access data necessary for lead
+                          management, qualification, and outreach tracking. All
+                          API calls are logged for audit purposes. The
+                          integration respects Salesforce field-level security
+                          and sharing rules.
                         </p>
                       </div>
                       <div className="space-y-2">
@@ -550,7 +640,9 @@ export default function SalesforceIntegrationPage() {
                           OAuth Policies
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          Ensure your Connected App has "Admin approved users are pre-authorized" enabled for seamless authentication.
+                          Ensure your Connected App has "Admin approved users
+                          are pre-authorized" enabled for seamless
+                          authentication.
                         </p>
                       </div>
                     </CardContent>
@@ -567,23 +659,36 @@ export default function SalesforceIntegrationPage() {
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-start gap-2">
                       <span className="text-primary mt-0.5">•</span>
-                      <span>Default lead/contact → lead mapping (name, email, company, title)</span>
+                      <span>
+                        Default lead/contact → lead mapping (name, email,
+                        company, title)
+                      </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-primary mt-0.5">•</span>
-                      <span>ICP score and qualification status field updates</span>
+                      <span>
+                        ICP score and qualification status field updates
+                      </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-primary mt-0.5">•</span>
-                      <span>Account data synchronization (industry, size, region)</span>
+                      <span>
+                        Account data synchronization (industry, size, region)
+                      </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-primary mt-0.5">•</span>
-                      <span>Opportunity creation for qualified leads ready for AE handoff</span>
+                      <span>
+                        Opportunity creation for qualified leads ready for AE
+                        handoff
+                      </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-primary mt-0.5">•</span>
-                      <span>Activity logging (emails, calls, meetings, tasks) to Salesforce timeline</span>
+                      <span>
+                        Activity logging (emails, calls, meetings, tasks) to
+                        Salesforce timeline
+                      </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-primary mt-0.5">•</span>
@@ -595,7 +700,8 @@ export default function SalesforceIntegrationPage() {
                     </li>
                   </ul>
                   <p className="text-xs text-muted-foreground mt-4">
-                    We auto-discover custom fields, record types, and picklist values during the first sync.
+                    We auto-discover custom fields, record types, and picklist
+                    values during the first sync.
                   </p>
                 </CardContent>
               </Card>
@@ -605,7 +711,8 @@ export default function SalesforceIntegrationPage() {
                 <CardHeader>
                   <CardTitle>Advanced — Field Mapping</CardTitle>
                   <CardDescription>
-                    Modify field mappings for custom Salesforce fields or different field names
+                    Modify field mappings for custom Salesforce fields or
+                    different field names
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -703,7 +810,8 @@ export default function SalesforceIntegrationPage() {
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Defaults work for most customers. Only edit if you use custom fields or different field names.
+                    Defaults work for most customers. Only edit if you use
+                    custom fields or different field names.
                   </p>
                   <Button variant="outline" size="sm">
                     Save mappings
@@ -717,4 +825,3 @@ export default function SalesforceIntegrationPage() {
     </SidebarProvider>
   );
 }
-

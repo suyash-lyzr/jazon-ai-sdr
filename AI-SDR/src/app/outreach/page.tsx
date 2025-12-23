@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useEffect, useMemo } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { JazonSidebar } from "@/components/jazon-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import {
@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -29,684 +28,322 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetFooter,
-} from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { mockOutreachStrategies, mockConversations } from "@/lib/mock-data";
-import { useJazonApp } from "@/context/jazon-app-context";
-import {
-  Mail,
-  Phone,
-  MessageSquare,
-  Shield,
-  CheckCircle2,
-  Clock,
-  Pause,
-  PhoneCall,
-  StopCircle,
-  UserCheck,
-  AlertCircle,
-  TrendingUp,
-  Target,
-  Activity,
-  Zap,
-  Database,
-  Search,
-  Send,
-  Eye,
-  FileText,
-  ChevronDown,
-  ChevronUp,
-  Edit3,
+import { 
+  Mail, 
+  Phone, 
+  MessageSquare, 
   Loader2,
-  Linkedin,
-  Settings2,
+  Plus,
+  Search,
   Upload,
   X,
+  FileText,
+  Linkedin,
+  Clock,
+  CheckCircle2,
+  Settings2,
+  Users,
+  Activity,
+  TrendingUp,
 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
-export default function OutreachPage() {
-  const { leads: mockLeads } = useJazonApp();
-  const searchParams = useSearchParams();
-  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
-  const [statusNote, setStatusNote] = useState<string | null>(null);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [controlDialogOpen, setControlDialogOpen] = useState<string | null>(
-    null
-  );
-  const [overrideReason, setOverrideReason] = useState("");
-  const [viewMode, setViewMode] = useState<"executive" | "full">("executive");
-  const [expandedMessageContent, setExpandedMessageContent] = useState<
-    Set<string>
-  >(new Set());
-
-  // New state for DB-backed data
-  const [dbLeads, setDbLeads] = useState<any[]>([]);
-  const [outreachData, setOutreachData] = useState<any>(null);
-  const [isLoadingOutreach, setIsLoadingOutreach] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [editSidebar, setEditSidebar] = useState<{
-    open: boolean;
-    section: "strategy" | "copy" | "guardrails" | null;
-  }>({
-    open: false,
-    section: null,
-  });
-  const [editFormData, setEditFormData] = useState<any>({});
-  const [isSaving, setIsSaving] = useState(false);
-  const [copyDialogOpen, setCopyDialogOpen] = useState(false);
-  const [selectedStepCopy, setSelectedStepCopy] = useState<any>(null);
-  const [editingCopy, setEditingCopy] = useState(false);
-  const [editedCopyData, setEditedCopyData] = useState<any>(null);
-  const [campaignSettingsOpen, setCampaignSettingsOpen] = useState(false);
-
-  // Campaign customization state
-  const [campaignInstructions, setCampaignInstructions] = useState({
-    formatting: "",
-    tone: "",
-    personalization: "",
-    additionalNotes: "",
-  });
-  const [campaignTemplates, setCampaignTemplates] = useState({
-    email: "",
-    linkedin: "",
-    voice: "",
-  });
-  const [campaignKnowledgeBase, setCampaignKnowledgeBase] = useState({
-    documents: [] as { id: string; name: string; type: string }[],
-    urls: [] as string[],
-    notes: "",
-  });
-  const [campaignUrlInput, setCampaignUrlInput] = useState("");
-
-  // Helper function to format dates consistently (avoid hydration mismatch)
-  const formatDate = (date: Date | string | null | undefined): string => {
-    if (!date) return "";
-    const d = typeof date === "string" ? new Date(date) : date;
-    if (isNaN(d.getTime())) return "";
-    // Use ISO format or a consistent format that works on both server and client
-    return d.toISOString().split("T")[0]; // Returns YYYY-MM-DD format
+interface Campaign {
+  _id: string;
+  name: string;
+  status: string;
+  mode: string;
+  metrics: {
+    total_prospects: number;
+    active_prospects: number;
+    replied_prospects: number;
+    booked_prospects: number;
+    response_rate: number;
   };
+  createdAt: string;
+  updatedAt: string;
+}
 
-  // Helper function to format relative time (for display)
-  // Returns a consistent format to avoid hydration mismatch
-  const formatRelativeTime = (
-    date: Date | string | null | undefined
-  ): string => {
-    if (!date) return "";
-    const d = typeof date === "string" ? new Date(date) : date;
-    if (isNaN(d.getTime())) return "";
-
-    // Use a consistent format that works the same on server and client
-    // Format: "YYYY-MM-DD HH:MM" or just the date if it's old
-    const now = new Date();
-    const diffMs = now.getTime() - d.getTime();
-    const diffDays = Math.floor(diffMs / 86400000);
-
-    // If more than 7 days, just show the date
-    if (diffDays >= 7) {
-      return formatDate(d);
-    }
-
-    // For recent dates, show a simple format that's consistent
-    // Format as "YYYY-MM-DD" to avoid locale/timezone issues
-    return formatDate(d);
-  };
-
-  // Fetch leads from database on mount
-  useEffect(() => {
-    const fetchLeads = async () => {
-      try {
-        const response = await fetch("/api/leads");
-        const data = await response.json();
-
-        if (data.success && data.leads) {
-          const transformedLeads = data.leads.map((dbLead: any) => ({
-            id: dbLead._id,
-            name: dbLead.name,
-            company: dbLead.company?.name || "Unknown",
-            icpScore: dbLead.icp_score?.icp_score || 0,
-            stage:
-              dbLead.status === "icp_scored" ? "Qualification" : "Research",
-            _dbLead: dbLead,
-          }));
-          setDbLeads(transformedLeads);
-        }
-      } catch (error) {
-        console.error("Error fetching leads:", error);
-      }
+interface CampaignDetails extends Campaign {
+  createdBy: string;
+  scheduling: {
+    max_touches: number;
+    interval_days: number;
+    time_window: {
+      start: string;
+      end: string;
     };
+    timezone: string;
+    allowed_days: string[];
+  };
+  agentProfile: {
+    agent_name: string;
+    agent_designation: string;
+    agent_contact: string;
+    seller_name: string;
+  };
+  instructions: {
+    construct: string;
+    format: string;
+    personalization: string;
+    additional_notes: string;
+  };
+  templates: {
+    email_steps: Array<{
+      step_name: string;
+      construct_instructions: string;
+      format_instructions: string;
+      template: string;
+    }>;
+    linkedin_template: string;
+    voice_template: string;
+  };
+}
 
-    fetchLeads();
+interface Prospect {
+  _id: string;
+  lead_id: string;
+  lead_name: string;
+  lead_email: string;
+  lead_title: string;
+  lead_company: string;
+  status: string;
+  current_step: number;
+  metrics: {
+    emails_sent: number;
+    replies: number;
+    last_touch_at: string | null;
+  };
+  addedAt: string;
+}
+
+interface KnowledgeItem {
+  _id: string;
+  type: string;
+  file_name?: string;
+  file_type?: string;
+  url?: string;
+  url_title?: string;
+  note_title?: string;
+  note_content?: string;
+  createdAt: string;
+}
+
+export default function OutreachCampaignPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  // State
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(null);
+  const [campaignDetails, setCampaignDetails] = useState<CampaignDetails | null>(null);
+  const [prospects, setProspects] = useState<Prospect[]>([]);
+  const [knowledgeItems, setKnowledgeItems] = useState<KnowledgeItem[]>([]);
+  const [activityData, setActivityData] = useState<any>(null);
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [createCampaignDialog, setCreateCampaignDialog] = useState(false);
+  const [newCampaignName, setNewCampaignName] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedMode, setSelectedMode] = useState("Pain Point Email");
+  const [addProspectsDialog, setAddProspectsDialog] = useState(false);
+  const [addKnowledgeDialog, setAddKnowledgeDialog] = useState(false);
+  const [knowledgeType, setKnowledgeType] = useState<"file" | "url" | "note">("url");
+  const [urlInput, setUrlInput] = useState("");
+
+  // Fetch campaigns on mount
+  useEffect(() => {
+    fetchCampaigns();
   }, []);
 
-  // Read leadId from URL query parameters
+  // Handle deep link with leadId
   useEffect(() => {
-    const leadIdFromUrl = searchParams.get("leadId");
-    if (leadIdFromUrl) {
-      setSelectedLeadId(leadIdFromUrl);
+    const leadId = searchParams.get("leadId");
+    if (leadId && campaigns.length === 0) {
+      // Auto-create campaign and add lead
+      handleAutoCreateCampaign(leadId);
     }
-  }, [searchParams]);
+  }, [searchParams, campaigns]);
 
-  // Combine mock leads and database leads
-  const leads = useMemo(() => {
-    const mockLeadsTransformed = mockLeads.map((l) => ({
-      ...l,
-      _dbLead: null,
-    }));
-    return [...mockLeadsTransformed, ...dbLeads];
-  }, [mockLeads, dbLeads]);
-
-  // Default to first lead with active outreach
-  const defaultLead = useMemo(() => {
-    if (leads.length === 0) return null;
-    return (
-      leads.find((l) => l.stage === "Qualification" || l.stage === "Engaged") ||
-      leads[0]
-    );
-  }, [leads]);
-
-  const selectedLead = selectedLeadId
-    ? leads.find((l) => l.id === selectedLeadId) || defaultLead
-    : defaultLead;
-
-  // Fetch outreach data when selected lead changes
-  useEffect(() => {
-    const fetchOutreachData = async () => {
-      if (!selectedLead || !selectedLead._dbLead) {
-        setOutreachData(null);
-        return;
-      }
-
-      setIsLoadingOutreach(true);
-      try {
-        const response = await fetch(`/api/leads/${selectedLead.id}/outreach`);
-        const data = await response.json();
-
-        if (data.success) {
-          setOutreachData(data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching outreach data:", error);
-      } finally {
-        setIsLoadingOutreach(false);
-      }
-    };
-
-    fetchOutreachData();
-  }, [selectedLead?.id]);
-
-  // Use real data if available, otherwise fall back to mock
-  const strategy = outreachData?.strategy ||
-    mockOutreachStrategies?.[0] || {
-      channelStrategy: [],
-      guardrails: {
-        maxTouches: 8,
-        voiceEscalationAllowed: true,
-        voiceEscalationTrigger: "",
-        stopConditions: [],
-      },
-    };
-  const conversations = selectedLead
-    ? mockConversations[selectedLead.id] || []
-    : [];
-
-  // Generate outreach strategy + copy
-  const handleGenerateOutreach = async () => {
-    if (!selectedLead || !selectedLead._dbLead) {
-      alert("Please select a database lead to generate outreach");
-      return;
-    }
-
-    setIsGenerating(true);
+  const fetchCampaigns = async () => {
     try {
-      const response = await fetch(
-        `/api/leads/${selectedLead.id}/outreach/generate`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-
-      const data = await response.json();
-
+      const res = await fetch("/api/outreach-campaigns");
+      const data = await res.json();
       if (data.success) {
-        // Refresh outreach data
-        const refreshResponse = await fetch(
-          `/api/leads/${selectedLead.id}/outreach`
-        );
-        const refreshData = await refreshResponse.json();
-        if (refreshData.success) {
-          setOutreachData(refreshData.data);
-        }
-        setStatusNote("Outreach strategy and copy generated successfully");
-      } else {
-        alert(`Error: ${data.error || "Failed to generate outreach"}`);
+        setCampaigns(data.campaigns);
       }
     } catch (error) {
-      console.error("Error generating outreach:", error);
-      alert("Failed to generate outreach");
-    } finally {
-      setIsGenerating(false);
+      console.error("Failed to fetch campaigns:", error);
     }
   };
 
-  // Handle control actions
-  const handleControlAction = async (action: string) => {
-    if (!selectedLead || !selectedLead._dbLead) return;
-
-    setIsUpdating(true);
-    setStatusNote(`Logging ${action} for audit purposes…`);
-
+  const handleAutoCreateCampaign = async (leadId: string) => {
     try {
-      const response = await fetch(
-        `/api/leads/${selectedLead.id}/outreach/control`,
-        {
+      // Create campaign
+      const createRes = await fetch("/api/outreach-campaigns", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ autoName: true }),
+      });
+      const createData = await createRes.json();
+      
+      if (createData.success) {
+        const campaignId = createData.campaign._id;
+        
+        // Add lead to campaign
+        await fetch(`/api/outreach-campaigns/${campaignId}/prospects`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action,
-            reason: overrideReason,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.success) {
-        // Refresh outreach data
-        const refreshResponse = await fetch(
-          `/api/leads/${selectedLead.id}/outreach`
-        );
-        const refreshData = await refreshResponse.json();
-        if (refreshData.success) {
-          setOutreachData(refreshData.data);
-        }
-
-        setStatusNote(data.message);
-        setControlDialogOpen(null);
-        setOverrideReason("");
-      } else {
-        alert(`Error: ${data.error || "Failed to execute control action"}`);
+          body: JSON.stringify({ lead_ids: [leadId] }),
+        });
+        
+        // Refresh campaigns and select new one
+        await fetchCampaigns();
+        setSelectedCampaignId(campaignId);
+        
+        // Clear URL param
+        router.replace("/outreach");
       }
     } catch (error) {
-      console.error("Error executing control action:", error);
-      alert("Failed to execute control action");
-    } finally {
-      setIsUpdating(false);
+      console.error("Failed to auto-create campaign:", error);
     }
   };
 
-  const simulateUpdate = (action: string, nextState: string) => {
-    setIsUpdating(true);
-    setStatusNote(`Logging ${action} for audit purposes…`);
-    setTimeout(() => {
-      setStatusNote(nextState);
-      setIsUpdating(false);
-      setControlDialogOpen(null);
-      setOverrideReason("");
-    }, 800);
+  const handleCreateCampaign = async () => {
+    if (!newCampaignName.trim()) return;
+    
+    setIsSaving(true);
+    try {
+      const res = await fetch("/api/outreach-campaigns", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newCampaignName }),
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        await fetchCampaigns();
+        setSelectedCampaignId(data.campaign._id);
+        setCreateCampaignDialog(false);
+        setNewCampaignName("");
+      }
+    } catch (error) {
+      console.error("Failed to create campaign:", error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const toggleMessageContent = (messageId: string) => {
-    const newExpanded = new Set(expandedMessageContent);
-    if (newExpanded.has(messageId)) {
-      newExpanded.delete(messageId);
+  const fetchCampaignDetails = async (campaignId: string) => {
+    setIsLoading(true);
+    try {
+      const [detailsRes, prospectsRes, knowledgeRes, activityRes] = await Promise.all([
+        fetch(`/api/outreach-campaigns/${campaignId}`),
+        fetch(`/api/outreach-campaigns/${campaignId}/prospects`),
+        fetch(`/api/outreach-campaigns/${campaignId}/knowledge`),
+        fetch(`/api/outreach-campaigns/${campaignId}/activity`),
+      ]);
+      
+      const [detailsData, prospectsData, knowledgeData, activityData] = await Promise.all([
+        detailsRes.json(),
+        prospectsRes.json(),
+        knowledgeRes.json(),
+        activityRes.json(),
+      ]);
+      
+      if (detailsData.success) setCampaignDetails(detailsData.campaign);
+      if (prospectsData.success) setProspects(prospectsData.prospects);
+      if (knowledgeData.success) setKnowledgeItems(knowledgeData.items);
+      if (activityData.success) setActivityData(activityData);
+    } catch (error) {
+      console.error("Failed to fetch campaign details:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedCampaignId) {
+      fetchCampaignDetails(selectedCampaignId);
+    }
+  }, [selectedCampaignId]);
+
+  const handleSaveCampaignField = async (field: string, value: unknown) => {
+    if (!selectedCampaignId) return;
+    
+    try {
+      await fetch(`/api/outreach-campaigns/${selectedCampaignId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [field]: value }),
+      });
+      
+      // Refresh details
+      fetchCampaignDetails(selectedCampaignId);
+    } catch (error) {
+      console.error("Failed to save campaign field:", error);
+    }
+  };
+
+  const handleAddKnowledge = async () => {
+    if (!selectedCampaignId) return;
+    
+    const body: Record<string, unknown> = { type: knowledgeType };
+    
+    if (knowledgeType === "url") {
+      if (!urlInput.trim()) return;
+      body.url = urlInput;
+      body.url_title = urlInput;
+    } else if (knowledgeType === "file") {
+      // For demo, just add metadata
+      body.file_name = "demo-file.pdf";
+      body.file_type = "PDF";
     } else {
-      newExpanded.add(messageId);
+      body.note_title = "Campaign Note";
+      body.note_content = "";
     }
-    setExpandedMessageContent(newExpanded);
-  };
-
-  // Determine outreach status (use real data if available)
-  const getOutreachStatus = () => {
-    if (!selectedLead) return "no_lead";
-    if (outreachData?.campaign) {
-      return outreachData.campaign.status === "not_started"
-        ? "research"
-        : outreachData.campaign.status;
-    }
-    // Fallback to mock logic
-    if (selectedLead.stage === "Disqualified") return "stopped";
-    if (selectedLead.stage === "Meeting Scheduled") return "completed";
-    if (
-      selectedLead.stage === "Qualification" ||
-      selectedLead.stage === "Engaged"
-    )
-      return "active";
-    return "research";
-  };
-
-  const outreachStatus = getOutreachStatus();
-
-  const getCurrentPhase = () => {
-    if (!selectedLead) return "-";
-    if (outreachData?.campaign) {
-      return outreachData.campaign.current_phase;
-    }
-    // Fallback to mock logic
-    if (selectedLead.stage === "Research") return "Research";
-    if (selectedLead.stage === "Engaged") return "Engagement";
-    if (selectedLead.stage === "Qualification") return "Qualification";
-    if (selectedLead.stage === "Meeting Scheduled") return "Handoff";
-    return "Research";
-  };
-
-  const getFinalDecision = () => {
-    if (!selectedLead) return "-";
-    if (outreachData?.campaign?.final_decision) {
-      return `${outreachData.campaign.final_decision.status}${
-        outreachData.campaign.final_decision.reason
-          ? ` → ${outreachData.campaign.final_decision.reason}`
-          : ""
-      }`;
-    }
-    // Fallback to mock logic
-    if (selectedLead.stage === "Meeting Scheduled")
-      return "Qualified → AE handoff";
-    if (selectedLead.stage === "Disqualified")
-      return "Disqualified → ICP mismatch";
-    if (selectedLead.stage === "Qualification") return "In progress";
-    if (selectedLead.stage === "Engaged") return "Nurturing → Qualification";
-    return "Research in progress";
-  };
-
-  // Generate full audit trail - use real events if available, otherwise generate mock
-  const fullAuditTrail = useMemo(() => {
-    if (!selectedLead) return [];
-
-    // If we have real events from the database, use those
-    if (outreachData?.events && outreachData.events.length > 0) {
-      return outreachData.events;
-    }
-
-    // Otherwise generate mock audit trail
-    type AuditEvent = {
-      id: string;
-      eventType:
-        | "lifecycle"
-        | "research"
-        | "outreach"
-        | "engagement"
-        | "decision"
-        | "guardrail"
-        | "outcome";
-      timestamp: string;
-      sortOrder: number; // Explicit sort order for strict chronological ordering
-      actor: "AI" | "System" | "Human";
-      title: string;
-      description: string;
-      metadata?: Record<string, any>;
-      badge?: string;
-      icon?: any;
-    };
-
-    const events: AuditEvent[] = [];
-    let sortCounter = 1;
-
-    // A. Lead Lifecycle Events (ALWAYS FIRST)
-    events.push({
-      id: `${selectedLead.id}-ingestion`,
-      eventType: "lifecycle",
-      timestamp: selectedLead.ingestedAt || "7 days ago",
-      sortOrder: sortCounter++,
-      actor: "System",
-      title: `Lead ingested from ${selectedLead.source || "Unknown source"}`,
-      description:
-        selectedLead.originTrigger ||
-        `Lead entered Jazon via ${selectedLead.source}. Initial data sync completed.`,
-      metadata: {
-        source: selectedLead.source,
-        importedBy: selectedLead.importedBy,
-        workspace: "Production Workspace",
-      },
-      badge: "Lead Ingestion",
-    });
-
-    // B. AI Research & ICP Decisions
-    events.push({
-      id: `${selectedLead.id}-research`,
-      eventType: "research",
-      timestamp: "6 days ago",
-      sortOrder: sortCounter++,
-      actor: "AI",
-      title: "ICP analysis completed",
-      description: `Lead evaluated with ICP score ${selectedLead.icpScore}. ${
-        selectedLead.icpScore >= 85
-          ? "High fit"
-          : selectedLead.icpScore >= 70
-          ? "Medium fit"
-          : "Low fit"
-      } determined based on company size, industry, tech stack, and persona.`,
-      metadata: {
-        icpScore: selectedLead.icpScore,
-        fitCategory:
-          selectedLead.icpScore >= 85
-            ? "High"
-            : selectedLead.icpScore >= 70
-            ? "Medium"
-            : "Low",
-        dataSources: ["LinkedIn", "CRM", "Perplexity"],
-        confidence: selectedLead.icpScore >= 70 ? "High" : "Medium",
-      },
-      badge: "AI Research",
-    });
-
-    if (selectedLead.triggers && selectedLead.triggers.length > 0) {
-      events.push({
-        id: `${selectedLead.id}-triggers`,
-        eventType: "research",
-        timestamp: "6 days ago",
-        sortOrder: sortCounter++,
-        actor: "AI",
-        title: `${selectedLead.triggers.length} buying signal(s) detected`,
-        description: selectedLead.triggers.join(". ") + ".",
-        metadata: {
-          triggerCount: selectedLead.triggers.length,
-          signals: selectedLead.triggers,
-        },
-        badge: "Trigger Detection",
+    
+    try {
+      const res = await fetch(`/api/outreach-campaigns/${selectedCampaignId}/knowledge`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
       });
-    }
-
-    // C. Outreach Actions (if lead has active or past outreach)
-    if (selectedLead.stage !== "Research") {
-      // Only start outreach if not disqualified at research stage
-      if (
-        selectedLead.stage !== "Disqualified" ||
-        selectedLead.icpScore >= 60
-      ) {
-        events.push({
-          id: `${selectedLead.id}-outreach-start`,
-          eventType: "outreach",
-          timestamp: "5 days ago",
-          sortOrder: sortCounter++,
-          actor: "AI",
-          title: "Outreach strategy initiated",
-          description: `Multi-channel sequence started based on ICP score ${selectedLead.icpScore}. Initial channel: Email. Strategy includes up to 8 touches across Email, LinkedIn, and conditional Voice.`,
-          metadata: {
-            channelStrategy: ["Email", "LinkedIn", "Voice"],
-            icpScore: selectedLead.icpScore,
-            complianceChecks: ["GDPR", "CAN-SPAM", "Business hours"],
-          },
-          badge: "Outreach Start",
-        });
-
-        // Add message events (sorted by their actual timestamps)
-        conversations.forEach((msg) => {
-          events.push({
-            id: msg.id,
-            eventType: msg.direction === "outbound" ? "outreach" : "engagement",
-            timestamp: msg.timestamp,
-            sortOrder: sortCounter++,
-            actor: msg.direction === "outbound" ? "AI" : "Human",
-            title: msg.subject || `${msg.channel} ${msg.direction}`,
-            description:
-              msg.summary ||
-              msg.content ||
-              `${msg.channel} message ${msg.direction}`,
-            metadata: {
-              channel: msg.channel,
-              direction: msg.direction,
-              outcome: msg.outcome,
-              duration: msg.duration,
-              aiGenerated: msg.direction === "outbound",
-            },
-            badge:
-              msg.direction === "outbound"
-                ? "Outreach Action"
-                : "Engagement Event",
-          });
-        });
+      
+      if (res.ok) {
+        fetchCampaignDetails(selectedCampaignId);
+        setAddKnowledgeDialog(false);
+        setUrlInput("");
       }
+    } catch (error) {
+      console.error("Failed to add knowledge:", error);
     }
+  };
 
-    // D. Guardrails & Compliance (in chronological position)
-    if (
-      selectedLead.stage === "Engaged" ||
-      selectedLead.stage === "Qualification"
-    ) {
-      events.push({
-        id: `${selectedLead.id}-compliance-check`,
-        eventType: "guardrail",
-        timestamp: "3 days ago",
-        sortOrder: sortCounter++,
-        actor: "System",
-        title: "Weekend outreach blocked",
-        description:
-          "Scheduled email deferred to Monday to respect business hours compliance rule.",
-        metadata: {
-          guardrailName: "No weekend outreach",
-          triggerCondition: "Saturday send scheduled",
-          actionTaken: "Deferred to Monday 9:00 AM",
-          systemConfirmation: "Compliance rule enforced",
-        },
-        badge: "Compliance",
+  const handleDeleteKnowledge = async (itemId: string) => {
+    if (!selectedCampaignId) return;
+    
+    try {
+      await fetch(`/api/outreach-campaigns/${selectedCampaignId}/knowledge?itemId=${itemId}`, {
+        method: "DELETE",
       });
+      fetchCampaignDetails(selectedCampaignId);
+    } catch (error) {
+      console.error("Failed to delete knowledge:", error);
     }
+  };
 
-    // E. AI Decisions & Escalations (in chronological position)
-    if (
-      selectedLead.stage === "Qualification" &&
-      selectedLead.channel &&
-      selectedLead.channel.includes("Voice")
-    ) {
-      events.push({
-        id: `${selectedLead.id}-voice-escalation`,
-        eventType: "decision",
-        timestamp: "2 hours ago",
-        sortOrder: sortCounter++,
-        actor: "AI",
-        title: "Voice escalation approved",
-        description: `High engagement on previous channels + ICP score ${selectedLead.icpScore} warranted personal touch. Voice escalation guardrails passed.`,
-        metadata: {
-          icpScore: selectedLead.icpScore,
-          rulesTriggered: ["ICP ≥ 80", "Engagement on 2+ channels"],
-          rulesPassed: ["Max touches not exceeded", "Voice escalation allowed"],
-          humanApprovalRequired: false,
-          confidence: "High",
-        },
-        badge: "AI Decision",
-      });
-    }
-
-    // F. Final Outcome (ALWAYS LAST)
-    if (selectedLead.stage === "Meeting Scheduled") {
-      events.push({
-        id: `${selectedLead.id}-meeting`,
-        eventType: "outcome",
-        timestamp: "1 hour ago",
-        sortOrder: sortCounter++,
-        actor: "AI",
-        title: "Meeting booked",
-        description:
-          "Lead fully qualified via BANT analysis. Meeting scheduled and calendar invite sent.",
-        metadata: {
-          qualificationScore: 88,
-          bantConfirmed: ["Need", "Timeline", "Authority", "Budget"],
-        },
-        badge: "Outcome",
-      });
-
-      events.push({
-        id: `${selectedLead.id}-handoff`,
-        eventType: "outcome",
-        timestamp: "1 hour ago",
-        sortOrder: sortCounter++,
-        actor: "System",
-        title: "AE handoff completed",
-        description:
-          "Handoff pack prepared with research summary, qualification notes, objections, and talk track. CRM updated.",
-        metadata: {
-          crmUpdated: true,
-          handoffPackGenerated: true,
-        },
-        badge: "Outcome",
-      });
-    }
-
-    if (selectedLead.stage === "Disqualified") {
-      events.push({
-        id: `${selectedLead.id}-disqualify`,
-        eventType: "decision",
-        timestamp: "1 week ago",
-        sortOrder: sortCounter++,
-        actor: "AI",
-        title: "Lead disqualified",
-        description: `ICP score ${selectedLead.icpScore} below threshold (60). Wrong market segment. Outreach stopped to save AE time.`,
-        metadata: {
-          icpScore: selectedLead.icpScore,
-          reason: "ICP mismatch",
-          confidence: "High",
-          rulesTriggered: ["ICP < 60"],
-        },
-        badge: "AI Decision",
-      });
-
-      events.push({
-        id: `${selectedLead.id}-stop`,
-        eventType: "outcome",
-        timestamp: "1 week ago",
-        sortOrder: sortCounter++,
-        actor: "System",
-        title: "Outreach stopped",
-        description:
-          "All scheduled actions cancelled. Lead moved to disqualified status. CRM updated.",
-        metadata: {
-          crmUpdated: true,
-          outreachStopped: true,
-        },
-        badge: "Outcome",
-      });
-    }
-
-    // STRICT CHRONOLOGICAL SORT: Oldest → Newest (using sortOrder as the single source of truth)
-    return events.sort((a, b) => a.sortOrder - b.sortOrder);
-  }, [selectedLead, conversations, outreachData]);
-
-  // Executive timeline (filtered for key events)
-  const executiveTimeline = useMemo(() => {
-    if (!fullAuditTrail || !Array.isArray(fullAuditTrail)) return [];
-    return fullAuditTrail.filter(
-      (event) =>
-        event.eventType === "outcome" ||
-        event.eventType === "decision" ||
-        (event.eventType === "outreach" &&
-          event.metadata?.channel === "voice") ||
-        (event.eventType === "engagement" &&
-          event.metadata?.direction === "inbound")
+  const filteredCampaigns = useMemo(() => {
+    if (!searchQuery) return campaigns;
+    return campaigns.filter((c) =>
+      c.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [fullAuditTrail]);
+  }, [campaigns, searchQuery]);
 
   return (
     <SidebarProvider
@@ -721,2724 +358,1077 @@ export default function OutreachPage() {
       <SidebarInset>
         <div className="flex flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-6 p-4 md:gap-8 md:p-6">
-            {/* Page Header with Lead Selector */}
+            {/* Page Header */}
             <div className="flex items-start justify-between gap-4">
               <div className="flex flex-col gap-2">
                 <h1 className="text-3xl font-semibold text-foreground">
-                  Outreach Campaign
+                  Outreach Campaigns
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                  Strategic, multi-channel engagement - not email blasting
+                  Manage multi-channel campaigns with AI-powered sequences
                 </p>
               </div>
-              <div className="flex items-center gap-3">
-                {selectedLead && selectedLead._dbLead && (
-                  <>
-                    <Button
-                      variant="outline"
-                      onClick={() => setCampaignSettingsOpen(true)}
-                      className="gap-2"
-                      size="sm"
-                    >
-                      <Settings2 className="h-4 w-4" />
-                      Campaign Settings
-                    </Button>
-                    <Button
-                      onClick={handleGenerateOutreach}
-                      disabled={isGenerating}
-                      className="gap-2"
-                      size="sm"
-                    >
-                      {isGenerating ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Generating...
-                        </>
-                      ) : (
-                        <>
-                          <Zap className="h-4 w-4" />
-                          {outreachData?.strategy
-                            ? "Regenerate Outreach Strategy"
-                            : "Generate Outreach Strategy"}
-                        </>
-                      )}
-                    </Button>
-                  </>
-                )}
-                <div className="flex items-center gap-2 min-w-0 max-w-md">
-                  <label className="text-xs text-muted-foreground shrink-0">
-                    Lead:
-                  </label>
-                  <Select
-                    value={selectedLeadId || defaultLead?.id || ""}
-                    onValueChange={setSelectedLeadId}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Choose a lead" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {leads.map((lead) => (
-                        <SelectItem key={lead.id} value={lead.id}>
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium">{lead.name}</span>
-                            <span className="text-muted-foreground">
-                              • {lead.company}
-                            </span>
-                            <Badge
-                              variant="outline"
-                              className="ml-auto text-xs"
-                            >
-                              ICP {lead.icpScore}
-                            </Badge>
-                            <Badge variant="secondary" className="text-xs">
-                              {lead.stage}
-                            </Badge>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+              <Button onClick={() => setCreateCampaignDialog(true)} className="gap-2">
+                <Plus className="h-4 w-4" />
+                New Campaign
+              </Button>
             </div>
 
-            {selectedLead && (
-              <>
-                {/* Section 1: Outreach Summary (Always Visible) */}
-                <div className="bg-muted/30 rounded-xl p-5 border border-border/50">
-                  <div className="grid grid-cols-5 gap-4">
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">
-                        Outreach Status
-                      </p>
-                      <div className="flex items-center gap-2">
-                        {outreachStatus === "active" && (
-                          <>
-                            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                            <Badge variant="default">Active</Badge>
-                          </>
-                        )}
-                        {outreachStatus === "completed" && (
-                          <>
-                            <CheckCircle2 className="w-4 h-4 text-chart-2" />
-                            <Badge className="bg-chart-2 hover:bg-chart-2">
-                              Completed
-                            </Badge>
-                          </>
-                        )}
-                        {outreachStatus === "stopped" && (
-                          <>
-                            <StopCircle className="w-4 h-4 text-destructive" />
-                            <Badge
-                              variant="outline"
-                              className="text-destructive border-destructive"
-                            >
-                              Stopped
-                            </Badge>
-                          </>
-                        )}
-                        {outreachStatus === "research" && (
-                          <>
-                            <Clock className="w-4 h-4 text-muted-foreground" />
-                            <Badge variant="outline">Research</Badge>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">
-                        Current Phase
-                      </p>
-                      <p className="text-sm font-medium">{getCurrentPhase()}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">
-                        Last Action
-                      </p>
-                      <p className="text-sm font-medium">
-                        {outreachData?.events && outreachData.events.length > 0
-                          ? `${
-                              outreachData.events[
-                                outreachData.events.length - 1
-                              ].title
-                            } - ${formatRelativeTime(
-                              outreachData.events[
-                                outreachData.events.length - 1
-                              ].timestamp
-                            )}`
-                          : outreachStatus === "active"
-                          ? "Voice call - 2 hours ago"
-                          : outreachStatus === "completed"
-                          ? "AE handoff - 1 hour ago"
-                          : selectedLead.lastContact}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">
-                        Next Planned Action
-                      </p>
-                      <p className="text-sm font-medium">
-                        {outreachData?.campaign?.next_planned_action?.label
-                          ? `${
-                              outreachData.campaign.next_planned_action.label
-                            }${
-                              outreachData.campaign.next_planned_action
-                                .scheduled_at
-                                ? ` - ${formatRelativeTime(
-                                    outreachData.campaign.next_planned_action
-                                      .scheduled_at
-                                  )}`
-                                : ""
-                            }`
-                          : outreachStatus === "active" &&
-                            selectedLead.stage === "Qualification"
-                          ? "Follow-up email - tomorrow"
-                          : outreachStatus === "completed"
-                          ? "AE handoff complete"
-                          : outreachStatus === "stopped"
-                          ? "None - outreach stopped"
-                          : "Generate outreach strategy"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">
-                        Final AI Decision
-                      </p>
-                      <p className="text-sm font-medium">
-                        {getFinalDecision()}
-                      </p>
-                    </div>
+            {!selectedCampaignId ? (
+              /* Campaign List View */
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="relative flex-1 max-w-md">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search campaigns..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-9"
+                    />
                   </div>
                 </div>
 
-                {/* Completion Summary (if completed) */}
-                {outreachStatus === "completed" && (
-                  <Card className="border-chart-2/30 bg-chart-2/10">
-                    <CardContent className="py-6">
-                      <div className="flex items-start gap-4">
-                        <div className="p-3 rounded-lg bg-chart-2/20">
-                          <CheckCircle2 className="w-6 h-6 text-chart-2" />
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-lg mb-2">
-                            Outreach Successfully Completed
-                          </h3>
-                          <p className="text-sm text-muted-foreground mb-4">
-                            Meeting scheduled and AE handoff completed. Outreach
-                            strategy achieved its goal.
-                          </p>
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-background/50 rounded-lg p-3 border border-border/30">
-                              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-                                Why it worked
-                              </p>
-                              <ul className="space-y-1 text-sm">
-                                <li className="flex items-start gap-2">
-                                  <span className="text-chart-2">•</span>
-                                  <span>
-                                    High ICP score ({selectedLead.icpScore})
-                                  </span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                  <span className="text-chart-2">•</span>
-                                  <span>
-                                    Strong engagement across multiple channels
-                                  </span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                  <span className="text-chart-2">•</span>
-                                  <span>Active buying signals detected</span>
-                                </li>
-                              </ul>
-                            </div>
-                            <div className="bg-background/50 rounded-lg p-3 border border-border/30">
-                              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-                                Outcome
-                              </p>
-                              <ul className="space-y-1 text-sm">
-                                <li className="flex items-start gap-2">
-                                  <CheckCircle2 className="w-4 h-4 text-chart-2 mt-0.5" />
-                                  <span>Meeting booked</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                  <CheckCircle2 className="w-4 h-4 text-chart-2 mt-0.5" />
-                                  <span>AE handoff pack prepared</span>
-                                </li>
-                                <li className="flex items-start gap-2">
-                                  <CheckCircle2 className="w-4 h-4 text-chart-2 mt-0.5" />
-                                  <span>CRM updated (demo)</span>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {/* Disqualification Summary (if stopped) */}
-                {outreachStatus === "stopped" && (
-                  <Card className="border-destructive/30 bg-destructive/5">
-                    <CardContent className="py-6">
-                      <div className="flex items-start gap-4">
-                        <div className="p-3 rounded-lg bg-destructive/10">
-                          <StopCircle className="w-6 h-6 text-destructive" />
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-lg mb-2">
-                            Outreach Disabled
-                          </h3>
-                          <p className="text-sm text-muted-foreground mb-4">
-                            This lead was disqualified and outreach has been
-                            automatically stopped.
-                          </p>
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-background/50 rounded-lg p-3 border border-border/30">
-                              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-                                Disqualification Reason
-                              </p>
-                              <p className="text-sm mb-2">
-                                Low ICP score ({selectedLead.icpScore}) - wrong
-                                market segment
-                              </p>
-                              <Badge variant="outline" className="text-xs">
-                                High Confidence
-                              </Badge>
-                            </div>
-                            <div className="bg-background/50 rounded-lg p-3 border border-border/30">
-                              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-                                Value Saved
-                              </p>
-                              <p className="text-sm mb-2">
-                                Early disqualification prevented wasted AE time
-                              </p>
-                              <Badge variant="outline" className="text-xs">
-                                AI Decision (Automatic)
-                              </Badge>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {/* Active Outreach Strategy (only for active leads OR when strategy exists) */}
-                {(outreachStatus === "active" || outreachData?.strategy) && (
-                  <Card>
-                    <CardHeader className="relative pr-20">
-                      <div>
-                        <CardTitle>
-                          AI-Generated Outreach Strategy for This Lead
-                        </CardTitle>
-                        <CardDescription>
-                          {outreachData?.strategy?.plan_summary ||
-                            `Intelligent channel escalation based on ICP score (${selectedLead.icpScore}) and engagement signals from Research & ICP`}
-                        </CardDescription>
-                      </div>
-                      {outreachData?.strategy && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            // Open edit sidebar for strategy
-                            const strategySteps =
-                              outreachData.strategy
-                                .recommended_channel_sequence || [];
-                            setEditFormData({
-                              plan_summary:
-                                outreachData.strategy.plan_summary || "",
-                              steps: strategySteps.map((step: any) => ({
-                                step: step.step,
-                                channel: step.channel,
-                                goal: step.goal || "",
-                                reasoning: step.reasoning || "",
-                                recommended_delay_hours:
-                                  step.recommended_delay_hours || 0,
-                                send_window: step.send_window || "",
-                                personalization_signals: (
-                                  step.personalization_signals || []
-                                ).join("\n"),
-                                gating_conditions: (
-                                  step.gating_conditions || []
-                                ).join("\n"),
-                              })),
-                            });
-                            setEditSidebar({ open: true, section: "strategy" });
-                          }}
-                          className="absolute top-4 right-4 h-6 px-2 gap-1.5 text-xs"
-                        >
-                          <Edit3 className="h-3 w-3" />
-                          Edit
-                        </Button>
-                      )}
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-6">
-                        {/* Progress Indicator */}
-                        <div>
-                          <div className="flex items-center justify-between mb-3">
-                            <span className="text-sm font-medium">
-                              Strategy Progress
-                            </span>
-                            <span className="text-sm text-muted-foreground">
-                              Step{" "}
-                              {outreachData?.campaign?.current_step_number ||
-                                strategy.currentStep ||
-                                0}{" "}
-                              of{" "}
-                              {outreachData?.strategy
-                                ?.recommended_channel_sequence?.length ||
-                                strategy.totalSteps ||
-                                0}
-                            </span>
-                          </div>
-                          <Progress
-                            value={
-                              ((outreachData?.campaign?.current_step_number ||
-                                strategy.currentStep) /
-                                (outreachData?.strategy
-                                  ?.recommended_channel_sequence?.length ||
-                                  strategy.totalSteps)) *
-                              100
-                            }
-                            className="h-2"
-                          />
-                          <div className="flex items-center gap-2 mt-2">
-                            {Array.from({
-                              length:
-                                outreachData?.strategy
-                                  ?.recommended_channel_sequence?.length ||
-                                strategy.totalSteps,
-                            }).map((_, idx) => (
-                              <div
-                                key={idx}
-                                className={`flex-1 h-1 rounded-full ${
-                                  idx <
-                                  (outreachData?.campaign
-                                    ?.current_step_number ||
-                                    strategy.currentStep)
-                                    ? "bg-chart-2"
-                                    : idx ===
-                                      (outreachData?.campaign
-                                        ?.current_step_number ||
-                                        strategy.currentStep)
-                                    ? "bg-primary"
-                                    : "bg-muted"
-                                }`}
-                              />
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Channel Strategy */}
-                        <div className="space-y-4">
-                          {(
-                            outreachData?.strategy
-                              ?.recommended_channel_sequence ||
-                            strategy?.channelStrategy ||
-                            []
-                          ).map((channel: any, idx: number) => {
-                            // Determine status: from campaign current_step or fallback to mock
-                            const stepStatus =
-                              outreachData?.campaign?.current_step_number >
-                              channel.step
-                                ? "completed"
-                                : outreachData?.campaign
-                                    ?.current_step_number === channel.step
-                                ? "active"
-                                : "pending";
-                            const displayStatus = channel.status || stepStatus;
-
-                            return (
-                              <div key={idx} className="flex gap-4 items-start">
-                                <div
-                                  className={`p-3 rounded-lg shrink-0 ${
-                                    displayStatus === "completed"
-                                      ? "bg-chart-2/10 text-chart-2"
-                                      : displayStatus === "active"
-                                      ? "bg-primary/10 text-primary"
-                                      : "bg-muted/50 text-muted-foreground"
-                                  }`}
-                                >
-                                  {channel.channel === "Email" && (
-                                    <Mail className="w-5 h-5" />
-                                  )}
-                                  {channel.channel === "LinkedIn" && (
-                                    <MessageSquare className="w-5 h-5" />
-                                  )}
-                                  {channel.channel === "Voice" && (
-                                    <Phone className="w-5 h-5" />
-                                  )}
-                                </div>
-
-                                <div className="flex-1 space-y-2">
-                                  <div className="flex items-center gap-2">
-                                    <h3 className="font-semibold">
-                                      {channel.channel}
-                                    </h3>
-                                    <Badge
-                                      variant="outline"
-                                      className="text-xs"
-                                    >
-                                      Step {channel.step}
-                                    </Badge>
-                                    {displayStatus === "completed" && (
-                                      <CheckCircle2 className="w-4 h-4 text-chart-2" />
-                                    )}
-                                    {displayStatus === "active" && (
-                                      <div className="flex items-center gap-1 text-primary">
-                                        <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                                        <span className="text-xs font-medium">
-                                          In Progress
-                                        </span>
-                                      </div>
-                                    )}
-                                    {displayStatus === "pending" && (
-                                      <Badge
-                                        variant="outline"
-                                        className="text-xs"
-                                      >
-                                        Upcoming
-                                      </Badge>
-                                    )}
-                                  </div>
-                                  <p className="text-sm text-muted-foreground">
-                                    {channel.goal}
-                                  </p>
-
-                                  {/* View Copy Button */}
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => {
-                                      // Find the corresponding copy draft
-                                      const drafts =
-                                        outreachData?.copy?.drafts || [];
-                                      const draft = drafts.find(
-                                        (d: any) =>
-                                          d.step === channel.step ||
-                                          (String(d.step) ===
-                                            String(channel.step) &&
-                                            d.channel === channel.channel)
-                                      );
-                                      setSelectedStepCopy(
-                                        draft || {
-                                          step: channel.step,
-                                          channel: channel.channel,
-                                          _missing: true,
-                                        }
-                                      );
-                                      setEditedCopyData(
-                                        draft ? { ...draft } : null
-                                      );
-                                      setEditingCopy(false);
-                                      setCopyDialogOpen(true);
-                                    }}
-                                    className="gap-2 mt-2"
-                                    disabled={
-                                      !outreachData?.copy?.drafts?.some(
-                                        (d: any) =>
-                                          d.step === channel.step ||
-                                          String(d.step) ===
-                                            String(channel.step)
-                                      )
-                                    }
-                                  >
-                                    <FileText className="w-4 h-4" />
-                                    View AI-Generated Copy
-                                  </Button>
-
-                                  {channel.reasoning && (
-                                    <div className="bg-muted/30 rounded-lg p-3 mt-2 border border-border/30">
-                                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
-                                        Why this step exists
-                                      </p>
-                                      <p className="text-sm">
-                                        {channel.reasoning}
-                                      </p>
-                                      <div className="flex items-center gap-4 mt-2 pt-2 border-t border-border/30">
-                                        <div className="text-xs text-muted-foreground">
-                                          <span className="font-medium">
-                                            Confidence:
-                                          </span>{" "}
-                                          High
-                                        </div>
-                                        <div className="text-xs text-muted-foreground">
-                                          <span className="font-medium">
-                                            Triggered by:
-                                          </span>{" "}
-                                          ICP {selectedLead.icpScore} +
-                                          engagement signals
-                                        </div>
-                                      </div>
-                                    </div>
-                                  )}
-
-                                  {/* Voice Readiness Check */}
-                                  {channel.channel === "Voice" && (
-                                    <div className="bg-primary/5 rounded-lg p-4 mt-2 border border-primary/20">
-                                      <div className="flex items-center gap-2 mb-3">
-                                        <Target className="w-4 h-4 text-primary" />
-                                        <p className="text-xs font-semibold uppercase tracking-wide">
-                                          Voice Readiness Check
-                                        </p>
-                                      </div>
-                                      <div className="space-y-2">
-                                        <div className="flex items-center gap-2 text-sm">
-                                          <CheckCircle2 className="w-4 h-4 text-chart-2" />
-                                          <span>
-                                            ICP score threshold met (≥80)
-                                          </span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-sm">
-                                          <CheckCircle2 className="w-4 h-4 text-chart-2" />
-                                          <span>
-                                            Engagement signals met (2+ channels)
-                                          </span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-sm">
-                                          <CheckCircle2 className="w-4 h-4 text-chart-2" />
-                                          <span>Guardrails passed</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-sm">
-                                          <AlertCircle className="w-4 h-4 text-muted-foreground" />
-                                          <span className="text-muted-foreground">
-                                            Human approval: Not required
-                                          </span>
-                                        </div>
-                                      </div>
-                                      <p className="text-xs text-muted-foreground mt-3 pt-3 border-t border-border/30">
-                                        Voice is conditional and used only for
-                                        high-intent leads. This is not a
-                                        voice-first approach.
-                                      </p>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {/* Section 2: Conversation & Activity History (Always Visible) */}
                 <Card>
                   <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="flex items-center gap-2">
-                          <Activity className="w-5 h-5" />
-                          Conversation & Activity History
-                        </CardTitle>
-                        <CardDescription className="mt-2">
-                          Full timeline of messages and AI decisions for
-                          auditability
-                        </CardDescription>
-                      </div>
-                      <Tabs
-                        value={viewMode}
-                        onValueChange={(v) =>
-                          setViewMode(v as "executive" | "full")
-                        }
-                      >
-                        <TabsList>
-                          <TabsTrigger value="executive" className="text-xs">
-                            Executive Summary
-                          </TabsTrigger>
-                          <TabsTrigger value="full" className="text-xs">
-                            Full Audit Trail
-                          </TabsTrigger>
-                        </TabsList>
-                      </Tabs>
-                    </div>
+                    <CardTitle>All Campaigns</CardTitle>
+                      <CardDescription>
+                        {filteredCampaigns.length} campaign(s)
+                      </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    {/* Status Banner */}
-                    {outreachStatus === "completed" && viewMode === "full" && (
-                      <div className="bg-chart-2/10 rounded-lg p-3 border border-chart-2/30 mb-6">
-                        <div className="flex items-center gap-2">
-                          <CheckCircle2 className="w-4 h-4 text-chart-2" />
-                          <p className="text-xs font-medium">
-                            Timeline locked for audit. All events are
-                            timestamped and cannot be modified.
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                    {outreachStatus === "active" && viewMode === "full" && (
-                      <div className="bg-primary/10 rounded-lg p-3 border border-primary/20 mb-6">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                          <p className="text-xs font-medium">
-                            Outreach in progress. Events logged in real time as
-                            they occur.
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                    {outreachStatus === "stopped" && viewMode === "full" && (
-                      <div className="bg-destructive/10 rounded-lg p-3 border border-destructive/30 mb-6">
-                        <div className="flex items-center gap-2">
-                          <StopCircle className="w-4 h-4 text-destructive" />
-                          <p className="text-xs font-medium">
-                            Outreach stopped automatically. Timeline locked for
-                            audit.
-                          </p>
-                        </div>
-                      </div>
-                    )}
-
-                    {viewMode === "executive" ? (
-                      /* Executive Summary View */
-                      <div className="space-y-4">
-                        {executiveTimeline.length > 0 ? (
-                          executiveTimeline.map((event) => (
-                            <div
-                              key={event.id}
-                              className="flex gap-3 pb-4 border-b last:border-0 last:pb-0"
-                            >
-                              <div
-                                className={`p-2 rounded-lg shrink-0 h-fit ${
-                                  event.eventType === "outcome"
-                                    ? "bg-chart-2/10 text-chart-2"
-                                    : event.eventType === "decision"
-                                    ? "bg-primary/10 text-primary"
-                                    : "bg-muted text-foreground"
-                                }`}
-                              >
-                                {event.eventType === "outcome" && (
-                                  <CheckCircle2 className="w-4 h-4" />
-                                )}
-                                {event.eventType === "decision" && (
-                                  <Target className="w-4 h-4" />
-                                )}
-                                {event.eventType === "outreach" &&
-                                  event.metadata?.channel === "voice" && (
-                                    <Phone className="w-4 h-4" />
-                                  )}
-                                {event.eventType === "engagement" && (
-                                  <MessageSquare className="w-4 h-4" />
-                                )}
-                              </div>
-                              <div className="flex-1 space-y-2 min-w-0">
-                                <div className="flex items-start justify-between gap-2">
-                                  <div className="min-w-0">
-                                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                      <Badge
-                                        variant="outline"
-                                        className="text-xs"
-                                      >
-                                        {event.badge}
-                                      </Badge>
-                                      <Badge
-                                        variant="secondary"
-                                        className="text-xs"
-                                      >
-                                        {event.actor}
-                                      </Badge>
-                                      <h4 className="font-medium text-sm">
-                                        {event.title}
-                                      </h4>
-                                    </div>
-                                  </div>
-                                  <span className="text-xs text-muted-foreground shrink-0">
-                                    {event.timestamp}
-                                  </span>
-                                </div>
-                                <p className="text-sm text-muted-foreground leading-relaxed">
-                                  {event.description}
-                                </p>
-                              </div>
+                    {filteredCampaigns.length === 0 ? (
+                      <div className="text-center py-12">
+                        <p className="text-muted-foreground">
+                          No campaigns yet. Create your first campaign to get started.
+                        </p>
                             </div>
-                          ))
-                        ) : (
-                          <div className="text-center py-8">
-                            <p className="text-sm text-muted-foreground">
-                              No key events to display yet.
-                            </p>
-                          </div>
-                        )}
-                      </div>
                     ) : (
-                      /* Full Audit Trail View */
-                      <div className="space-y-4">
-                        {/* Ordering clarity cue */}
-                        <div className="bg-muted/20 rounded-lg p-2 border border-border/30">
-                          <p className="text-xs text-center text-muted-foreground">
-                            Events shown in chronological order (oldest →
-                            newest)
-                          </p>
-                        </div>
-
-                        {fullAuditTrail.length > 0 ? (
-                          fullAuditTrail.map((event: any) => {
-                            // Event type styling
-                            const getEventColor = (type: string) => {
-                              switch (type) {
-                                case "lifecycle":
-                                  return "bg-muted/50 border-border text-foreground";
-                                case "research":
-                                  return "bg-primary/5 border-primary/20 text-primary";
-                                case "outreach":
-                                  return "bg-chart-3/5 border-chart-3/20 text-chart-3";
-                                case "engagement":
-                                  return "bg-chart-2/5 border-chart-2/20 text-chart-2";
-                                case "decision":
-                                  return "bg-primary/10 border-primary/30 text-primary";
-                                case "guardrail":
-                                  return "bg-chart-4/5 border-chart-4/20 text-chart-4";
-                                case "outcome":
-                                  return "bg-chart-2/10 border-chart-2/30 text-chart-2";
-                                default:
-                                  return "bg-muted border-border text-foreground";
-                              }
-                            };
-
-                            const getEventIcon = (type: string) => {
-                              switch (type) {
-                                case "lifecycle":
-                                  return <Database className="w-5 h-5" />;
-                                case "research":
-                                  return <Search className="w-5 h-5" />;
-                                case "outreach":
-                                  return <Send className="w-5 h-5" />;
-                                case "engagement":
-                                  return <Eye className="w-5 h-5" />;
-                                case "decision":
-                                  return <Target className="w-5 h-5" />;
-                                case "guardrail":
-                                  return <Shield className="w-5 h-5" />;
-                                case "outcome":
-                                  return <CheckCircle2 className="w-5 h-5" />;
-                                default:
-                                  return <Activity className="w-5 h-5" />;
-                              }
-                            };
-
-                            return (
-                              <div key={event.id} className="relative">
-                                {/* Vertical timeline connector */}
-                                <div className="absolute left-6 top-14 bottom-0 w-px bg-border" />
-
-                                <div className="flex gap-4">
-                                  {/* Icon */}
-                                  <div
-                                    className={`p-3 rounded-lg shrink-0 border ${getEventColor(
-                                      event.eventType
-                                    )}`}
+                      <div className="border rounded-md">
+                        <table className="w-full">
+                          <thead className="bg-muted/40 border-b">
+                            <tr>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">
+                                Campaign Name
+                              </th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">
+                                Status
+                              </th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">
+                                Leads
+                              </th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">
+                                Response Rate
+                              </th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">
+                                Created
+                              </th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">
+                                Actions
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {filteredCampaigns.map((campaign) => (
+                              <tr
+                                key={campaign._id}
+                                className="border-b hover:bg-muted/20 cursor-pointer"
+                                onClick={() => setSelectedCampaignId(campaign._id)}
+                              >
+                                <td className="px-4 py-3 font-medium">{campaign.name}</td>
+                                <td className="px-4 py-3">
+                                  <Badge
+                                    variant={
+                                      campaign.status === "active"
+                                        ? "default"
+                                        : "outline"
+                                    }
                                   >
-                                    {getEventIcon(event.eventType)}
-                                  </div>
+                                    {campaign.status}
+                                  </Badge>
+                                </td>
+                                <td className="px-4 py-3 text-sm text-muted-foreground">
+                                  {campaign.metrics.total_prospects} total,{" "}
+                                  {campaign.metrics.active_prospects} active
+                                </td>
+                                <td className="px-4 py-3">
+                                  <span className="text-sm font-medium">
+                                    {campaign.metrics.response_rate}%
+                                  </span>
+                                </td>
+                                <td className="px-4 py-3 text-sm text-muted-foreground">
+                                  {new Date(campaign.createdAt).toLocaleDateString()}
+                                </td>
+                                <td className="px-4 py-3">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedCampaignId(campaign._id);
+                                    }}
+                                  >
+                                    View
+                                  </Button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                            </div>
+                    )}
+                    </CardContent>
+                  </Card>
+                        </div>
+            ) : (
+              /* Campaign Detail View with Tabs */
+              <div className="space-y-6">
+                <div className="space-y-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedCampaignId(null)}
+                  >
+                    ← Back to Campaigns
+                  </Button>
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1">
+                      <h2 className="text-2xl font-semibold">
+                        {campaignDetails?.name || "Loading..."}
+                      </h2>
+                      <p className="text-sm text-muted-foreground">
+                        {campaignDetails?.mode || ""}
+                      </p>
+                    </div>
+                    <Badge
+                      variant={
+                        campaignDetails?.status === "active" ? "default" : "outline"
+                      }
+                    >
+                      {campaignDetails?.status}
+                    </Badge>
+                  </div>
+                </div>
 
-                                  {/* Content Card */}
-                                  <div className="flex-1 min-w-0">
-                                    <div className="bg-card border rounded-lg p-4">
-                                      {/* Header */}
-                                      <div className="flex items-start justify-between gap-4 mb-3">
-                                        <div className="flex-1">
-                                          <div className="flex items-center gap-2 mb-2 flex-wrap">
-                                            <Badge
-                                              variant="outline"
-                                              className="text-xs"
-                                            >
-                                              {event.badge}
-                                            </Badge>
-                                            <Badge
-                                              variant={
-                                                event.actor === "AI"
-                                                  ? "default"
-                                                  : event.actor === "Human"
-                                                  ? "secondary"
-                                                  : "outline"
-                                              }
-                                              className="text-xs"
-                                            >
-                                              {event.actor}
-                                            </Badge>
-                                          </div>
-                                          <h4 className="font-semibold text-sm">
-                                            {event.title}
-                                          </h4>
-                                        </div>
-                                        <span className="text-xs text-muted-foreground shrink-0">
-                                          {event.timestamp}
-                                        </span>
+                <Tabs defaultValue="campaign" className="w-full">
+                  <TabsList>
+                    <TabsTrigger value="campaign">Campaign</TabsTrigger>
+                    <TabsTrigger value="knowledge">Knowledge Base</TabsTrigger>
+                    <TabsTrigger value="mode">Mode</TabsTrigger>
+                    <TabsTrigger value="prospects">Leads</TabsTrigger>
+                    <TabsTrigger value="scheduling">Scheduling</TabsTrigger>
+                    <TabsTrigger value="activity">Activity</TabsTrigger>
+                  </TabsList>
+
+                  {/* Campaign Tab */}
+                  <TabsContent value="campaign" className="space-y-4 mt-4">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Agent Name</CardTitle>
+                        <CardDescription>Give your SDR agent a name</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Input
+                          value={campaignDetails?.agentProfile.agent_name || ""}
+                          onChange={(e) =>
+                            setCampaignDetails((prev) =>
+                              prev
+                                ? {
+                                    ...prev,
+                                    agentProfile: {
+                                      ...prev.agentProfile,
+                                      agent_name: e.target.value,
+                                    },
+                                  }
+                                : null
+                            )
+                          }
+                          onBlur={() =>
+                            handleSaveCampaignField(
+                              "agentProfile",
+                              campaignDetails?.agentProfile
+                            )
+                          }
+                          placeholder="e.g., Alex Morgan"
+                        />
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                        <CardTitle>Agent Designation</CardTitle>
+                        <CardDescription>Title or role of the agent</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Input
+                          value={campaignDetails?.agentProfile.agent_designation || ""}
+                          onChange={(e) =>
+                            setCampaignDetails((prev) =>
+                              prev
+                                ? {
+                                    ...prev,
+                                    agentProfile: {
+                                      ...prev.agentProfile,
+                                      agent_designation: e.target.value,
+                                    },
+                                  }
+                                : null
+                            )
+                          }
+                          onBlur={() =>
+                            handleSaveCampaignField(
+                              "agentProfile",
+                              campaignDetails?.agentProfile
+                            )
+                          }
+                          placeholder="e.g., Senior SDR"
+                        />
+                    </CardContent>
+                  </Card>
+
+                <Card>
+                  <CardHeader>
+                        <CardTitle>Agent Contact</CardTitle>
+                        <CardDescription>How can people contact you?</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                        <Input
+                          value={campaignDetails?.agentProfile.agent_contact || ""}
+                          onChange={(e) =>
+                            setCampaignDetails((prev) =>
+                              prev
+                                ? {
+                                    ...prev,
+                                    agentProfile: {
+                                      ...prev.agentProfile,
+                                      agent_contact: e.target.value,
+                                    },
+                                  }
+                                : null
+                            )
+                          }
+                          onBlur={() =>
+                            handleSaveCampaignField(
+                              "agentProfile",
+                              campaignDetails?.agentProfile
+                            )
+                          }
+                          placeholder="email@company.com"
+                        />
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Seller Name</CardTitle>
+                        <CardDescription>The name of the seller</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Input
+                          value={campaignDetails?.agentProfile.seller_name || ""}
+                          onChange={(e) =>
+                            setCampaignDetails((prev) =>
+                              prev
+                                ? {
+                                    ...prev,
+                                    agentProfile: {
+                                      ...prev.agentProfile,
+                                      seller_name: e.target.value,
+                                    },
+                                  }
+                                : null
+                            )
+                          }
+                          onBlur={() =>
+                            handleSaveCampaignField(
+                              "agentProfile",
+                              campaignDetails?.agentProfile
+                            )
+                          }
+                          placeholder="Company Name"
+                        />
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+
+                  {/* Knowledge Base Tab */}
+                  <TabsContent value="knowledge" className="space-y-4 mt-4">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h3 className="text-lg font-semibold">Knowledge Items</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {knowledgeItems.length} item(s)
+                        </p>
+                                  </div>
+                      <Button onClick={() => setAddKnowledgeDialog(true)}>
+                        <Upload className="h-4 w-4 mr-2" />
+                        Upload
+                      </Button>
                                       </div>
 
-                                      {/* Description */}
-                                      <p className="text-sm text-foreground leading-relaxed mb-3">
-                                        {event.description}
-                                      </p>
-
-                                      {/* Metadata */}
-                                      {event.metadata &&
-                                        Object.keys(event.metadata).length >
-                                          0 && (
-                                          <div className="bg-muted/30 rounded-lg p-3 border border-border/30">
-                                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-                                              Event Details
-                                            </p>
-                                            <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                                              {Object.entries(
-                                                event.metadata
-                                              ).map(([key, value]) => (
-                                                <div key={key}>
-                                                  <span className="text-xs text-muted-foreground capitalize">
-                                                    {key
-                                                      .replace(
-                                                        /([A-Z])/g,
-                                                        " $1"
-                                                      )
-                                                      .trim()}
-                                                    :
-                                                  </span>{" "}
-                                                  <span className="text-xs font-medium">
-                                                    {Array.isArray(value)
-                                                      ? value.join(", ")
-                                                      : typeof value ===
-                                                        "boolean"
-                                                      ? value
-                                                        ? "Yes"
-                                                        : "No"
-                                                      : String(value)}
-                                                  </span>
-                                                </div>
-                                              ))}
-                                            </div>
+                    {knowledgeItems.length === 0 ? (
+                      <Card>
+                        <CardContent className="py-12 text-center">
+                          <p className="text-muted-foreground">
+                            No knowledge items yet. Add documents, URLs, or notes.
+                          </p>
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      <div className="space-y-2">
+                        {knowledgeItems.map((item) => (
+                          <Card key={item._id}>
+                            <CardContent className="p-4 flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <FileText className="h-5 w-5 text-muted-foreground" />
+                                <div>
+                                  <p className="font-medium">
+                                    {item.file_name || item.url_title || item.note_title}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {item.type} • {new Date(item.createdAt).toLocaleDateString()}
+                                  </p>
+                                              </div>
                                           </div>
-                                        )}
-
-                                      {/* View Message Content (for outreach/engagement events) */}
-                                      {(event.eventType === "outreach" ||
-                                        event.eventType === "engagement") &&
-                                        event.metadata?.channel &&
-                                        (() => {
-                                          const message = conversations.find(
-                                            (m) => m.id === event.id
-                                          );
-                                          return (
-                                            message?.body || message?.scriptUsed
-                                          );
-                                        })() && (
-                                          <div className="mt-3">
-                                            <Button
-                                              variant="ghost"
-                                              size="sm"
-                                              onClick={() =>
-                                                toggleMessageContent(event.id)
-                                              }
-                                              className="text-xs w-full justify-start"
-                                            >
-                                              <Eye className="w-3 h-3 mr-2" />
-                                              {expandedMessageContent.has(
-                                                event.id
-                                              )
-                                                ? "Hide"
-                                                : "View"}{" "}
-                                              Message Content
-                                              {expandedMessageContent.has(
-                                                event.id
-                                              ) ? (
-                                                <ChevronUp className="w-3 h-3 ml-auto" />
-                                              ) : (
-                                                <ChevronDown className="w-3 h-3 ml-auto" />
-                                              )}
-                                            </Button>
-
-                                            {expandedMessageContent.has(
-                                              event.id
-                                            ) &&
-                                              (() => {
-                                                const message =
-                                                  conversations.find(
-                                                    (m) => m.id === event.id
-                                                  );
-                                                if (!message) return null;
-
-                                                return (
-                                                  <div className="mt-3 bg-background rounded-lg p-4 border border-primary/20 space-y-3">
-                                                    <div className="flex items-center gap-2">
-                                                      <Badge
-                                                        variant="outline"
-                                                        className="text-xs"
-                                                      >
-                                                        {message.channel ===
-                                                        "email"
-                                                          ? "Email Content"
-                                                          : message.channel ===
-                                                            "linkedin"
-                                                          ? "LinkedIn Message"
-                                                          : message.channel ===
-                                                            "voice"
-                                                          ? "Voice Call"
-                                                          : "Message Content"}
-                                                      </Badge>
-                                                      {message.aiGenerated && (
-                                                        <Badge
-                                                          variant="outline"
-                                                          className="text-xs bg-primary/5 border-primary/20"
-                                                        >
-                                                          AI-generated
-                                                        </Badge>
-                                                      )}
-                                                    </div>
-
-                                                    {message.subject && (
-                                                      <div>
-                                                        <p className="text-xs font-medium text-muted-foreground mb-1">
-                                                          Subject
-                                                        </p>
-                                                        <p className="text-sm font-medium">
-                                                          {message.subject}
-                                                        </p>
-                                                      </div>
-                                                    )}
-
-                                                    {message.body && (
-                                                      <div>
-                                                        <p className="text-xs font-medium text-muted-foreground mb-2">
-                                                          {message.channel ===
-                                                          "email"
-                                                            ? "Email Body"
-                                                            : message.channel ===
-                                                              "linkedin"
-                                                            ? "LinkedIn Message"
-                                                            : "Message Content"}
-                                                        </p>
-                                                        <div className="bg-muted/30 rounded-lg p-4 border border-border/30">
-                                                          <pre className="text-sm whitespace-pre-wrap text-foreground leading-relaxed font-sans">
-                                                            {message.body}
-                                                          </pre>
-                                                        </div>
-                                                      </div>
-                                                    )}
-
-                                                    {message.scriptUsed && (
-                                                      <div>
-                                                        <p className="text-xs font-medium text-muted-foreground mb-2">
-                                                          Voice Call Script
-                                                          (AI-Generated)
-                                                        </p>
-                                                        <div className="bg-muted/30 rounded-lg p-4 border border-border/30">
-                                                          <pre className="text-xs font-mono whitespace-pre-wrap text-foreground leading-relaxed">
-                                                            {message.scriptUsed}
-                                                          </pre>
-                                                        </div>
-                                                      </div>
-                                                    )}
-
-                                                    {message.personalizationTokens &&
-                                                      message
-                                                        .personalizationTokens
-                                                        .length > 0 && (
-                                                        <div>
-                                                          <p className="text-xs font-medium text-muted-foreground mb-2">
-                                                            Personalization
-                                                            Tokens
-                                                          </p>
-                                                          <div className="flex flex-wrap gap-2">
-                                                            {(
-                                                              message.personalizationTokens ||
-                                                              []
-                                                            ).map(
-                                                              (token, tidx) => (
-                                                                <Badge
-                                                                  key={tidx}
-                                                                  variant="outline"
-                                                                  className="text-xs"
-                                                                >
-                                                                  {token}
-                                                                </Badge>
-                                                              )
-                                                            )}
-                                                          </div>
-                                                        </div>
-                                                      )}
-
-                                                    <div className="pt-2 border-t text-xs text-muted-foreground">
-                                                      This shows the exact
-                                                      content sent to the lead
-                                                      for full transparency and
-                                                      auditability.
-                                                    </div>
+                                          <Button
+                                            variant="ghost"
+                                            size="sm"
+                                onClick={() => handleDeleteKnowledge(item._id)}
+                              >
+                                <X className="h-4 w-4" />
+                                          </Button>
+                            </CardContent>
+                          </Card>
+                        ))}
                                                   </div>
-                                                );
-                                              })()}
-                                          </div>
-                                        )}
+                                                )}
+                  </TabsContent>
+
+                  {/* Mode Tab */}
+                  <TabsContent value="mode" className="space-y-4 mt-4">
+                    <div className="flex gap-6">
+                      <div className="w-64 shrink-0">
+                        <Card>
+                          <CardHeader>
+                            <CardTitle className="text-base">Email Steps</CardTitle>
+                          </CardHeader>
+                          <CardContent className="p-0">
+                            <div className="space-y-1">
+                              {campaignDetails?.templates.email_steps.map((step, idx) => (
+                                <button
+                                  key={idx}
+                                  onClick={() => setSelectedMode(step.step_name)}
+                                  className={`w-full px-4 py-2 text-left text-sm hover:bg-muted/50 ${
+                                    selectedMode === step.step_name
+                                      ? "bg-primary text-primary-foreground"
+                                      : ""
+                                  }`}
+                                >
+                                  {step.step_name}
+                                </button>
+                              ))}
+                                                    </div>
+                          </CardContent>
+                        </Card>
+                                                  </div>
+
+                      <div className="flex-1 space-y-4">
+                        {campaignDetails?.templates.email_steps
+                          .filter((s) => s.step_name === selectedMode)
+                          .map((step, idx) => (
+                            <div key={idx} className="space-y-4">
+                              <Card>
+                                <CardHeader>
+                                  <CardTitle className="text-base">
+                                    Construct Instructions
+                                  </CardTitle>
+                                  <CardDescription>
+                                    How to structure this email
+                                  </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                  <Textarea
+                                    rows={4}
+                                    value={step.construct_instructions}
+                                    onChange={(e) => {
+                                      const newSteps = [...campaignDetails.templates.email_steps];
+                                      const stepIdx = newSteps.findIndex(
+                                        (s) => s.step_name === selectedMode
+                                      );
+                                      newSteps[stepIdx].construct_instructions = e.target.value;
+                                      setCampaignDetails({
+                                        ...campaignDetails,
+                                        templates: {
+                                          ...campaignDetails.templates,
+                                          email_steps: newSteps,
+                                        },
+                                      });
+                                    }}
+                                    onBlur={() =>
+                                      handleSaveCampaignField(
+                                        "templates",
+                                        campaignDetails.templates
+                                      )
+                                    }
+                                    placeholder="Define how to construct this email..."
+                                  />
+                                </CardContent>
+                              </Card>
+
+                              <Card>
+                                <CardHeader>
+                                  <CardTitle className="text-base">
+                                    Format Instructions
+                                  </CardTitle>
+                                  <CardDescription>
+                                    Formatting and style guidelines
+                                  </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                  <Textarea
+                                    rows={4}
+                                    value={step.format_instructions}
+                                    onChange={(e) => {
+                                      const newSteps = [...campaignDetails.templates.email_steps];
+                                      const stepIdx = newSteps.findIndex(
+                                        (s) => s.step_name === selectedMode
+                                      );
+                                      newSteps[stepIdx].format_instructions = e.target.value;
+                                      setCampaignDetails({
+                                        ...campaignDetails,
+                                        templates: {
+                                          ...campaignDetails.templates,
+                                          email_steps: newSteps,
+                                        },
+                                      });
+                                    }}
+                                    onBlur={() =>
+                                      handleSaveCampaignField(
+                                        "templates",
+                                        campaignDetails.templates
+                                      )
+                                    }
+                                    placeholder="Define formatting rules..."
+                                  />
+                                </CardContent>
+                              </Card>
+
+                              <Card>
+                                <CardHeader>
+                                  <CardTitle className="text-base">Email Template</CardTitle>
+                                  <CardDescription>
+                                    Template with variables
+                                  </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                  <Textarea
+                                    rows={10}
+                                    value={step.template}
+                                    onChange={(e) => {
+                                      const newSteps = [...campaignDetails.templates.email_steps];
+                                      const stepIdx = newSteps.findIndex(
+                                        (s) => s.step_name === selectedMode
+                                      );
+                                      newSteps[stepIdx].template = e.target.value;
+                                      setCampaignDetails({
+                                        ...campaignDetails,
+                                        templates: {
+                                          ...campaignDetails.templates,
+                                          email_steps: newSteps,
+                                        },
+                                      });
+                                    }}
+                                    onBlur={() =>
+                                      handleSaveCampaignField(
+                                        "templates",
+                                        campaignDetails.templates
+                                      )
+                                    }
+                                    placeholder="Subject: [Your subject]\n\nHi {prospect_name},\n\n..."
+                                    className="font-mono text-sm"
+                                  />
+                                  <div className="mt-2">
+                                    <Button variant="outline" size="sm">
+                                      Generate sample email
+                                    </Button>
+                                        </div>
+                                </CardContent>
+                              </Card>
                                     </div>
+                          ))}
                                   </div>
                                 </div>
-                              </div>
-                            );
-                          })
-                        ) : (
-                          <div className="text-center py-12">
-                            <div className="flex flex-col items-center gap-4">
-                              <div className="p-4 rounded-full bg-muted">
-                                <FileText className="w-8 h-8 text-muted-foreground" />
-                              </div>
+                  </TabsContent>
+
+                  {/* Leads Tab */}
+                  <TabsContent value="prospects" className="space-y-4 mt-4">
+                    <div className="flex justify-between items-center">
                               <div>
-                                <h4 className="font-semibold mb-1">
-                                  No audit trail available
-                                </h4>
+                        <h3 className="text-lg font-semibold">Leads</h3>
                                 <p className="text-sm text-muted-foreground">
-                                  This lead is still in research phase. Full
-                                  audit trail will be available once outreach
-                                  begins.
+                          {prospects.length} lead(s) in campaign
                                 </p>
                               </div>
+                      <Button onClick={() => setAddProspectsDialog(true)}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Leads
+                      </Button>
                             </div>
-                          </div>
-                        )}
 
-                        {/* Demo disclaimer */}
-                        <div className="mt-6 pt-4 border-t border-border/50">
-                          <p className="text-xs text-center text-muted-foreground">
-                            This is an immutable audit log. All events are
-                            timestamped and cannot be modified.
+                    {prospects.length === 0 ? (
+                      <Card>
+                        <CardContent className="py-12 text-center">
+                          <p className="text-muted-foreground">
+                            No leads yet. Add leads to start your campaign.
                           </p>
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      <Card>
+                        <CardContent className="p-0">
+                          <div className="border rounded-md">
+                            <table className="w-full">
+                              <thead className="bg-muted/40 border-b">
+                                <tr>
+                                  <th className="px-4 py-3 text-left text-xs font-medium">
+                                    Name
+                                  </th>
+                                  <th className="px-4 py-3 text-left text-xs font-medium">
+                                    Email
+                                  </th>
+                                  <th className="px-4 py-3 text-left text-xs font-medium">
+                                    Company
+                                  </th>
+                                  <th className="px-4 py-3 text-left text-xs font-medium">
+                                    Status
+                                  </th>
+                                  <th className="px-4 py-3 text-left text-xs font-medium">
+                                    Step
+                                  </th>
+                                  <th className="px-4 py-3 text-left text-xs font-medium">
+                                    Emails Sent
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {prospects.map((prospect) => (
+                                  <tr key={prospect._id} className="border-b">
+                                    <td className="px-4 py-3">{prospect.lead_name}</td>
+                                    <td className="px-4 py-3 text-sm text-muted-foreground">
+                                      {prospect.lead_email}
+                                    </td>
+                                    <td className="px-4 py-3 text-sm">
+                                      {prospect.lead_company}
+                                    </td>
+                                    <td className="px-4 py-3">
+                                      <Badge variant="outline">{prospect.status}</Badge>
+                                    </td>
+                                    <td className="px-4 py-3 text-sm">
+                                      {prospect.current_step}
+                                    </td>
+                                    <td className="px-4 py-3 text-sm">
+                                      {prospect.metrics.emails_sent}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
                         </div>
-                      </div>
-                    )}
                   </CardContent>
                 </Card>
+                    )}
+                  </TabsContent>
 
-                {/* Section 3: Controls & Guardrails (conditionally styled) */}
-                {outreachStatus === "active" && (
-                  <>
-                    {/* Human Controls */}
-                    <Card className="border-primary/20 bg-primary/5">
+                  {/* Scheduling Tab */}
+                  <TabsContent value="scheduling" className="space-y-4 mt-4">
+                    <Card>
                       <CardHeader>
-                        <CardTitle>Human Controls</CardTitle>
+                        <CardTitle>Max. outreach email count</CardTitle>
                         <CardDescription>
-                          Override AI decisions or adjust outreach strategy
+                          Maximum outreach emails sent to a lead
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Input
+                          type="number"
+                          value={campaignDetails?.scheduling.max_touches || 7}
+                          onChange={(e) =>
+                            setCampaignDetails((prev) =>
+                              prev
+                                ? {
+                                    ...prev,
+                                    scheduling: {
+                                      ...prev.scheduling,
+                                      max_touches: parseInt(e.target.value) || 7,
+                                    },
+                                  }
+                                : null
+                            )
+                          }
+                          onBlur={() =>
+                            handleSaveCampaignField(
+                              "scheduling",
+                              campaignDetails?.scheduling
+                            )
+                          }
+                        />
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Time Interval</CardTitle>
+                        <CardDescription>
+                          Time interval, in days, between consecutive emails to a lead
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Input
+                          type="number"
+                          value={campaignDetails?.scheduling.interval_days || 1}
+                          onChange={(e) =>
+                            setCampaignDetails((prev) =>
+                              prev
+                                ? {
+                                    ...prev,
+                                    scheduling: {
+                                      ...prev.scheduling,
+                                      interval_days: parseInt(e.target.value) || 1,
+                                    },
+                                  }
+                                : null
+                            )
+                          }
+                          onBlur={() =>
+                            handleSaveCampaignField(
+                              "scheduling",
+                              campaignDetails?.scheduling
+                            )
+                          }
+                        />
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Time Window</CardTitle>
+                        <CardDescription>
+                          Hours between which emails can be sent
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <div className="flex flex-wrap gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            disabled={isUpdating}
-                            onClick={() => setControlDialogOpen("pause")}
-                            className="gap-2"
-                          >
-                            <Pause className="w-4 h-4" />
-                            Pause Outreach
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            disabled={isUpdating}
-                            onClick={() => setControlDialogOpen("voice")}
-                            className="gap-2"
-                          >
-                            <PhoneCall className="w-4 h-4" />
-                            Force Voice Escalation
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            disabled={isUpdating}
-                            onClick={() => setControlDialogOpen("stop")}
-                            className="gap-2"
-                          >
-                            <StopCircle className="w-4 h-4" />
-                            Stop Outreach
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            disabled={isUpdating}
-                            className="gap-2"
-                          >
-                            <UserCheck className="w-4 h-4" />
-                            Send to AE for Review
-                          </Button>
-                        </div>
-
-                        <p className="text-xs text-muted-foreground">
-                          All control actions are logged for audit purposes and
-                          require confirmation.
-                        </p>
-                        {statusNote && (
-                          <div className="bg-background rounded-lg p-3 border">
-                            <p className="text-xs text-muted-foreground">
-                              {statusNote}
-                            </p>
+                          <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label>Start time</Label>
+                            <Input
+                              type="time"
+                              value={campaignDetails?.scheduling.time_window.start || "08:00"}
+                              onChange={(e) =>
+                                setCampaignDetails((prev) =>
+                                  prev
+                                    ? {
+                                        ...prev,
+                                        scheduling: {
+                                          ...prev.scheduling,
+                                          time_window: {
+                                            ...prev.scheduling.time_window,
+                                            start: e.target.value,
+                                          },
+                                        },
+                                      }
+                                    : null
+                                )
+                              }
+                              onBlur={() =>
+                                handleSaveCampaignField(
+                                  "scheduling",
+                                  campaignDetails?.scheduling
+                                )
+                              }
+                            />
+                            </div>
+                          <div>
+                            <Label>End time</Label>
+                            <Input
+                              type="time"
+                              value={campaignDetails?.scheduling.time_window.end || "17:00"}
+                              onChange={(e) =>
+                                setCampaignDetails((prev) =>
+                                  prev
+                                    ? {
+                                        ...prev,
+                                        scheduling: {
+                                          ...prev.scheduling,
+                                          time_window: {
+                                            ...prev.scheduling.time_window,
+                                            end: e.target.value,
+                                          },
+                                        },
+                                      }
+                                    : null
+                                )
+                              }
+                              onBlur={() =>
+                                handleSaveCampaignField(
+                                  "scheduling",
+                                  campaignDetails?.scheduling
+                                )
+                              }
+                            />
+                            </div>
                           </div>
-                        )}
                       </CardContent>
                     </Card>
 
-                    {/* Outreach Guardrails */}
-                    <Card className="border-chart-4/20 bg-chart-4/5">
-                      <CardHeader className="relative pr-20">
-                        <div>
-                          <CardTitle className="flex items-center gap-2">
-                            <Shield className="w-5 h-5 text-chart-4" />
-                            Outreach Guardrails
-                          </CardTitle>
-                          <CardDescription>
-                            Automated safety controls to maintain quality and
-                            compliance
-                          </CardDescription>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            const guardrails =
-                              outreachData?.guardrails || strategy.guardrails;
-                            setEditFormData({
-                              max_touches: guardrails.max_touches || 8,
-                              voice_escalation_allowed:
-                                guardrails.voice_escalation_allowed ?? true,
-                              voice_escalation_trigger:
-                                guardrails.voice_escalation_trigger ||
-                                "High ICP (≥80) + engagement on 2+ channels",
-                              stop_conditions: (
-                                guardrails.stop_conditions || []
-                              ).join("\n"),
-                              compliance_rules: (
-                                guardrails.compliance_rules || []
-                              ).join("\n"),
-                            });
-                            setEditSidebar({
-                              open: true,
-                              section: "guardrails",
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Timezone</CardTitle>
+                        <CardDescription>Select appropriate timezone</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Select
+                          value={campaignDetails?.scheduling.timezone}
+                          onValueChange={(value) => {
+                            setCampaignDetails((prev) =>
+                              prev
+                                ? {
+                                    ...prev,
+                                    scheduling: {
+                                      ...prev.scheduling,
+                                      timezone: value,
+                                    },
+                                  }
+                                : null
+                            );
+                            handleSaveCampaignField("scheduling", {
+                              ...campaignDetails?.scheduling,
+                              timezone: value,
                             });
                           }}
-                          className="absolute top-4 right-4 h-6 px-2 gap-1.5 text-xs"
                         >
-                          <Edit3 className="h-3 w-3" />
-                          Edit
-                        </Button>
-                      </CardHeader>
-                      <CardContent className="space-y-6">
-                        {/* Frequency Limits */}
-                        <div>
-                          <p className="text-xs font-semibold text-foreground uppercase tracking-wide mb-3">
-                            Frequency Limits
-                          </p>
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-background rounded-lg p-3 border">
-                              <p className="text-xs text-muted-foreground mb-1">
-                                Maximum Touches
-                              </p>
-                              <p className="text-lg font-semibold">
-                                {outreachData?.guardrails?.max_touches ||
-                                  strategy.guardrails.maxTouches}{" "}
-                                touches
-                              </p>
-                              <p className="text-xs text-muted-foreground mt-1">
-                                After this, outreach stops automatically
-                              </p>
-                            </div>
-                            <div className="bg-background rounded-lg p-3 border">
-                              <p className="text-xs text-muted-foreground mb-1">
-                                Voice Escalation
-                              </p>
-                              <p className="text-lg font-semibold">
-                                {outreachData?.guardrails
-                                  ?.voice_escalation_allowed ??
-                                strategy.guardrails.voiceEscalationAllowed
-                                  ? "Allowed"
-                                  : "Not Allowed"}
-                              </p>
-                              <p className="text-xs text-muted-foreground mt-1">
-                                {outreachData?.guardrails
-                                  ?.voice_escalation_trigger ||
-                                  strategy.guardrails.voiceEscalationTrigger ||
-                                  "Configured in Agent Instructions"}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="America/New_York">
+                              America/New_York (EST)
+                            </SelectItem>
+                            <SelectItem value="America/Los_Angeles">
+                              America/Los_Angeles (PST)
+                            </SelectItem>
+                            <SelectItem value="Europe/London">Europe/London (GMT)</SelectItem>
+                            <SelectItem value="Asia/Kolkata">Asia/Kolkata (+5:30)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </CardContent>
+                    </Card>
 
-                        {/* AI Auto-Stop Conditions */}
-                        <div>
-                          <p className="text-xs font-semibold text-foreground uppercase tracking-wide mb-3">
-                            AI Auto-Stop Conditions
-                          </p>
-                          <ul className="space-y-2">
-                            {(
-                              outreachData?.guardrails?.stop_conditions ||
-                              strategy?.guardrails?.stopConditions ||
-                              []
-                            ).map((condition: string, idx: number) => (
-                              <li
-                                key={idx}
-                                className="flex items-start gap-2 text-sm"
-                              >
-                                <StopCircle className="w-4 h-4 text-destructive mt-0.5 shrink-0" />
-                                <div>
-                                  <span className="font-medium">
-                                    {condition}
-                                  </span>
-                                  <p className="text-xs text-muted-foreground mt-0.5">
-                                    Jazon will immediately stop outreach when
-                                    this occurs
-                                  </p>
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Days</CardTitle>
+                        <CardDescription>Select the weekdays</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-2 gap-3">
+                          {[
+                            "Monday",
+                            "Tuesday",
+                            "Wednesday",
+                            "Thursday",
+                            "Friday",
+                            "Saturday",
+                            "Sunday",
+                          ].map((day) => (
+                            <div key={day} className="flex items-center gap-2">
+                              <Checkbox
+                                id={day}
+                                checked={campaignDetails?.scheduling.allowed_days.includes(
+                                  day
+                                )}
+                                onCheckedChange={(checked) => {
+                                  const newDays = checked
+                                    ? [...(campaignDetails?.scheduling.allowed_days || []), day]
+                                    : campaignDetails?.scheduling.allowed_days.filter(
+                                        (d) => d !== day
+                                      ) || [];
+                                  setCampaignDetails((prev) =>
+                                    prev
+                                      ? {
+                                          ...prev,
+                                          scheduling: {
+                                            ...prev.scheduling,
+                                            allowed_days: newDays,
+                                          },
+                                        }
+                                      : null
+                                  );
+                                  handleSaveCampaignField("scheduling", {
+                                    ...campaignDetails?.scheduling,
+                                    allowed_days: newDays,
+                                  });
+                                }}
+                              />
+                              <Label htmlFor={day} className="cursor-pointer">
+                                {day}
+                              </Label>
                                 </div>
-                              </li>
                             ))}
-                          </ul>
-                        </div>
-
-                        {/* Compliance Rules */}
-                        <div>
-                          <p className="text-xs font-semibold text-foreground uppercase tracking-wide mb-3">
-                            Compliance Rules
-                          </p>
-                          <ul className="space-y-2">
-                            {(
-                              outreachData?.guardrails?.compliance_rules || [
-                                "No weekend outreach (respects business hours)",
-                                "Unsubscribe links included in all emails",
-                                "GDPR and CAN-SPAM compliant messaging",
-                              ]
-                            ).map((rule: string, idx: number) => (
-                              <li
-                                key={idx}
-                                className="flex items-start gap-2 text-sm"
-                              >
-                                <CheckCircle2 className="w-4 h-4 text-chart-2 mt-0.5 shrink-0" />
-                                <span>{rule}</span>
-                              </li>
-                            ))}
-                          </ul>
                         </div>
                       </CardContent>
                     </Card>
-                  </>
-                )}
 
-                {/* Metrics with Context (Always visible for active/completed leads) */}
-                {(outreachStatus === "active" ||
-                  outreachStatus === "completed") && (
-                  <div className="grid gap-4 md:grid-cols-3">
-                    <Card>
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-sm">Channel Mix</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-muted-foreground">Email</span>
-                            <span className="font-medium">40%</span>
-                          </div>
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-muted-foreground">
-                              LinkedIn
-                            </span>
-                            <span className="font-medium">35%</span>
-                          </div>
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-muted-foreground">Voice</span>
-                            <span className="font-medium">25%</span>
-                          </div>
+                    <Button onClick={() => handleSaveCampaignField("scheduling", campaignDetails?.scheduling)}>
+                      Save Configuration
+                    </Button>
+                  </TabsContent>
+
+                  {/* Activity Tab */}
+                  <TabsContent value="activity" className="space-y-4 mt-4">
+                    <div className="grid grid-cols-5 gap-4">
+                      <Card>
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-sm font-medium text-muted-foreground">
+                            Mails
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="text-2xl font-bold">
+                            {activityData?.metrics.mails_sent || 0}
                         </div>
-                        <p className="text-xs text-muted-foreground mt-3 pt-3 border-t">
-                          Optimized based on ICP segment patterns
-                        </p>
                       </CardContent>
                     </Card>
 
                     <Card>
                       <CardHeader className="pb-3">
-                        <CardTitle className="text-sm">Response Rate</CardTitle>
+                          <CardTitle className="text-sm font-medium text-muted-foreground">
+                            Replies
+                          </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="flex items-baseline gap-2">
-                          <div className="text-3xl font-bold text-chart-2">
-                            32%
+                          <div className="text-2xl font-bold">
+                            {activityData?.metrics.replies || 0}
                           </div>
-                          <TrendingUp className="w-4 h-4 text-chart-2" />
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Above average for this ICP segment
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-2 pt-2 border-t">
-                          Team benchmark: 24% • Segment avg: 28%
-                        </p>
+                        </CardContent>
+                      </Card>
+
+                      <Card>
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-sm font-medium text-muted-foreground">
+                            Open
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="text-2xl font-bold">
+                            {activityData?.metrics.opens || 0}
+                          </div>
                       </CardContent>
                     </Card>
 
                     <Card>
                       <CardHeader className="pb-3">
-                        <CardTitle className="text-sm">
-                          Avg. Time to Response
-                        </CardTitle>
+                          <CardTitle className="text-sm font-medium text-muted-foreground">
+                            Click
+                          </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="text-3xl font-bold">18h</div>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Median response time
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-2 pt-2 border-t">
-                          Faster than enterprise avg: 36h
-                        </p>
+                          <div className="text-2xl font-bold">
+                            {activityData?.metrics.clicks || 0}
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="pb-3">
+                          <CardTitle className="text-sm font-medium text-muted-foreground">
+                            Unsubscribe
+                          </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                          <div className="text-2xl font-bold">0</div>
                       </CardContent>
                     </Card>
                   </div>
-                )}
 
-                {/* Demo Safety Footer */}
-                <div className="bg-muted/20 rounded-lg p-3 border border-border/30">
-                  <p className="text-xs text-center text-muted-foreground">
-                    All actions shown are part of a demo environment and do not
-                    affect real systems.
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Receipts</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {activityData?.prospects && activityData.prospects.length > 0 ? (
+                          <div className="space-y-2">
+                            {activityData.prospects.map((prospect: any) => (
+                              <div
+                                key={prospect._id}
+                                className="p-3 border rounded-md hover:bg-muted/20"
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div>
+                                    <p className="font-medium">{prospect.lead_name}</p>
+                                    <p className="text-sm text-muted-foreground">
+                                      {prospect.lead_email}
                   </p>
                 </div>
-              </>
+                                  <Badge variant="outline">{prospect.status}</Badge>
+                                </div>
+                                {prospect.history && prospect.history.length > 0 && (
+                                  <div className="mt-2 text-xs text-muted-foreground">
+                                    Last activity: {prospect.history[0].title}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-center py-8 text-muted-foreground">
+                            No activity yet
+                          </p>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                </Tabs>
+              </div>
             )}
           </div>
         </div>
       </SidebarInset>
 
-      {/* Control Confirmation Dialogs */}
-      <Dialog
-        open={!!controlDialogOpen}
-        onOpenChange={() => setControlDialogOpen(null)}
-      >
+      {/* Create Campaign Dialog */}
+      <Dialog open={createCampaignDialog} onOpenChange={setCreateCampaignDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              {controlDialogOpen === "pause" && "Pause Outreach"}
-              {controlDialogOpen === "voice" && "Force Voice Escalation"}
-              {controlDialogOpen === "stop" && "Stop Outreach"}
-            </DialogTitle>
+            <DialogTitle>Create New Campaign</DialogTitle>
             <DialogDescription>
-              This action will be logged for audit purposes and require
-              confirmation.
+              Give your campaign a descriptive name
             </DialogDescription>
           </DialogHeader>
-          <div className="py-4">
-            <label className="text-sm font-medium mb-2 block">
-              Reason for override (optional):
-            </label>
-            <Textarea
-              placeholder="Enter a brief explanation for this manual intervention..."
-              value={overrideReason}
-              onChange={(e) => setOverrideReason(e.target.value)}
-              rows={3}
-            />
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="campaign-name">Campaign Name</Label>
+              <Input
+                id="campaign-name"
+                value={newCampaignName}
+                onChange={(e) => setNewCampaignName(e.target.value)}
+                placeholder="e.g., Q1 Enterprise Outbound"
+              />
+            </div>
           </div>
           <DialogFooter>
             <Button
               variant="outline"
-              onClick={() => setControlDialogOpen(null)}
+              onClick={() => setCreateCampaignDialog(false)}
             >
               Cancel
             </Button>
-            <Button
-              onClick={() => {
-                if (selectedLead?._dbLead) {
-                  // Use real API
-                  handleControlAction(controlDialogOpen || "");
-                } else {
-                  // Fallback to mock
-                  const messages = {
-                    pause:
-                      "Outreach paused for this lead. All scheduled actions stopped.",
-                    voice:
-                      "Voice escalation forced for next touch, aligned with escalation rules.",
-                    stop: "Outreach stopped for this lead. Marked for review.",
-                  };
-                  simulateUpdate(
-                    controlDialogOpen || "",
-                    messages[controlDialogOpen as keyof typeof messages] ||
-                      "Action completed"
-                  );
-                }
-              }}
-            >
-              Confirm
+            <Button onClick={handleCreateCampaign} disabled={isSaving}>
+              {isSaving ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                "Create Campaign"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Copy View/Edit Sidebar */}
-      <Sheet open={copyDialogOpen} onOpenChange={setCopyDialogOpen}>
-        <SheetContent className="!w-[30rem] !max-w-[30rem] flex flex-col overflow-hidden overflow-x-hidden break-words">
-          <SheetHeader className="px-6 pt-6 pb-4 border-b">
-            <SheetTitle className="text-2xl font-semibold flex items-center gap-3">
-              {selectedStepCopy?.channel === "Email" && (
-                <div className="p-2 rounded-lg bg-blue-500/10">
-                  <Mail className="w-5 h-5 text-blue-600" />
-                </div>
-              )}
-              {selectedStepCopy?.channel === "LinkedIn" && (
-                <div className="p-2 rounded-lg bg-indigo-500/10">
-                  <Linkedin className="w-5 h-5 text-indigo-600" />
-                </div>
-              )}
-              {selectedStepCopy?.channel === "Voice" && (
-                <div className="p-2 rounded-lg bg-purple-500/10">
-                  <Phone className="w-5 h-5 text-purple-600" />
-                </div>
-              )}
-              <div>
-                <div className="flex items-center gap-2">
-                  <span>
-                    Step {selectedStepCopy?.step}: {selectedStepCopy?.channel}{" "}
-                    Copy
-                  </span>
-                  <Badge variant="outline" className="text-xs">
-                    {editingCopy ? "Editing" : "AI-Generated"}
-                  </Badge>
-                </div>
-              </div>
-            </SheetTitle>
-            <SheetDescription className="text-sm">
-              {editingCopy
-                ? "Edit the AI-generated copy below. Your changes will override the AI suggestions."
-                : "View the AI-generated copy for this outreach step. Click 'Edit Copy' to make changes."}
-            </SheetDescription>
-          </SheetHeader>
-
-          <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 py-6 break-words min-w-0">
-            {selectedStepCopy && (
-              <div className="space-y-6 break-words min-w-0">
-                {selectedStepCopy._missing && (
-                  <Alert>
-                    <AlertCircle className="w-4 h-4" />
-                    <AlertTitle>No Draft Available</AlertTitle>
-                    <AlertDescription>
-                      No AI draft found for this step yet. Regenerate outreach
-                      to generate drafts, or edit and save your own copy.
-                    </AlertDescription>
-                  </Alert>
-                )}
-
-                {/* Email Copy */}
-                {selectedStepCopy.channel === "Email" && (
-                  <>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <Label className="text-base font-semibold">
-                          Subject Line Options
-                        </Label>
-                        {!editingCopy && (
-                          <Badge variant="secondary" className="text-xs">
-                            {selectedStepCopy.subject_options?.length || 0}{" "}
-                            options
-                          </Badge>
-                        )}
-                      </div>
-                      {editingCopy ? (
-                        <Textarea
-                          value={(editedCopyData?.subject_options || []).join(
-                            "\n"
-                          )}
-                          onChange={(e) =>
-                            setEditedCopyData({
-                              ...editedCopyData,
-                              subject_options: e.target.value
-                                .split("\n")
-                                .filter((s) => s.trim()),
-                            })
-                          }
-                          rows={3}
-                          placeholder="Enter subject lines (one per line)"
-                          className="text-sm resize-none"
-                        />
-                      ) : (
-                        <div className="space-y-2">
-                          {(selectedStepCopy.subject_options || []).map(
-                            (subject: string, idx: number) => (
-                              <Card
-                                key={idx}
-                                className="bg-muted/30 border-border/50 overflow-hidden"
-                              >
-                                <CardContent className="p-2 overflow-hidden">
-                                  <p className="text-sm font-medium text-foreground break-words overflow-wrap-anywhere">
-                                    {subject}
-                                  </p>
-                                </CardContent>
-                              </Card>
-                            )
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="space-y-3">
-                      <Label className="text-base font-semibold">
-                        Email Body
-                      </Label>
-                      {editingCopy ? (
-                        <Textarea
-                          value={editedCopyData?.body || ""}
-                          onChange={(e) =>
-                            setEditedCopyData({
-                              ...editedCopyData,
-                              body: e.target.value,
-                            })
-                          }
-                          rows={14}
-                          placeholder="Enter email body"
-                          className="text-sm resize-none"
-                        />
-                      ) : (
-                        <Card className="bg-muted/30 border-border/50 overflow-hidden">
-                          <CardContent className="p-3 overflow-hidden">
-                            <pre className="text-sm whitespace-pre-wrap break-words font-sans leading-relaxed text-foreground overflow-wrap-anywhere">
-                              {selectedStepCopy.body}
-                            </pre>
-                          </CardContent>
-                        </Card>
-                      )}
-                    </div>
-                  </>
-                )}
-
-                {/* LinkedIn Copy */}
-                {selectedStepCopy.channel === "LinkedIn" && (
-                  <div className="space-y-3">
-                    <Label className="text-base font-semibold">
-                      LinkedIn Connection Message
-                    </Label>
-                    {editingCopy ? (
-                      <Textarea
-                        value={editedCopyData?.body || ""}
-                        onChange={(e) =>
-                          setEditedCopyData({
-                            ...editedCopyData,
-                            body: e.target.value,
-                          })
-                        }
-                        rows={8}
-                        placeholder="Enter LinkedIn message"
-                        className="text-sm resize-none"
-                      />
-                    ) : (
-                      <Card className="bg-muted/30 border-border/50 overflow-hidden">
-                        <CardContent className="p-3 overflow-hidden">
-                          <pre className="text-sm whitespace-pre-wrap break-words font-sans leading-relaxed text-foreground overflow-wrap-anywhere">
-                            {selectedStepCopy.body}
-                          </pre>
-                        </CardContent>
-                      </Card>
-                    )}
-                  </div>
-                )}
-
-                {/* Voice Copy */}
-                {selectedStepCopy.channel === "Voice" && (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-base font-semibold">
-                        Voice Call Script & Talking Points
-                      </Label>
-                      {!editingCopy && (
-                        <Badge variant="secondary" className="text-xs">
-                          {selectedStepCopy.talking_points?.length || 0} points
-                        </Badge>
-                      )}
-                    </div>
-                    {editingCopy ? (
-                      <div className="space-y-2">
-                        <p className="text-xs text-muted-foreground">
-                          Enter each talking point separated by a blank line
-                        </p>
-                        <Textarea
-                          value={(editedCopyData?.talking_points || []).join(
-                            "\n\n"
-                          )}
-                          onChange={(e) =>
-                            setEditedCopyData({
-                              ...editedCopyData,
-                              talking_points: e.target.value
-                                .split("\n\n")
-                                .filter((s) => s.trim()),
-                            })
-                          }
-                          rows={18}
-                          placeholder="Enter talking points (separate with blank lines)"
-                          className="text-sm resize-none"
-                        />
-                      </div>
-                    ) : (
-                      <Card className="bg-muted/30 border-border/50 overflow-hidden">
-                        <CardContent className="p-3 space-y-4 overflow-hidden">
-                          {(selectedStepCopy.talking_points || []).map(
-                            (point: string, idx: number) => (
-                              <div key={idx} className="flex gap-3 min-w-0">
-                                <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary/10 border border-primary/20 text-primary flex items-center justify-center text-xs font-semibold">
-                                  {idx + 1}
-                                </div>
-                                <p className="text-sm flex-1 leading-relaxed text-foreground pt-0.5 break-words overflow-wrap-anywhere min-w-0">
-                                  {point}
-                                </p>
-                              </div>
-                            )
-                          )}
-                        </CardContent>
-                      </Card>
-                    )}
-                  </div>
-                )}
-
-                {/* Personalization Used */}
-                {selectedStepCopy.personalization_used &&
-                  selectedStepCopy.personalization_used.length > 0 && (
-                    <div className="space-y-3">
-                      <Label className="text-base font-semibold">
-                        Personalization Signals Used
-                      </Label>
-                      <div className="space-y-3">
-                        {selectedStepCopy.personalization_used.map(
-                          (signal: string, idx: number) => {
-                            // Check if signal contains semicolons (point-wise format)
-                            if (signal.includes(";")) {
-                              const points = signal
-                                .split(";")
-                                .map((p) => p.trim())
-                                .filter((p) => p);
-                              return (
-                                <div key={idx} className="space-y-1">
-                                  {points.map(
-                                    (point: string, pointIdx: number) => (
-                                      <div
-                                        key={pointIdx}
-                                        className="flex gap-2 items-start"
-                                      >
-                                        <span className="text-primary mt-1.5 flex-shrink-0">
-                                          •
-                                        </span>
-                                        <span className="text-sm text-foreground break-words overflow-wrap-anywhere flex-1">
-                                          {point}
-                                        </span>
-                                      </div>
-                                    )
-                                  )}
-                                </div>
-                              );
-                            }
-                            // Display as badge for single items
-                            return (
-                              <Badge
-                                key={idx}
-                                variant="secondary"
-                                className="text-xs py-1.5 px-3 break-words overflow-wrap-anywhere max-w-full"
-                              >
-                                {signal}
-                              </Badge>
-                            );
-                          }
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                {/* Strategy Alignment */}
-                {selectedStepCopy.strategy_alignment && (
-                  <div className="space-y-3">
-                    <Label className="text-base font-semibold">
-                      Strategy Alignment
-                    </Label>
-                    <Card className="bg-primary/5 border-primary/20 overflow-hidden">
-                      <CardContent className="p-3 overflow-hidden">
-                        <div className="flex gap-3 min-w-0">
-                          <Target className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                          <p className="text-sm text-foreground leading-relaxed break-words overflow-wrap-anywhere flex-1 min-w-0">
-                            {selectedStepCopy.strategy_alignment}
-                          </p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          <SheetFooter className="px-6 py-4 border-t bg-muted/30">
-            {!editingCopy ? (
-              <div className="flex items-center gap-2 w-full">
-                <Button
-                  variant="outline"
-                  onClick={() => setCopyDialogOpen(false)}
-                  className="flex-1"
-                >
-                  Close
-                </Button>
-                <Button
-                  onClick={() => setEditingCopy(true)}
-                  className="flex-1 gap-2"
-                >
-                  <Edit3 className="w-4 h-4" />
-                  Edit Copy
-                </Button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 w-full">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setEditingCopy(false);
-                    setEditedCopyData(
-                      selectedStepCopy ? { ...selectedStepCopy } : null
-                    );
-                  }}
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={async () => {
-                    if (!selectedLead?._dbLead || !editedCopyData) return;
-
-                    setIsSaving(true);
-                    setStatusNote("Saving copy edits...");
-
-                    try {
-                      // Find the copy run ID
-                      const copyRunId = outreachData?.copy?._id;
-                      if (!copyRunId) {
-                        throw new Error("Copy run ID not found");
-                      }
-
-                      // Update the specific draft in the drafts array
-                      const updatedDrafts = (
-                        outreachData.copy.drafts || []
-                      ).map((d: any) =>
-                        d.step === editedCopyData.step ? editedCopyData : d
-                      );
-
-                      const response = await fetch(
-                        `/api/leads/${selectedLead.id}/outreach/override`,
-                        {
-                          method: "PATCH",
-                          headers: {
-                            "Content-Type": "application/json",
-                          },
-                          body: JSON.stringify({
-                            scope: "outreach_copy",
-                            entity_id: copyRunId,
-                            updates: {
-                              drafts: updatedDrafts,
-                            },
-                            path_prefix: "copy_output",
-                            reason: "Manual UI edit via Copy Sidebar",
-                          }),
-                        }
-                      );
-
-                      if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(
-                          errorData.message ||
-                            `HTTP error! status: ${response.status}`
-                        );
-                      }
-
-                      setStatusNote("Copy edits saved successfully!");
-                      setEditingCopy(false);
-                      setCopyDialogOpen(false);
-
-                      // Refetch outreach data
-                      const updatedOutreachResponse = await fetch(
-                        `/api/leads/${selectedLead.id}/outreach`
-                      );
-                      const updatedOutreachData =
-                        await updatedOutreachResponse.json();
-                      setOutreachData(updatedOutreachData.data);
-                    } catch (error: any) {
-                      console.error("Error saving copy edits:", error);
-                      setStatusNote(`Error saving edits: ${error.message}`);
-                    } finally {
-                      setIsSaving(false);
-                    }
-                  }}
-                  disabled={isSaving}
-                  className="flex-1 gap-2"
-                >
-                  {isSaving ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <CheckCircle2 className="w-4 h-4" />
-                  )}
-                  Save Changes
-                </Button>
-              </div>
-            )}
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
-
-      {/* Edit Sidebars */}
-      <Sheet
-        open={editSidebar.open}
-        onOpenChange={(open) => setEditSidebar({ ...editSidebar, open })}
-      >
-        <SheetContent className="w-[600px] sm:w-[800px] overflow-y-auto">
-          <SheetHeader className="px-6">
-            <SheetTitle className="text-xl font-semibold">
-              Edit{" "}
-              {editSidebar.section === "strategy"
-                ? "Outreach Strategy"
-                : editSidebar.section === "copy"
-                ? "Outreach Copy"
-                : "Guardrails"}
-            </SheetTitle>
-            <SheetDescription className="text-sm text-muted-foreground">
-              Update the fields below. All fields are prefilled and can be
-              edited.
-            </SheetDescription>
-          </SheetHeader>
-
-          <div className="px-6 py-6 space-y-6">
-            {editSidebar.section === "guardrails" && (
-              <>
-                <div className="space-y-2">
-                  <Label htmlFor="max_touches" className="text-sm font-medium">
-                    Maximum Touches
-                  </Label>
-                  <Input
-                    id="max_touches"
-                    type="number"
-                    value={editFormData.max_touches || ""}
-                    onChange={(e) =>
-                      setEditFormData({
-                        ...editFormData,
-                        max_touches: e.target.value,
-                      })
-                    }
-                    placeholder="e.g., 8"
-                    className="w-full"
-                  />
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id="voice_escalation_allowed"
-                    checked={editFormData.voice_escalation_allowed}
-                    onChange={(e) =>
-                      setEditFormData({
-                        ...editFormData,
-                        voice_escalation_allowed: e.target.checked,
-                      })
-                    }
-                    className="h-4 w-4"
-                  />
-                  <Label
-                    htmlFor="voice_escalation_allowed"
-                    className="text-sm font-medium"
-                  >
-                    Voice Escalation Allowed
-                  </Label>
-                </div>
-
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="voice_escalation_trigger"
-                    className="text-sm font-medium"
-                  >
-                    Voice Escalation Trigger
-                  </Label>
-                  <Textarea
-                    id="voice_escalation_trigger"
-                    value={editFormData.voice_escalation_trigger || ""}
-                    onChange={(e) =>
-                      setEditFormData({
-                        ...editFormData,
-                        voice_escalation_trigger: e.target.value,
-                      })
-                    }
-                    rows={3}
-                    placeholder="e.g., High ICP (≥80) + engagement on 2+ channels"
-                    className="w-full resize-none"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="stop_conditions"
-                    className="text-sm font-medium"
-                  >
-                    AI Auto-Stop Conditions (one per line)
-                  </Label>
-                  <Textarea
-                    id="stop_conditions"
-                    value={editFormData.stop_conditions || ""}
-                    onChange={(e) =>
-                      setEditFormData({
-                        ...editFormData,
-                        stop_conditions: e.target.value,
-                      })
-                    }
-                    rows={6}
-                    placeholder="Explicit opt-out&#10;No engagement after 8 touches"
-                    className="w-full resize-none"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="compliance_rules"
-                    className="text-sm font-medium"
-                  >
-                    Compliance Rules (one per line)
-                  </Label>
-                  <Textarea
-                    id="compliance_rules"
-                    value={editFormData.compliance_rules || ""}
-                    onChange={(e) =>
-                      setEditFormData({
-                        ...editFormData,
-                        compliance_rules: e.target.value,
-                      })
-                    }
-                    rows={6}
-                    placeholder="No weekend outreach&#10;Unsubscribe links in emails"
-                    className="w-full resize-none"
-                  />
-                </div>
-              </>
-            )}
-
-            {editSidebar.section === "strategy" && editFormData.steps && (
-              <>
-                <div className="space-y-2">
-                  <Label htmlFor="plan_summary" className="text-sm font-medium">
-                    Strategy Summary
-                  </Label>
-                  <Textarea
-                    id="plan_summary"
-                    value={editFormData.plan_summary || ""}
-                    onChange={(e) =>
-                      setEditFormData({
-                        ...editFormData,
-                        plan_summary: e.target.value,
-                      })
-                    }
-                    rows={2}
-                    placeholder="One-line summary of the outreach strategy"
-                    className="w-full resize-none"
-                  />
-                </div>
-
-                <div className="border-t pt-4">
-                  <h4 className="text-sm font-semibold mb-4">Strategy Steps</h4>
-                  {(editFormData.steps || []).map(
-                    (step: any, stepIdx: number) => (
-                      <div
-                        key={stepIdx}
-                        className="mb-6 pb-6 border-b last:border-0"
-                      >
-                        <div className="flex items-center gap-2 mb-4">
-                          <Badge variant="outline" className="text-xs">
-                            Step {step.step}
-                          </Badge>
-                          <Badge variant="secondary" className="text-xs">
-                            {step.channel}
-                          </Badge>
-                        </div>
-
-                        <div className="space-y-4">
-                          <div className="space-y-2">
-                            <Label className="text-sm font-medium">Goal</Label>
-                            <Input
-                              value={step.goal}
-                              onChange={(e) => {
-                                const newSteps = [...editFormData.steps];
-                                newSteps[stepIdx].goal = e.target.value;
-                                setEditFormData({
-                                  ...editFormData,
-                                  steps: newSteps,
-                                });
-                              }}
-                              placeholder="What this step achieves"
-                              className="w-full"
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label className="text-sm font-medium">
-                              Reasoning
-                            </Label>
-                            <Textarea
-                              value={step.reasoning}
-                              onChange={(e) => {
-                                const newSteps = [...editFormData.steps];
-                                newSteps[stepIdx].reasoning = e.target.value;
-                                setEditFormData({
-                                  ...editFormData,
-                                  steps: newSteps,
-                                });
-                              }}
-                              rows={3}
-                              placeholder="Why this step exists"
-                              className="w-full resize-none"
-                            />
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                              <Label className="text-sm font-medium">
-                                Delay (hours)
-                              </Label>
-                              <Input
-                                type="number"
-                                value={step.recommended_delay_hours}
-                                onChange={(e) => {
-                                  const newSteps = [...editFormData.steps];
-                                  newSteps[stepIdx].recommended_delay_hours =
-                                    e.target.value;
-                                  setEditFormData({
-                                    ...editFormData,
-                                    steps: newSteps,
-                                  });
-                                }}
-                                placeholder="48"
-                                className="w-full"
-                              />
-                            </div>
-
-                            <div className="space-y-2">
-                              <Label className="text-sm font-medium">
-                                Send Window
-                              </Label>
-                              <Input
-                                value={step.send_window}
-                                onChange={(e) => {
-                                  const newSteps = [...editFormData.steps];
-                                  newSteps[stepIdx].send_window =
-                                    e.target.value;
-                                  setEditFormData({
-                                    ...editFormData,
-                                    steps: newSteps,
-                                  });
-                                }}
-                                placeholder="Business hours only"
-                                className="w-full"
-                              />
-                            </div>
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label className="text-sm font-medium">
-                              Personalization Signals (one per line)
-                            </Label>
-                            <Textarea
-                              value={step.personalization_signals}
-                              onChange={(e) => {
-                                const newSteps = [...editFormData.steps];
-                                newSteps[stepIdx].personalization_signals =
-                                  e.target.value;
-                                setEditFormData({
-                                  ...editFormData,
-                                  steps: newSteps,
-                                });
-                              }}
-                              rows={4}
-                              placeholder="Signal 1&#10;Signal 2"
-                              className="w-full resize-none"
-                            />
-                          </div>
-
-                          {step.channel === "Voice" && (
-                            <div className="space-y-2">
-                              <Label className="text-sm font-medium">
-                                Gating Conditions (one per line)
-                              </Label>
-                              <Textarea
-                                value={step.gating_conditions}
-                                onChange={(e) => {
-                                  const newSteps = [...editFormData.steps];
-                                  newSteps[stepIdx].gating_conditions =
-                                    e.target.value;
-                                  setEditFormData({
-                                    ...editFormData,
-                                    steps: newSteps,
-                                  });
-                                }}
-                                rows={4}
-                                placeholder="ICP score >= 80&#10;Engagement on 2+ channels"
-                                className="w-full resize-none"
-                              />
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-
-          <SheetFooter className="px-6 pb-6">
-            <div className="flex items-center gap-3 w-full">
-              <Button
-                variant="outline"
-                onClick={() => setEditSidebar({ open: false, section: null })}
-                disabled={isSaving}
-                className="flex-1"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={async () => {
-                  if (!selectedLead?._dbLead || !outreachData) return;
-
-                  setIsSaving(true);
-                  try {
-                    // Save based on section
-                    if (editSidebar.section === "guardrails") {
-                      // Save guardrails overrides
-                      const updates = [
-                        {
-                          path: "max_touches",
-                          value: parseInt(editFormData.max_touches),
-                        },
-                        {
-                          path: "voice_escalation_allowed",
-                          value: editFormData.voice_escalation_allowed,
-                        },
-                        {
-                          path: "voice_escalation_trigger",
-                          value: editFormData.voice_escalation_trigger,
-                        },
-                        {
-                          path: "stop_conditions",
-                          value: editFormData.stop_conditions
-                            .split("\n")
-                            .filter((s: string) => s.trim()),
-                        },
-                        {
-                          path: "compliance_rules",
-                          value: editFormData.compliance_rules
-                            .split("\n")
-                            .filter((s: string) => s.trim()),
-                        },
-                      ];
-
-                      for (const update of updates) {
-                        await fetch(
-                          `/api/leads/${selectedLead.id}/outreach/override`,
-                          {
-                            method: "PATCH",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                              scope: "outreach_guardrails",
-                              entity_id: outreachData.guardrails._id,
-                              path: update.path,
-                              value: update.value,
-                            }),
-                          }
-                        );
-                      }
-                    } else if (editSidebar.section === "strategy") {
-                      // Save strategy overrides
-                      await fetch(
-                        `/api/leads/${selectedLead.id}/outreach/override`,
-                        {
-                          method: "PATCH",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({
-                            scope: "outreach_strategy",
-                            entity_id: outreachData.strategy._id,
-                            path: "plan_summary",
-                            value: editFormData.plan_summary,
-                          }),
-                        }
-                      );
-
-                      // Save step overrides
-                      for (let i = 0; i < editFormData.steps.length; i++) {
-                        const step = editFormData.steps[i];
-                        const updates = [
-                          { path: `steps[${i}].goal`, value: step.goal },
-                          {
-                            path: `steps[${i}].reasoning`,
-                            value: step.reasoning,
-                          },
-                          {
-                            path: `steps[${i}].recommended_delay_hours`,
-                            value: parseInt(step.recommended_delay_hours),
-                          },
-                          {
-                            path: `steps[${i}].send_window`,
-                            value: step.send_window,
-                          },
-                          {
-                            path: `steps[${i}].personalization_signals`,
-                            value: step.personalization_signals
-                              .split("\n")
-                              .filter((s: string) => s.trim()),
-                          },
-                        ];
-
-                        if (step.gating_conditions) {
-                          updates.push({
-                            path: `steps[${i}].gating_conditions`,
-                            value: step.gating_conditions
-                              .split("\n")
-                              .filter((s: string) => s.trim()),
-                          });
-                        }
-
-                        for (const update of updates) {
-                          await fetch(
-                            `/api/leads/${selectedLead.id}/outreach/override`,
-                            {
-                              method: "PATCH",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({
-                                scope: "outreach_strategy",
-                                entity_id: outreachData.strategy._id,
-                                path: update.path,
-                                value: update.value,
-                              }),
-                            }
-                          );
-                        }
-                      }
-                    }
-
-                    // Refresh data
-                    const refreshResponse = await fetch(
-                      `/api/leads/${selectedLead.id}/outreach`
-                    );
-                    const refreshData = await refreshResponse.json();
-                    if (refreshData.success) {
-                      setOutreachData(refreshData.data);
-                    }
-
-                    setEditSidebar({ open: false, section: null });
-                  } catch (error) {
-                    console.error("Error saving:", error);
-                    alert("Failed to save changes");
-                  } finally {
-                    setIsSaving(false);
-                  }
-                }}
-                disabled={isSaving}
-                className="flex-1"
-              >
-                {isSaving ? "Saving..." : "Save All Changes"}
-              </Button>
-            </div>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
-
-      {/* Campaign Settings Dialog */}
-      <Dialog
-        open={campaignSettingsOpen}
-        onOpenChange={setCampaignSettingsOpen}
-      >
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      {/* Add Knowledge Dialog */}
+      <Dialog open={addKnowledgeDialog} onOpenChange={setAddKnowledgeDialog}>
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle>Campaign Settings</DialogTitle>
-            <DialogDescription>
-              Customize agent instructions, templates, and knowledge base for
-              this campaign
-            </DialogDescription>
+            <DialogTitle>Add Knowledge Item</DialogTitle>
+            <DialogDescription>Add a document, URL, or note to the knowledge base</DialogDescription>
           </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Type</Label>
+              <Select
+                value={knowledgeType}
+                onValueChange={(value: "file" | "url" | "note") =>
+                  setKnowledgeType(value)
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="file">File</SelectItem>
+                  <SelectItem value="url">URL</SelectItem>
+                  <SelectItem value="note">Note</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-          <Tabs defaultValue="instructions" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="instructions">Agent Instructions</TabsTrigger>
-              <TabsTrigger value="templates">Templates</TabsTrigger>
-              <TabsTrigger value="knowledge">Knowledge Base</TabsTrigger>
-            </TabsList>
+            {knowledgeType === "url" && (
+              <div className="space-y-2">
+                <Label>URL</Label>
+                <Input
+                  value={urlInput}
+                  onChange={(e) => setUrlInput(e.target.value)}
+                  placeholder="https://example.com/case-study"
+                />
+              </div>
+            )}
 
-            <TabsContent value="instructions" className="space-y-4 mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">
-                    Formatting Instructions
-                  </CardTitle>
-                  <CardDescription>
-                    Specify how the AI should format outreach content (email
-                    structure, LinkedIn style, etc.)
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Textarea
-                    rows={4}
-                    placeholder="Example: Use bullet points for value propositions, keep paragraphs under 3 sentences, include clear CTAs..."
-                    value={campaignInstructions.formatting}
-                    onChange={(e) =>
-                      setCampaignInstructions((prev) => ({
-                        ...prev,
-                        formatting: e.target.value,
-                      }))
-                    }
-                  />
-                </CardContent>
-              </Card>
+            {knowledgeType === "file" && (
+              <div className="space-y-2">
+                <Label>Upload File</Label>
+                <Input type="file" accept=".pdf,.doc,.docx" />
+                <p className="text-xs text-muted-foreground">
+                  For demo: file metadata will be stored
+                </p>
+              </div>
+            )}
 
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Tone & Style</CardTitle>
-                  <CardDescription>
-                    Define the tone and writing style for this campaign
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Textarea
-                    rows={3}
-                    placeholder="Example: Professional but conversational, avoid jargon, focus on business outcomes..."
-                    value={campaignInstructions.tone}
-                    onChange={(e) =>
-                      setCampaignInstructions((prev) => ({
-                        ...prev,
-                        tone: e.target.value,
-                      }))
-                    }
-                  />
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">
-                    Personalization Guidelines
-                  </CardTitle>
-                  <CardDescription>
-                    Specify how to personalize content for this campaign
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Textarea
-                    rows={3}
-                    placeholder="Example: Always mention company name in first paragraph, reference specific pain points from research, use prospect's title when relevant..."
-                    value={campaignInstructions.personalization}
-                    onChange={(e) =>
-                      setCampaignInstructions((prev) => ({
-                        ...prev,
-                        personalization: e.target.value,
-                      }))
-                    }
-                  />
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Additional Notes</CardTitle>
-                  <CardDescription>
-                    Any other instructions or guidelines for this campaign
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Textarea
-                    rows={3}
-                    placeholder="Additional campaign-specific instructions..."
-                    value={campaignInstructions.additionalNotes}
-                    onChange={(e) =>
-                      setCampaignInstructions((prev) => ({
-                        ...prev,
-                        additionalNotes: e.target.value,
-                      }))
-                    }
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="templates" className="space-y-4 mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Mail className="w-4 h-4" />
-                    Email Template
-                  </CardTitle>
-                  <CardDescription>
-                    Provide a template structure for email outreach. Use
-                    variables like {"{"}prospect_name{"}"}, {"{"}company_name
-                    {"}"}, {"{"}pain_point{"}"}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Textarea
-                    rows={10}
-                    placeholder={`Subject: [Customize based on pain point]\n\nHi {prospect_name},\n\n[Opening paragraph with personalization]\n\n[Value proposition]\n\n[Call to action]\n\nBest regards,\n[Your name]`}
-                    value={campaignTemplates.email}
-                    onChange={(e) =>
-                      setCampaignTemplates((prev) => ({
-                        ...prev,
-                        email: e.target.value,
-                      }))
-                    }
-                    className="font-mono text-sm"
-                  />
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Linkedin className="w-4 h-4" />
-                    LinkedIn Template
-                  </CardTitle>
-                  <CardDescription>
-                    Template for LinkedIn messages. Keep it concise and
-                    professional.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Textarea
-                    rows={8}
-                    placeholder={`Hi {prospect_name},\n\n[Personalized opening]\n\n[Value proposition]\n\n[Soft CTA]\n\nBest,\n[Your name]`}
-                    value={campaignTemplates.linkedin}
-                    onChange={(e) =>
-                      setCampaignTemplates((prev) => ({
-                        ...prev,
-                        linkedin: e.target.value,
-                      }))
-                    }
-                    className="font-mono text-sm"
-                  />
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Phone className="w-4 h-4" />
-                    Voice Call Talking Points
-                  </CardTitle>
-                  <CardDescription>
-                    Key talking points for voice calls. Separate each point with
-                    a blank line.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Textarea
-                    rows={8}
-                    placeholder={`1. Opening: Introduce yourself and reason for call\n\n2. Qualification: Ask about current challenges\n\n3. Value proposition: Explain how we help\n\n4. Next steps: Schedule follow-up if interested`}
-                    value={campaignTemplates.voice}
-                    onChange={(e) =>
-                      setCampaignTemplates((prev) => ({
-                        ...prev,
-                        voice: e.target.value,
-                      }))
-                    }
-                    className="font-mono text-sm"
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="knowledge" className="space-y-4 mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">
-                    Upload Campaign Documents
-                  </CardTitle>
-                  <CardDescription>
-                    Add documents specific to this campaign (case studies,
-                    product sheets, etc.)
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Upload Documents</Label>
-                    <Input
-                      type="file"
-                      accept=".pdf,.doc,.docx,.ppt,.pptx,.txt"
-                      multiple
-                      onChange={(e) => {
-                        const files = e.target.files;
-                        if (files) {
-                          const newDocs = Array.from(files).map(
-                            (file, idx) => ({
-                              id: `${Date.now()}-${idx}`,
-                              name: file.name,
-                              type:
-                                file.name.split(".").pop()?.toUpperCase() ||
-                                "FILE",
-                            })
-                          );
-                          setCampaignKnowledgeBase((prev) => ({
-                            ...prev,
-                            documents: [...prev.documents, ...newDocs],
-                          }));
-                        }
-                      }}
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Recommended: case studies, product sheets, pricing info,
-                      objection handling guides
-                    </p>
-                  </div>
-
-                  {campaignKnowledgeBase.documents.length > 0 && (
-                    <div className="space-y-2">
-                      <Label>Uploaded Documents</Label>
-                      <div className="border rounded-md divide-y">
-                        {campaignKnowledgeBase.documents.map((doc) => (
-                          <div
-                            key={doc.id}
-                            className="flex items-center justify-between px-3 py-2 text-sm"
-                          >
-                            <div className="flex items-center gap-2">
-                              <FileText className="w-4 h-4 text-muted-foreground" />
-                              <span className="font-medium">{doc.name}</span>
-                              <Badge variant="outline" className="text-xs">
-                                {doc.type}
-                              </Badge>
-                            </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                setCampaignKnowledgeBase((prev) => ({
-                                  ...prev,
-                                  documents: prev.documents.filter(
-                                    (d) => d.id !== doc.id
-                                  ),
-                                }));
-                              }}
-                            >
-                              <X className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">
-                    Campaign-Specific URLs
-                  </CardTitle>
-                  <CardDescription>
-                    Add relevant URLs that should be referenced in outreach for
-                    this campaign
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="https://example.com/case-study"
-                      value={campaignUrlInput}
-                      onChange={(e) => setCampaignUrlInput(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          if (campaignUrlInput.trim()) {
-                            setCampaignKnowledgeBase((prev) => ({
-                              ...prev,
-                              urls: [...prev.urls, campaignUrlInput.trim()],
-                            }));
-                            setCampaignUrlInput("");
-                          }
-                        }
-                      }}
-                    />
-                    <Button
-                      type="button"
-                      onClick={() => {
-                        if (campaignUrlInput.trim()) {
-                          setCampaignKnowledgeBase((prev) => ({
-                            ...prev,
-                            urls: [...prev.urls, campaignUrlInput.trim()],
-                          }));
-                          setCampaignUrlInput("");
-                        }
-                      }}
-                    >
-                      Add URL
-                    </Button>
-                  </div>
-
-                  {campaignKnowledgeBase.urls.length > 0 && (
-                    <div className="space-y-2">
-                      <Label>Added URLs</Label>
-                      <div className="space-y-1">
-                        {campaignKnowledgeBase.urls.map((url, idx) => (
-                          <div
-                            key={idx}
-                            className="flex items-center justify-between px-3 py-2 text-sm border rounded-md"
-                          >
-                            <a
-                              href={url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-primary hover:underline truncate flex-1"
-                            >
-                              {url}
-                            </a>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                setCampaignKnowledgeBase((prev) => ({
-                                  ...prev,
-                                  urls: prev.urls.filter((_, i) => i !== idx),
-                                }));
-                              }}
-                            >
-                              <X className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Campaign Notes</CardTitle>
-                  <CardDescription>
-                    Additional context, messaging guidelines, or specific
-                    information for this campaign
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Textarea
-                    rows={6}
-                    placeholder="Add any campaign-specific context, messaging guidelines, or information that should inform outreach content..."
-                    value={campaignKnowledgeBase.notes}
-                    onChange={(e) =>
-                      setCampaignKnowledgeBase((prev) => ({
-                        ...prev,
-                        notes: e.target.value,
-                      }))
-                    }
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-
+            {knowledgeType === "note" && (
+              <div className="space-y-2">
+                <Label>Note</Label>
+                <Textarea rows={4} placeholder="Add your note here..." />
+              </div>
+            )}
+          </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setCampaignSettingsOpen(false)}
-            >
+            <Button variant="outline" onClick={() => setAddKnowledgeDialog(false)}>
               Cancel
             </Button>
-            <Button
-              onClick={async () => {
-                // Save campaign settings (you can implement API call here)
-                // For now, just close the dialog
-                // TODO: Save to API endpoint for campaign-specific settings
-                setCampaignSettingsOpen(false);
-              }}
-            >
-              Save Settings
+            <Button onClick={handleAddKnowledge}>Add Item</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Leads Dialog */}
+      <Dialog open={addProspectsDialog} onOpenChange={setAddProspectsDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Leads</DialogTitle>
+            <DialogDescription>
+              Add leads to this campaign from existing leads or CSV upload
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Button variant="outline" className="h-20">
+                <div className="flex flex-col items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  <span className="text-xs">From Existing Leads</span>
+                </div>
+              </Button>
+              <Button variant="outline" className="h-20">
+                <div className="flex flex-col items-center gap-2">
+                  <Upload className="h-5 w-5" />
+                  <span className="text-xs">CSV Upload</span>
+                </div>
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground text-center">
+              Demo: Select method to add leads
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAddProspectsDialog(false)}>
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>

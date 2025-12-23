@@ -1,53 +1,114 @@
 "use client"
 
 import * as React from "react"
-import * as AvatarPrimitive from "@radix-ui/react-avatar"
 
 import { cn } from "@/lib/utils"
 
-function Avatar({
-  className,
-  ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Root>) {
-  return (
-    <AvatarPrimitive.Root
-      data-slot="avatar"
-      className={cn(
-        "relative flex size-8 shrink-0 overflow-hidden rounded-full",
-        className
-      )}
-      {...props}
-    />
-  )
+type ImageLoadingStatus = "idle" | "loading" | "loaded" | "error"
+
+type AvatarContextValue = {
+  imageLoadingStatus: ImageLoadingStatus
+  setImageLoadingStatus: (status: ImageLoadingStatus) => void
 }
 
-function AvatarImage({
-  className,
-  ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Image>) {
+const AvatarContext = React.createContext<AvatarContextValue | null>(null)
+
+function useAvatarContext() {
+  const ctx = React.useContext(AvatarContext)
+  if (!ctx) {
+    throw new Error("Avatar components must be used within <Avatar />")
+  }
+  return ctx
+}
+
+const Avatar = React.forwardRef<HTMLDivElement, React.ComponentPropsWithoutRef<"div">>(
+  ({ className, ...props }, ref) => {
+    const [imageLoadingStatus, setImageLoadingStatus] =
+      React.useState<ImageLoadingStatus>("idle")
+
+    return (
+      <AvatarContext.Provider value={{ imageLoadingStatus, setImageLoadingStatus }}>
+        <div
+          ref={ref}
+          data-slot="avatar"
+          className={cn(
+            "relative flex size-8 shrink-0 overflow-hidden rounded-full",
+            className
+          )}
+          {...props}
+        />
+      </AvatarContext.Provider>
+    )
+  }
+)
+Avatar.displayName = "Avatar"
+
+const AvatarImage = React.forwardRef<
+  HTMLImageElement,
+  React.ComponentPropsWithoutRef<"img">
+>(({ className, src, onLoad, onError, ...props }, ref) => {
+  const { setImageLoadingStatus } = useAvatarContext()
+
+  React.useEffect(() => {
+    if (!src) {
+      setImageLoadingStatus("error")
+      return
+    }
+    setImageLoadingStatus("loading")
+  }, [src, setImageLoadingStatus])
+
   return (
-    <AvatarPrimitive.Image
+    <img
+      ref={ref}
       data-slot="avatar-image"
       className={cn("aspect-square size-full", className)}
+      src={src}
+      onLoad={(e) => {
+        setImageLoadingStatus("loaded")
+        onLoad?.(e)
+      }}
+      onError={(e) => {
+        setImageLoadingStatus("error")
+        onError?.(e)
+      }}
       {...props}
     />
   )
+})
+AvatarImage.displayName = "AvatarImage"
+
+type AvatarFallbackProps = React.ComponentPropsWithoutRef<"div"> & {
+  delayMs?: number
 }
 
-function AvatarFallback({
-  className,
-  ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Fallback>) {
-  return (
-    <AvatarPrimitive.Fallback
-      data-slot="avatar-fallback"
-      className={cn(
-        "bg-muted flex size-full items-center justify-center rounded-full",
-        className
-      )}
-      {...props}
-    />
-  )
-}
+const AvatarFallback = React.forwardRef<HTMLDivElement, AvatarFallbackProps>(
+  ({ className, delayMs, ...props }, ref) => {
+    const { imageLoadingStatus } = useAvatarContext()
+    const [canRender, setCanRender] = React.useState(delayMs ? false : true)
+
+    React.useEffect(() => {
+      if (!delayMs) return
+      setCanRender(false)
+      const id = window.setTimeout(() => setCanRender(true), delayMs)
+      return () => window.clearTimeout(id)
+    }, [delayMs])
+
+    if (imageLoadingStatus === "loaded") return null
+    if (!canRender) return null
+
+    return (
+      <div
+        ref={ref}
+        data-slot="avatar-fallback"
+        className={cn(
+          "bg-muted flex size-full items-center justify-center rounded-full",
+          className
+        )}
+        {...props}
+      />
+    )
+  }
+)
+AvatarFallback.displayName = "AvatarFallback"
 
 export { Avatar, AvatarImage, AvatarFallback }
