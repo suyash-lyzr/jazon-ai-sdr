@@ -193,6 +193,7 @@ function OutreachCampaignPage() {
   const [activityData, setActivityData] = useState<any>(null);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingCampaigns, setIsLoadingCampaigns] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [createCampaignDialog, setCreateCampaignDialog] = useState(false);
   const [newCampaignName, setNewCampaignName] = useState("");
@@ -278,6 +279,7 @@ function OutreachCampaignPage() {
   };
 
   const fetchCampaigns = async () => {
+    setIsLoadingCampaigns(true);
     try {
       const res = await fetch("/api/outreach-campaigns");
       const data = await res.json();
@@ -286,6 +288,8 @@ function OutreachCampaignPage() {
       }
     } catch (error) {
       console.error("Failed to fetch campaigns:", error);
+    } finally {
+      setIsLoadingCampaigns(false);
     }
   };
 
@@ -931,11 +935,25 @@ function OutreachCampaignPage() {
                   <CardHeader>
                     <CardTitle>All Campaigns</CardTitle>
                     <CardDescription>
-                      {filteredCampaigns.length} campaign(s)
+                      {isLoadingCampaigns ? (
+                        <span className="flex items-center gap-2">
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                          Loading campaigns...
+                        </span>
+                      ) : (
+                        `${filteredCampaigns.length} campaign(s)`
+                      )}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    {filteredCampaigns.length === 0 ? (
+                    {isLoadingCampaigns ? (
+                      <div className="text-center py-12">
+                        <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground mb-4" />
+                        <p className="text-muted-foreground">
+                          Loading campaigns...
+                        </p>
+                      </div>
+                    ) : filteredCampaigns.length === 0 ? (
                       <div className="text-center py-12">
                         <p className="text-muted-foreground">
                           No campaigns yet. Create your first campaign to get
@@ -1087,27 +1105,6 @@ function OutreachCampaignPage() {
             ) : (
               /* Campaign Detail View with Tabs */
               <div className="space-y-6">
-                {/* Page Header */}
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex flex-col gap-2">
-                    <h1 className="text-3xl font-semibold text-foreground">
-                      {campaignDetails?.name || "Loading..."}
-                    </h1>
-                    <p className="text-sm text-muted-foreground">
-                      {campaignDetails?.mode || ""}
-                    </p>
-                  </div>
-                  <Badge
-                    variant={
-                      campaignDetails?.status === "active"
-                        ? "default"
-                        : "outline"
-                    }
-                  >
-                    {campaignDetails?.status}
-                  </Badge>
-                </div>
-
                 <div className="space-y-3">
                   <Button
                     variant="ghost"
@@ -1118,7 +1115,40 @@ function OutreachCampaignPage() {
                   </Button>
                 </div>
 
-                {/* AI Campaign Reasoning - Removed for now */}
+                {isLoading || !campaignDetails ? (
+                  <div className="flex flex-col items-center justify-center py-24 space-y-4">
+                    <Loader2 className="h-12 w-12 animate-spin text-muted-foreground" />
+                    <p className="text-lg font-medium text-muted-foreground">
+                      Loading campaign details...
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Please wait while we fetch the campaign information
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    {/* Page Header */}
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex flex-col gap-2">
+                        <h1 className="text-3xl font-semibold text-foreground">
+                          {campaignDetails?.name || "Loading..."}
+                        </h1>
+                        <p className="text-sm text-muted-foreground">
+                          {campaignDetails?.mode || ""}
+                        </p>
+                      </div>
+                      <Badge
+                        variant={
+                          campaignDetails?.status === "active"
+                            ? "default"
+                            : "outline"
+                        }
+                      >
+                        {campaignDetails?.status}
+                      </Badge>
+                    </div>
+
+                    {/* AI Campaign Reasoning - Removed for now */}
                 {/* <Card className="border-primary/20 bg-primary/5">
                   <CardHeader>
                     <div className="flex items-start justify-between">
@@ -2432,6 +2462,8 @@ function OutreachCampaignPage() {
                     </Card>
                   </TabsContent>
                 </Tabs>
+                  </>
+                )}
               </div>
             )}
           </div>
