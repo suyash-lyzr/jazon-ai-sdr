@@ -938,7 +938,14 @@ function OutreachCampaignPage() {
                   <CardHeader>
                     <CardTitle>All Campaigns</CardTitle>
                     <CardDescription>
-                      {filteredCampaigns.length} campaign(s)
+                      {isLoadingCampaigns ? (
+                        <span className="flex items-center gap-2">
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                          Loading campaigns...
+                        </span>
+                      ) : (
+                        `${filteredCampaigns.length} campaign(s)`
+                      )}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -1101,27 +1108,6 @@ function OutreachCampaignPage() {
             ) : (
               /* Campaign Detail View with Tabs */
               <div className="space-y-6">
-                {/* Page Header */}
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex flex-col gap-2">
-                    <h1 className="text-3xl font-semibold text-foreground">
-                      {campaignDetails?.name || "Loading..."}
-                    </h1>
-                    <p className="text-sm text-muted-foreground">
-                      {campaignDetails?.mode || ""}
-                    </p>
-                  </div>
-                  <Badge
-                    variant={
-                      campaignDetails?.status === "active"
-                        ? "default"
-                        : "outline"
-                    }
-                  >
-                    {campaignDetails?.status || "loading"}
-                  </Badge>
-                </div>
-
                 <div className="space-y-3">
                   <Button
                     variant="ghost"
@@ -1144,6 +1130,27 @@ function OutreachCampaignPage() {
                   </div>
                 ) : (
                   <>
+                    {/* Page Header */}
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex flex-col gap-2">
+                        <h1 className="text-3xl font-semibold text-foreground">
+                          {campaignDetails?.name || "Loading..."}
+                        </h1>
+                        <p className="text-sm text-muted-foreground">
+                          {campaignDetails?.mode || ""}
+                        </p>
+                      </div>
+                      <Badge
+                        variant={
+                          campaignDetails?.status === "active"
+                            ? "default"
+                            : "outline"
+                        }
+                      >
+                        {campaignDetails?.status || "loading"}
+                      </Badge>
+                    </div>
+
                     {/* AI Campaign Reasoning - Removed for now */}
                     {/* <Card className="border-primary/20 bg-primary/5">
                   <CardHeader>
