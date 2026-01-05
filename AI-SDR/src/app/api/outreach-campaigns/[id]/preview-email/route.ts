@@ -400,6 +400,17 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       (s) => s.step_name === step_name
     );
 
+    // Ensure strategyRun exists
+    if (!strategyRun) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Failed to generate or retrieve strategy",
+        },
+        { status: 500 }
+      );
+    }
+
     // Build the copy agent input
     const copyInput = {
       lead: {
