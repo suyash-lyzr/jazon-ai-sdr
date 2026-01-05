@@ -732,6 +732,60 @@ function OutreachCampaignPage() {
     }
   };
 
+  const handleGenerateSampleMessage = async () => {
+    console.log("🔵 Generate Sample Message clicked from top button");
+
+    if (!selectedCampaignId) {
+      console.log("❌ No campaign selected");
+      return;
+    }
+
+    // Check if there are prospects
+    if (prospects.length === 0) {
+      console.log("❌ No prospects in campaign");
+      setSampleEmailError(
+        "Please add at least one lead to the campaign first."
+      );
+      return;
+    }
+
+    setSampleEmailLoading(true);
+    setSampleEmailError(null);
+    setSampleEmailResult(null);
+
+    try {
+      // Use the first email step as default
+      const defaultStepName = campaignDetails?.templates.email_steps[0]?.step_name || "Pain Point Email";
+      console.log("📤 Calling preview-email API with default step:", defaultStepName);
+      
+      const res = await fetch(
+        `/api/outreach-campaigns/${selectedCampaignId}/preview-email`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ step_name: defaultStepName }),
+        }
+      );
+
+      console.log("📥 API Response status:", res.status);
+      const data = await res.json();
+      console.log("📥 API Response data:", data);
+
+      if (!data.success) {
+        setSampleEmailError(data.error || "Failed to generate sample email");
+        return;
+      }
+
+      setSampleEmailResult(data);
+      setShowSampleEmailDialog(true);
+    } catch (error) {
+      console.error("❌ Failed to generate sample email:", error);
+      setSampleEmailError("An unexpected error occurred. Please try again.");
+    } finally {
+      setSampleEmailLoading(false);
+    }
+  };
+
   const filteredCampaigns = useMemo(() => {
     if (!searchQuery) return campaigns;
     return campaigns.filter((c) =>
@@ -1156,10 +1210,10 @@ function OutreachCampaignPage() {
                   <TabsList>
                     <TabsTrigger value="campaign">Campaign</TabsTrigger>
                     <TabsTrigger value="knowledge">Knowledge Base</TabsTrigger>
-                    <TabsTrigger value="strategy">Strategy</TabsTrigger>
+                    <TabsTrigger value="messaging">Messaging</TabsTrigger>
                     <TabsTrigger value="prospects">Leads</TabsTrigger>
                     <TabsTrigger value="scheduling">Scheduling</TabsTrigger>
-                    <TabsTrigger value="activity">Activity</TabsTrigger>
+                    <TabsTrigger value="activity">Performance</TabsTrigger>
                   </TabsList>
 
                   {/* Campaign Tab */}
@@ -1369,17 +1423,35 @@ function OutreachCampaignPage() {
                     )}
                   </TabsContent>
 
-                  {/* Strategy Tab */}
-                  <TabsContent value="strategy" className="space-y-4 mt-4">
+                  {/* Messaging Tab */}
+                  <TabsContent value="messaging" className="space-y-4 mt-4">
                     {/* Strategy Summary */}
                     <Card className="mb-4">
-                      <CardHeader>
-                        <CardTitle className="text-base">
-                          Campaign Strategy Overview
-                        </CardTitle>
-                        <CardDescription>
-                          AI-determined strategy for this campaign
-                        </CardDescription>
+                      <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+                        <div className="space-y-1.5">
+                          <CardTitle className="text-base">
+                            Campaign Strategy Overview
+                          </CardTitle>
+                          <CardDescription>
+                            AI-determined strategy for this campaign
+                          </CardDescription>
+                        </div>
+                        <Button
+                          onClick={handleGenerateSampleMessage}
+                          disabled={
+                            sampleEmailLoading || prospects.length === 0
+                          }
+                          className="shrink-0"
+                        >
+                          {sampleEmailLoading ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Generating...
+                            </>
+                          ) : (
+                            "Generate Sample Message"
+                          )}
+                        </Button>
                       </CardHeader>
                       <CardContent>
                         <div className="grid md:grid-cols-3 gap-4">
@@ -1597,38 +1669,6 @@ function OutreachCampaignPage() {
                                     placeholder="Subject: [Your subject]\n\nHi {prospect_name},\n\n..."
                                     className="font-mono text-sm"
                                   />
-                                  <div className="mt-2 space-y-2">
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={handleGenerateSampleEmail}
-                                      disabled={
-                                        sampleEmailLoading ||
-                                        prospects.length === 0
-                                      }
-                                    >
-                                      {sampleEmailLoading ? (
-                                        <>
-                                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                          Generating...
-                                        </>
-                                      ) : (
-                                        "Generate sample email"
-                                      )}
-                                    </Button>
-                                    {prospects.length === 0 &&
-                                      !sampleEmailLoading && (
-                                        <p className="text-xs text-muted-foreground">
-                                          Add at least one lead to the campaign
-                                          to generate a sample email
-                                        </p>
-                                      )}
-                                    {sampleEmailError && (
-                                      <p className="text-xs text-red-600">
-                                        {sampleEmailError}
-                                      </p>
-                                    )}
-                                  </div>
                                 </CardContent>
                               </Card>
                             </div>
@@ -2036,207 +2076,358 @@ function OutreachCampaignPage() {
                     </Button>
                   </TabsContent>
 
-                  {/* Activity Tab */}
-                  <TabsContent value="activity" className="space-y-4 mt-4">
-                    <div className="grid grid-cols-5 gap-4">
+                  {/* Performance Tab */}
+                  <TabsContent value="activity" className="space-y-6 mt-4">
+                    {/* Section A: Performance Summary Cards */}
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                       <Card>
                         <CardHeader className="pb-3">
-                          <CardTitle className="text-sm font-medium text-muted-foreground">
-                            Mails
+                          <CardTitle className="text-xs font-medium text-muted-foreground">
+                            Total Leads
                           </CardTitle>
                         </CardHeader>
                         <CardContent>
                           <div className="text-2xl font-bold">
-                            {activityData?.metrics.mails_sent || 0}
+                            {activityData?.metrics?.total_leads ?? "—"}
                           </div>
                         </CardContent>
                       </Card>
 
                       <Card>
                         <CardHeader className="pb-3">
-                          <CardTitle className="text-sm font-medium text-muted-foreground">
-                            Replies
+                          <CardTitle className="text-xs font-medium text-muted-foreground">
+                            Messages Sent
                           </CardTitle>
                         </CardHeader>
                         <CardContent>
                           <div className="text-2xl font-bold">
-                            {activityData?.metrics.replies || 0}
+                            {activityData?.metrics?.mails_sent ?? "—"}
                           </div>
                         </CardContent>
                       </Card>
 
                       <Card>
                         <CardHeader className="pb-3">
-                          <CardTitle className="text-sm font-medium text-muted-foreground">
-                            Open
+                          <CardTitle className="text-xs font-medium text-muted-foreground">
+                            Open Rate
                           </CardTitle>
                         </CardHeader>
                         <CardContent>
                           <div className="text-2xl font-bold">
-                            {activityData?.metrics.opens || 0}
+                            {activityData?.metrics?.open_rate !== null && activityData?.metrics?.open_rate !== undefined
+                              ? `${activityData.metrics.open_rate}%`
+                              : "—"}
                           </div>
                         </CardContent>
                       </Card>
 
                       <Card>
                         <CardHeader className="pb-3">
-                          <CardTitle className="text-sm font-medium text-muted-foreground">
-                            Click
+                          <CardTitle className="text-xs font-medium text-muted-foreground">
+                            Reply Rate
                           </CardTitle>
                         </CardHeader>
                         <CardContent>
                           <div className="text-2xl font-bold">
-                            {activityData?.metrics.clicks || 0}
+                            {activityData?.metrics?.reply_rate !== null && activityData?.metrics?.reply_rate !== undefined
+                              ? `${activityData.metrics.reply_rate}%`
+                              : "—"}
                           </div>
                         </CardContent>
                       </Card>
 
                       <Card>
                         <CardHeader className="pb-3">
-                          <CardTitle className="text-sm font-medium text-muted-foreground">
-                            Unsubscribe
+                          <CardTitle className="text-xs font-medium text-muted-foreground">
+                            Meetings Booked
                           </CardTitle>
                         </CardHeader>
                         <CardContent>
-                          <div className="text-2xl font-bold">0</div>
+                          <div className="text-2xl font-bold">
+                            {activityData?.metrics?.meetings_booked ?? "—"}
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      <Card>
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-xs font-medium text-muted-foreground">
+                            Unsubscribes
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="text-2xl font-bold">
+                            {activityData?.metrics?.unsubscribes ?? "—"}
+                          </div>
                         </CardContent>
                       </Card>
                     </div>
 
+                    {/* Section B: Campaign Funnel View */}
                     <Card>
                       <CardHeader>
-                        <CardTitle>Receipts</CardTitle>
+                        <CardTitle>Campaign Funnel</CardTitle>
+                        <CardDescription>
+                          Lead progression through campaign stages
+                        </CardDescription>
                       </CardHeader>
                       <CardContent>
-                        {activityData?.prospects &&
-                        activityData.prospects.length > 0 ? (
-                          <div className="space-y-2">
-                            {activityData.prospects.map((prospect: any) => (
-                              <div
-                                key={prospect._id}
-                                className="p-3 border rounded-md hover:bg-muted/50 cursor-pointer transition-colors"
-                                onClick={() => {
-                                  setSelectedProspectHistory(prospect);
-                                  setShowMessageHistoryDialog(true);
-                                }}
-                              >
-                                <div className="flex items-center justify-between">
-                                  <div>
-                                    <p className="font-medium">
-                                      {prospect.lead_name}
-                                    </p>
-                                    <p className="text-sm text-muted-foreground">
-                                      {prospect.lead_email}
-                                    </p>
-                                  </div>
-                                  <Badge variant="outline">
-                                    {prospect.status}
-                                  </Badge>
+                        <div className="space-y-3">
+                          {[
+                            { label: "Leads Added", value: activityData?.funnel?.leads_added, color: "bg-blue-500" },
+                            { label: "Contacted", value: activityData?.funnel?.contacted, color: "bg-blue-400" },
+                            { label: "Opened", value: activityData?.funnel?.opened, color: "bg-blue-300" },
+                            { label: "Replied", value: activityData?.funnel?.replied, color: "bg-green-400" },
+                            { label: "Qualified", value: activityData?.funnel?.qualified, color: "bg-green-300" },
+                            { label: "Meetings Booked", value: activityData?.funnel?.meetings_booked, color: "bg-green-500" },
+                          ].map((stage, idx) => {
+                            const maxValue = activityData?.funnel?.leads_added || 1;
+                            const percentage = stage.value ? (stage.value / maxValue) * 100 : 0;
+                            
+                            return (
+                              <div key={idx} className="space-y-1">
+                                <div className="flex items-center justify-between text-sm">
+                                  <span className="font-medium">{stage.label}</span>
+                                  <span className="text-muted-foreground">
+                                    {stage.value ?? 0}
+                                  </span>
                                 </div>
-                                {prospect.history &&
-                                  prospect.history.length > 0 && (
-                                    <div className="mt-2 text-xs text-muted-foreground">
-                                      Last activity: {prospect.history[0].title}
-                                      <span className="ml-2 text-primary">→ Click to view messages</span>
+                                <div className="h-8 bg-muted rounded-md overflow-hidden">
+                                  <div
+                                    className={`h-full ${stage.color} transition-all flex items-center justify-end px-3`}
+                                    style={{ width: `${Math.max(percentage, 2)}%` }}
+                                  >
+                                    {percentage > 15 && (
+                                      <span className="text-xs font-medium text-white">
+                                        {Math.round(percentage)}%
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
                                     </div>
-                                  )}
+                            );
+                          })}
                               </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Section C: Channel-wise Performance */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Channel Performance</CardTitle>
+                        <CardDescription>
+                          Performance metrics by outreach channel
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="overflow-x-auto">
+                          <table className="w-full">
+                            <thead>
+                              <tr className="border-b">
+                                <th className="text-left py-3 px-2 font-medium text-sm">Channel</th>
+                                <th className="text-right py-3 px-2 font-medium text-sm">Sent</th>
+                                <th className="text-right py-3 px-2 font-medium text-sm">Open Rate</th>
+                                <th className="text-right py-3 px-2 font-medium text-sm">Reply Rate</th>
+                                <th className="text-right py-3 px-2 font-medium text-sm">Meetings</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {activityData?.channelMetrics && Object.entries(activityData.channelMetrics).map(([channel, metrics]: [string, any]) => {
+                                if (metrics.sent === 0) return null;
+                                
+                                return (
+                                  <tr key={channel} className="border-b last:border-0">
+                                    <td className="py-3 px-2 font-medium">{channel}</td>
+                                    <td className="py-3 px-2 text-right">{metrics.sent}</td>
+                                    <td className="py-3 px-2 text-right">
+                                      {metrics.openRate !== null && metrics.openRate !== undefined
+                                        ? `${metrics.openRate}%`
+                                        : "—"}
+                                    </td>
+                                    <td className="py-3 px-2 text-right">
+                                      {metrics.replyRate !== null && metrics.replyRate !== undefined
+                                        ? `${metrics.replyRate}%`
+                                        : "—"}
+                                    </td>
+                                    <td className="py-3 px-2 text-right">{metrics.booked || 0}</td>
+                                  </tr>
+                                );
+                              })}
+                              {(!activityData?.channelMetrics || 
+                                Object.values(activityData.channelMetrics).every((m: any) => m.sent === 0)) && (
+                                <tr>
+                                  <td colSpan={5} className="py-8 text-center text-muted-foreground">
+                                    No channel activity yet
+                                  </td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Section D: Step-wise Email Performance */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Email Step Performance</CardTitle>
+                        <CardDescription>
+                          Performance breakdown by email sequence step
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="overflow-x-auto">
+                          <table className="w-full">
+                            <thead>
+                              <tr className="border-b">
+                                <th className="text-left py-3 px-2 font-medium text-sm">Step Name</th>
+                                <th className="text-right py-3 px-2 font-medium text-sm">Sent</th>
+                                <th className="text-right py-3 px-2 font-medium text-sm">Open %</th>
+                                <th className="text-right py-3 px-2 font-medium text-sm">Reply %</th>
+                                <th className="text-right py-3 px-2 font-medium text-sm">Drop-off %</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {activityData?.stepMetrics && Object.entries(activityData.stepMetrics).map(([stepName, metrics]: [string, any]) => {
+                                if (metrics.sent === 0) return null;
+                                
+                                return (
+                                  <tr key={stepName} className="border-b last:border-0">
+                                    <td className="py-3 px-2 font-medium">{stepName}</td>
+                                    <td className="py-3 px-2 text-right">{metrics.sent}</td>
+                                    <td className="py-3 px-2 text-right">
+                                      {metrics.openRate !== null && metrics.openRate !== undefined
+                                        ? `${metrics.openRate}%`
+                                        : "—"}
+                                    </td>
+                                    <td className="py-3 px-2 text-right">
+                                      {metrics.replyRate !== null && metrics.replyRate !== undefined
+                                        ? `${metrics.replyRate}%`
+                                        : "—"}
+                                    </td>
+                                    <td className="py-3 px-2 text-right">
+                                      {metrics.dropoffRate !== null && metrics.dropoffRate !== undefined
+                                        ? `${metrics.dropoffRate}%`
+                                        : "—"}
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                              {(!activityData?.stepMetrics || 
+                                Object.values(activityData.stepMetrics).every((m: any) => m.sent === 0)) && (
+                                <tr>
+                                  <td colSpan={5} className="py-8 text-center text-muted-foreground">
+                                    No email step activity yet
+                                  </td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Section E: AI Insights */}
+                    <Card className="border-primary/20 bg-primary/5">
+                      <CardHeader>
+                              <div className="flex items-center gap-2">
+                          <TrendingUp className="h-5 w-5 text-primary" />
+                          <div>
+                            <CardTitle>AI Insights</CardTitle>
+                            <Badge variant="outline" className="mt-1 text-xs">Beta</Badge>
+                              </div>
+                            </div>
+                        <CardDescription>
+                          Data-driven observations from campaign performance
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        {activityData?.insights && activityData.insights.length > 0 ? (
+                          <ul className="space-y-3">
+                            {activityData.insights.map((insight: string, idx: number) => (
+                              <li key={idx} className="flex gap-2 text-sm">
+                                <span className="text-primary mt-0.5">•</span>
+                                <span>{insight}</span>
+                              </li>
                             ))}
-                          </div>
+                          </ul>
                         ) : (
-                          <p className="text-center py-8 text-muted-foreground">
-                            No activity yet
+                          <p className="text-center py-4 text-sm text-muted-foreground">
+                            Insights will appear here as campaign data accumulates
                           </p>
                         )}
                       </CardContent>
                     </Card>
 
-                    {/* AI Decisions Log */}
+                    {/* Section F: Lead-level Outcomes */}
                     <Card>
                       <CardHeader>
-                        <div className="flex items-center gap-2">
-                          <TrendingUp className="h-5 w-5 text-primary" />
-                          <CardTitle>AI Decisions Log</CardTitle>
-                        </div>
+                        <CardTitle>Lead Outcomes</CardTitle>
                         <CardDescription>
-                          Automated decisions made by Jazon based on engagement
-                          and intent
+                          Individual lead status and progression
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <div className="space-y-3">
-                          {/* Sample AI decisions */}
-                          <div className="p-3 border rounded-lg bg-muted/30">
-                            <div className="flex items-start justify-between mb-2">
-                              <div className="flex items-center gap-2">
-                                <Badge variant="default" className="text-xs">
-                                  Decision
-                                </Badge>
-                                <span className="text-sm font-medium">
-                                  Paused outreach to John Smith
-                                </span>
-                              </div>
-                              <span className="text-xs text-muted-foreground">
-                                2 hours ago
-                              </span>
-                            </div>
-                            <p className="text-xs text-muted-foreground">
-                              <strong>Reason:</strong> No opens after 3 emails.
-                              Low intent signal detected.
-                            </p>
-                          </div>
-
-                          <div className="p-3 border rounded-lg bg-muted/30">
-                            <div className="flex items-start justify-between mb-2">
-                              <div className="flex items-center gap-2">
+                        {activityData?.prospects && activityData.prospects.length > 0 ? (
+                          <div className="overflow-x-auto">
+                            <table className="w-full">
+                              <thead>
+                                <tr className="border-b">
+                                  <th className="text-left py-3 px-2 font-medium text-sm">Lead</th>
+                                  <th className="text-left py-3 px-2 font-medium text-sm">Company</th>
+                                  <th className="text-right py-3 px-2 font-medium text-sm">Current Step</th>
+                                  <th className="text-left py-3 px-2 font-medium text-sm">Last Message</th>
+                                  <th className="text-left py-3 px-2 font-medium text-sm">Outcome</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {activityData.prospects.map((prospect: any) => (
+                                  <tr 
+                                    key={prospect._id} 
+                                    className="border-b last:border-0 hover:bg-muted/50 cursor-pointer transition-colors"
+                                    onClick={() => {
+                                      setSelectedProspectHistory(prospect);
+                                      setShowMessageHistoryDialog(true);
+                                    }}
+                                  >
+                                    <td className="py-3 px-2">
+                                      <div>
+                                        <p className="font-medium text-sm">{prospect.lead_name}</p>
+                                        <p className="text-xs text-muted-foreground">{prospect.lead_email}</p>
+                                      </div>
+                                    </td>
+                                    <td className="py-3 px-2 text-sm">{prospect.lead_company || "—"}</td>
+                                    <td className="py-3 px-2 text-right text-sm">
+                                      {prospect.current_step > 0 ? `Step ${prospect.current_step}` : "—"}
+                                    </td>
+                                    <td className="py-3 px-2 text-xs text-muted-foreground">
+                                      {prospect.last_message_sent 
+                                        ? new Date(prospect.last_message_sent).toLocaleDateString()
+                                        : "—"}
+                                    </td>
+                                    <td className="py-3 px-2">
                                 <Badge
-                                  variant="outline"
-                                  className="text-xs border-blue-500 text-blue-600"
-                                >
-                                  Escalate
+                                        variant={
+                                          prospect.outcome === "Booked" ? "default" :
+                                          prospect.outcome === "Replied" ? "secondary" :
+                                          prospect.outcome === "Disqualified" ? "destructive" :
+                                          "outline"
+                                        }
+                                        className="text-xs"
+                                      >
+                                        {prospect.outcome}
                                 </Badge>
-                                <span className="text-sm font-medium">
-                                  Escalated Emily Davis to call
-                                </span>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
                               </div>
-                              <span className="text-xs text-muted-foreground">
-                                1 day ago
-                              </span>
-                            </div>
-                            <p className="text-xs text-muted-foreground">
-                              <strong>Reason:</strong> Replied twice with
-                              positive signals. High intent detected.
-                            </p>
-                          </div>
-
-                          <div className="p-3 border rounded-lg bg-muted/30">
-                            <div className="flex items-start justify-between mb-2">
-                              <div className="flex items-center gap-2">
-                                <Badge variant="secondary" className="text-xs">
-                                  Timing Adjusted
-                                </Badge>
-                                <span className="text-sm font-medium">
-                                  Advanced next touch for Michael Chen
-                                </span>
-                              </div>
-                              <span className="text-xs text-muted-foreground">
-                                3 days ago
-                              </span>
-                            </div>
-                            <p className="text-xs text-muted-foreground">
-                              <strong>Reason:</strong> Engagement spike
-                              detected. Opened email 3 times.
-                            </p>
-                          </div>
-
-                          {(!activityData?.aiDecisions ||
-                            activityData.aiDecisions.length === 0) && (
-                            <p className="text-center py-4 text-sm text-muted-foreground">
-                              AI decisions will appear here as Jazon optimizes
-                              the campaign
+                        ) : (
+                          <p className="text-center py-8 text-muted-foreground">
+                            No leads in campaign yet
                             </p>
                           )}
-                        </div>
                       </CardContent>
                     </Card>
                   </TabsContent>
