@@ -54,7 +54,7 @@ const getChannelIcon = (channel: string) => {
 
 export function LeadsTable({ leads, onRowClick, extraColumns }: LeadsTableProps) {
   return (
-    <div className="overflow-x-auto w-full" style={{ maxWidth: "calc(100vw - var(--sidebar-width) - 2rem)" }}>
+    <div className="w-full">
       <TooltipProvider>
         <Table className="min-w-max">
           <TableHeader>

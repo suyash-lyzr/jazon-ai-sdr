@@ -825,3 +825,4 @@ export default function SalesforceIntegrationPage() {
     </SidebarProvider>
   );
 }
+
