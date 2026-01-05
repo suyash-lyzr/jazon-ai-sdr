@@ -87,6 +87,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
           summary: e.summary,
           badge: e.badge,
           channel: e.channel,
+          direction: e.direction,
+          content: e.content,
           metadata: e.metadata,
         })),
       };

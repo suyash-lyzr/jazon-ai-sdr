@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, Suspense } from "react";
+import { useState, useEffect, useMemo, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { JazonSidebar } from "@/components/jazon-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -228,7 +228,16 @@ function OutreachCampaignPage() {
   const [sampleEmailError, setSampleEmailError] = useState<string | null>(null);
   const [sampleEmailResult, setSampleEmailResult] = useState<any>(null);
   const [showSampleEmailDialog, setShowSampleEmailDialog] = useState(false);
+
+  // Activity message viewer
+  const [selectedProspectHistory, setSelectedProspectHistory] = useState<any>(null);
+  const [showMessageHistoryDialog, setShowMessageHistoryDialog] = useState(false);
   const [createError, setCreateError] = useState<string>("");
+
+  // CSV Upload
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState<string | null>(null);
 
   // Fetch campaigns and leads on mount
   useEffect(() => {
@@ -546,6 +555,88 @@ function OutreachCampaignPage() {
   const handleOpenLeadsSelection = () => {
     setShowLeadsSelection(true);
     fetchAvailableLeads();
+  };
+
+  const handleCSVUpload = async (file: File) => {
+    if (!file || !selectedCampaignId) {
+      setUploadMessage("Please select a CSV file.");
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadMessage("Uploading and processing leads…");
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("mapping", JSON.stringify({}));
+
+      const response = await fetch("/api/leads/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || result.message || "Failed to upload CSV");
+      }
+
+      if (!result.success) {
+        throw new Error(result.message || "Upload failed");
+      }
+
+      const createdCount = result.summary?.created || result.leads?.length || 0;
+      const failedCount = result.summary?.failed || 0;
+
+      if (createdCount === 0) {
+        setUploadMessage(
+          `No leads were imported. ${failedCount > 0 ? `${failedCount} failed.` : "Please check your CSV format."}`
+        );
+      } else {
+        // Add imported leads to campaign
+        const leadIds = result.leads?.map((lead: any) => lead.id) || [];
+        
+        if (leadIds.length > 0) {
+          await fetch(`/api/outreach-campaigns/${selectedCampaignId}/prospects`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ leadIds }),
+          });
+        }
+
+        const successMsg = `Successfully imported ${createdCount} lead${createdCount !== 1 ? "s" : ""} and added to campaign.${failedCount > 0 ? ` ${failedCount} failed.` : ""}`;
+        setUploadMessage(successMsg);
+
+        // Refresh campaign details and leads
+        setTimeout(async () => {
+          await fetchCampaignDetails(selectedCampaignId);
+          await fetchAllLeads();
+          setAddProspectsDialog(false);
+          setUploadMessage(null);
+        }, 1500);
+      }
+    } catch (error: any) {
+      console.error("❌ CSV upload error:", error);
+      setUploadMessage(`Error: ${error.message || "Failed to upload CSV"}`);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleCSVUpload(file);
+    }
+    // Reset input so same file can be selected again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleCSVButtonClick = () => {
+    fileInputRef.current?.click();
   };
 
   const handleToggleLeadSelection = (leadId: string) => {
@@ -1362,10 +1453,10 @@ function OutreachCampaignPage() {
                                     onClick={() =>
                                       setSelectedMode(step.step_name)
                                     }
-                                    className={`w-full px-4 py-2 text-left text-sm hover:bg-muted/50 ${
+                                    className={`w-full px-4 py-2 text-left text-sm ${
                                       selectedMode === step.step_name
-                                        ? "bg-primary text-primary-foreground"
-                                        : ""
+                                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                                        : "hover:bg-muted/50"
                                     }`}
                                   >
                                     {step.step_name}
@@ -2023,7 +2114,11 @@ function OutreachCampaignPage() {
                             {activityData.prospects.map((prospect: any) => (
                               <div
                                 key={prospect._id}
-                                className="p-3 border rounded-md hover:bg-muted/20"
+                                className="p-3 border rounded-md hover:bg-muted/50 cursor-pointer transition-colors"
+                                onClick={() => {
+                                  setSelectedProspectHistory(prospect);
+                                  setShowMessageHistoryDialog(true);
+                                }}
                               >
                                 <div className="flex items-center justify-between">
                                   <div>
@@ -2042,6 +2137,7 @@ function OutreachCampaignPage() {
                                   prospect.history.length > 0 && (
                                     <div className="mt-2 text-xs text-muted-foreground">
                                       Last activity: {prospect.history[0].title}
+                                      <span className="ml-2 text-primary">→ Click to view messages</span>
                                     </div>
                                   )}
                               </div>
@@ -2335,10 +2431,14 @@ function OutreachCampaignPage() {
           if (!open) {
             setShowLeadsSelection(false);
             setSelectedLeadIds([]);
+            setUploadMessage(null);
+            setIsUploading(false);
+          } else {
+            setUploadMessage(null);
           }
         }}
       >
-        <DialogContent className="max-w-4xl max-h-[80vh]">
+        <DialogContent className={showLeadsSelection ? "max-w-6xl max-h-[80vh]" : "max-h-[80vh]"} style={showLeadsSelection ? { maxWidth: "72rem" } : undefined}>
           <DialogHeader>
             <DialogTitle>Add Leads to Campaign</DialogTitle>
             <DialogDescription>
@@ -2370,17 +2470,38 @@ function OutreachCampaignPage() {
                 <Button
                   variant="outline"
                   className="h-24 hover:border-primary hover:bg-primary/5 transition-colors"
-                  disabled
+                  onClick={handleCSVButtonClick}
+                  disabled={isUploading}
                 >
                   <div className="flex flex-col items-center gap-2">
-                    <Upload className="h-6 w-6" />
+                    {isUploading ? (
+                      <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                    ) : (
+                      <Upload className="h-6 w-6 text-primary" />
+                    )}
                     <span className="text-sm font-medium">CSV Upload</span>
                     <span className="text-xs text-muted-foreground">
-                      Coming soon
+                      {isUploading ? "Uploading..." : "Upload leads from CSV"}
                     </span>
                   </div>
                 </Button>
               </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".csv"
+                onChange={handleFileInputChange}
+                className="hidden"
+              />
+              {uploadMessage && (
+                <div className={`text-sm p-3 rounded-md ${
+                  uploadMessage.includes("Error") || uploadMessage.includes("failed")
+                    ? "bg-destructive/10 text-destructive"
+                    : "bg-primary/10 text-primary"
+                }`}>
+                  {uploadMessage}
+                </div>
+              )}
             </div>
           ) : (
             // Leads Selection
@@ -3486,6 +3607,125 @@ function OutreachCampaignPage() {
                 setShowSampleEmailDialog(false);
                 setSampleEmailResult(null);
                 setSampleEmailError(null);
+              }}
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Message History Dialog */}
+      <Dialog open={showMessageHistoryDialog} onOpenChange={(open) => {
+        setShowMessageHistoryDialog(open);
+        if (!open) {
+          setSelectedProspectHistory(null);
+        }
+      }}>
+        <DialogContent className="max-h-[80vh] overflow-y-auto" style={{ maxWidth: "var(--container-3xl, 80rem)" }}>
+          <DialogHeader>
+            <DialogTitle>Message History</DialogTitle>
+            <DialogDescription>
+              {selectedProspectHistory?.lead_name} ({selectedProspectHistory?.lead_email})
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedProspectHistory?.history && selectedProspectHistory.history.length > 0 ? (
+            <div className="space-y-4 py-4">
+              {selectedProspectHistory.history.map((event: any, idx: number) => (
+                <div key={event.id || idx} className="border rounded-lg p-4 space-y-3">
+                  {/* Event Header */}
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-2">
+                      {event.badge && (
+                        <Badge variant={
+                          event.badge === "Email" ? "default" :
+                          event.badge === "LinkedIn" ? "secondary" :
+                          event.badge === "Reply" ? "default" :
+                          event.badge === "Opened" ? "outline" :
+                          event.badge === "Clicked" ? "outline" : "secondary"
+                        }>
+                          {event.badge}
+                        </Badge>
+                      )}
+                      <span className="font-medium">{event.title}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(event.timestamp).toLocaleString()}
+                    </span>
+                  </div>
+
+                  {/* Event Summary (only show if no content to display) */}
+                  {!event.content?.subject && !event.content?.body && (
+                    <p className="text-sm text-muted-foreground">{event.summary}</p>
+                  )}
+
+                  {/* Message Content */}
+                  {event.content && (event.content.subject || event.content.body || (event.content.talking_points && event.content.talking_points.length > 0)) && (
+                    <div className="space-y-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 p-4 rounded-lg">
+                      {event.content.subject && (
+                        <div>
+                          <Label className="text-xs font-semibold text-blue-700 dark:text-blue-300 uppercase tracking-wide">Subject Line</Label>
+                          <p className="text-sm font-semibold mt-1.5 text-foreground">{event.content.subject}</p>
+                        </div>
+                      )}
+                      {event.content.body && (
+                        <div>
+                          <Label className="text-xs font-semibold text-blue-700 dark:text-blue-300 uppercase tracking-wide">
+                            {event.channel === "LinkedIn" ? "LinkedIn Message" : event.channel === "Voice" ? "Voice Script" : "Email Message"}
+                          </Label>
+                          <div className="text-sm mt-1.5 whitespace-pre-wrap bg-white dark:bg-background p-4 rounded-md border shadow-sm leading-relaxed">
+                            {event.content.body}
+                          </div>
+                        </div>
+                      )}
+                      {event.content.talking_points && event.content.talking_points.length > 0 && (
+                        <div>
+                          <Label className="text-xs font-semibold text-blue-700 dark:text-blue-300 uppercase tracking-wide">Voice Call Talking Points</Label>
+                          <ul className="space-y-2 mt-2">
+                            {event.content.talking_points.map((point: string, pidx: number) => (
+                              <li key={pidx} className="text-sm flex items-start gap-2">
+                                <span className="text-primary font-bold mt-0.5">•</span>
+                                <span>{point}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Direction indicator */}
+                  {event.direction && (
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      {event.direction === "outbound" ? (
+                        <>
+                          <span>↗</span>
+                          <span>Outbound</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>↙</span>
+                          <span>Inbound</span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="py-8 text-center text-muted-foreground">
+              <p>No message history available</p>
+            </div>
+          )}
+          
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowMessageHistoryDialog(false);
+                setSelectedProspectHistory(null);
               }}
             >
               Close
