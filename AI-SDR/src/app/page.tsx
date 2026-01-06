@@ -233,6 +233,7 @@ function OutreachCampaignPage() {
   // Activity message viewer
   const [selectedProspectHistory, setSelectedProspectHistory] = useState<any>(null);
   const [showMessageHistoryDialog, setShowMessageHistoryDialog] = useState(false);
+  const [selectedActivityEvent, setSelectedActivityEvent] = useState<any>(null);
   const [createError, setCreateError] = useState<string>("");
 
   // CSV Upload
@@ -1243,7 +1244,8 @@ function OutreachCampaignPage() {
                     <TabsTrigger value="messaging">Messaging</TabsTrigger>
                     <TabsTrigger value="prospects">Leads</TabsTrigger>
                     <TabsTrigger value="scheduling">Scheduling</TabsTrigger>
-                    <TabsTrigger value="activity">Performance</TabsTrigger>
+                    <TabsTrigger value="activity">Activity</TabsTrigger>
+                    <TabsTrigger value="performance">Performance</TabsTrigger>
                   </TabsList>
 
                   {/* Campaign Tab */}
@@ -2106,8 +2108,103 @@ function OutreachCampaignPage() {
                     </Button>
                   </TabsContent>
 
-                  {/* Performance Tab */}
+                  {/* Activity Tab */}
                   <TabsContent value="activity" className="space-y-6 mt-4">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Recent Activity</CardTitle>
+                        <CardDescription>
+                          Latest campaign events and interactions across all leads. Click to view full details.
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        {activityData?.events && activityData.events.length > 0 ? (
+                          <div className="space-y-1 max-h-[600px] overflow-y-auto">
+                            {activityData.events.slice(0, 50).map((event: any) => {
+                              // Determine icon and color based on event type and badge
+                              const getEventIcon = () => {
+                                if (event.type === "outreach") {
+                                  if (event.channel === "Email") return { icon: <Mail className="h-4 w-4" />, color: "bg-blue-500/10 text-blue-600" };
+                                  if (event.channel === "LinkedIn") return { icon: <Linkedin className="h-4 w-4" />, color: "bg-blue-600/10 text-blue-700" };
+                                  if (event.channel === "Call") return { icon: <Phone className="h-4 w-4" />, color: "bg-purple-500/10 text-purple-600" };
+                                  return { icon: <MessageSquare className="h-4 w-4" />, color: "bg-gray-500/10 text-gray-600" };
+                                }
+                                if (event.type === "engagement") {
+                                  if (event.badge === "Opened") return { icon: <Activity className="h-4 w-4" />, color: "bg-green-500/10 text-green-600" };
+                                  if (event.badge === "Clicked") return { icon: <TrendingUp className="h-4 w-4" />, color: "bg-emerald-500/10 text-emerald-600" };
+                                  if (event.badge === "Reply") return { icon: <MessageSquare className="h-4 w-4" />, color: "bg-green-600/10 text-green-700" };
+                                  return { icon: <Activity className="h-4 w-4" />, color: "bg-green-500/10 text-green-600" };
+                                }
+                                if (event.type === "decision") {
+                                  return { icon: <Rocket className="h-4 w-4" />, color: "bg-purple-500/10 text-purple-600" };
+                                }
+                                if (event.type === "outcome") {
+                                  if (event.badge === "Unsubscribed") return { icon: <AlertCircle className="h-4 w-4" />, color: "bg-red-500/10 text-red-600" };
+                                  return { icon: <CheckCircle2 className="h-4 w-4" />, color: "bg-green-600/10 text-green-700" };
+                                }
+                                return { icon: <Activity className="h-4 w-4" />, color: "bg-gray-500/10 text-gray-600" };
+                              };
+
+                              const { icon, color } = getEventIcon();
+                              const hasContent = event.content && (event.content.subject || event.content.body);
+
+                              return (
+                                <div 
+                                  key={event.id} 
+                                  className={`flex gap-3 py-3 px-2 rounded-md transition-colors ${hasContent ? 'hover:bg-muted/50 cursor-pointer' : ''}`}
+                                  onClick={() => hasContent && setSelectedActivityEvent(event)}
+                                >
+                                  <div className={`p-2 rounded-full h-fit shrink-0 ${color}`}>
+                                    {icon}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-start justify-between gap-2">
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-medium truncate">{event.title}</p>
+                                        <p className="text-xs text-muted-foreground mt-0.5">
+                                          {event.description}
+                                        </p>
+                                      </div>
+                                      <div className="flex items-center gap-2 shrink-0">
+                                        <Badge variant="outline" className="text-xs">
+                                          {event.badge}
+                                        </Badge>
+                                        {hasContent && (
+                                          <FileText className="h-3.5 w-3.5 text-muted-foreground" />
+                                        )}
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center gap-2 mt-1.5 text-xs text-muted-foreground">
+                                      <span className="font-medium">{event.lead_name}</span>
+                                      {event.lead_company && (
+                                        <>
+                                          <span>•</span>
+                                          <span>{event.lead_company}</span>
+                                        </>
+                                      )}
+                                      <span>•</span>
+                                      <span>{new Date(event.timestamp).toLocaleString()}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <div className="text-center py-12">
+                            <Activity className="h-12 w-12 mx-auto text-muted-foreground mb-3 opacity-50" />
+                            <p className="text-muted-foreground">No activity yet</p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Activity will appear here as the campaign runs
+                            </p>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+
+                  {/* Performance Tab */}
+                  <TabsContent value="performance" className="space-y-6 mt-4">
                     {/* Section A: Performance Summary Cards */}
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                       <Card>
@@ -3951,6 +4048,78 @@ function OutreachCampaignPage() {
                 setSelectedProspectHistory(null);
               }}
             >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Activity Event Details Dialog */}
+      <Dialog open={!!selectedActivityEvent} onOpenChange={(open) => {
+        if (!open) setSelectedActivityEvent(null);
+      }}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              {selectedActivityEvent?.channel === "Email" && <Mail className="h-5 w-5" />}
+              {selectedActivityEvent?.channel === "LinkedIn" && <Linkedin className="h-5 w-5" />}
+              {selectedActivityEvent?.title}
+            </DialogTitle>
+            <DialogDescription>
+              {selectedActivityEvent?.lead_name} • {selectedActivityEvent?.timestamp && new Date(selectedActivityEvent.timestamp).toLocaleString()}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            {/* Event Summary */}
+            <div>
+              <Label className="text-xs text-muted-foreground">Summary</Label>
+              <p className="text-sm mt-1">{selectedActivityEvent?.description}</p>
+            </div>
+
+            {/* Email Subject */}
+            {selectedActivityEvent?.content?.subject && (
+              <div>
+                <Label className="text-xs text-muted-foreground">Subject</Label>
+                <p className="text-sm font-medium mt-1">{selectedActivityEvent.content.subject}</p>
+              </div>
+            )}
+
+            {/* Email/Message Body */}
+            {selectedActivityEvent?.content?.body && (
+              <div>
+                <Label className="text-xs text-muted-foreground">Message</Label>
+                <div className="mt-2 p-4 bg-muted/50 rounded-lg border">
+                  <pre className="text-sm whitespace-pre-wrap font-sans">
+                    {selectedActivityEvent.content.body}
+                  </pre>
+                </div>
+              </div>
+            )}
+
+            {/* Metadata */}
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+              <div>
+                <Label className="text-xs text-muted-foreground">Channel</Label>
+                <p className="text-sm mt-1">{selectedActivityEvent?.channel || "N/A"}</p>
+              </div>
+              <div>
+                <Label className="text-xs text-muted-foreground">Direction</Label>
+                <p className="text-sm mt-1 capitalize">{selectedActivityEvent?.direction || "N/A"}</p>
+              </div>
+              <div>
+                <Label className="text-xs text-muted-foreground">Type</Label>
+                <p className="text-sm mt-1 capitalize">{selectedActivityEvent?.type || "N/A"}</p>
+              </div>
+              <div>
+                <Label className="text-xs text-muted-foreground">Actor</Label>
+                <p className="text-sm mt-1">{selectedActivityEvent?.actor || "N/A"}</p>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSelectedActivityEvent(null)}>
               Close
             </Button>
           </DialogFooter>

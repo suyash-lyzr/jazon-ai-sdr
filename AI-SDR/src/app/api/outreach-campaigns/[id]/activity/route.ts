@@ -255,6 +255,26 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       };
     });
 
+    // Format events for activity feed
+    const formattedEvents = events.map((event) => {
+      const lead = prospects.find((p: any) => p.lead_id._id.toString() === event.lead_id.toString())?.lead_id as any;
+      return {
+        id: event._id,
+        type: event.event_type,
+        title: event.title,
+        description: event.summary,
+        lead_name: lead?.name || "Unknown",
+        lead_company: lead?.company_name || "",
+        channel: event.channel,
+        badge: event.badge,
+        direction: event.direction,
+        timestamp: event.timestamp,
+        actor: event.actor,
+        content: event.content,
+        metadata: event.metadata,
+      };
+    });
+
     return NextResponse.json(
       {
         success: true,
@@ -285,6 +305,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         stepMetrics,
         insights,
         prospects: prospectsWithHistory,
+        events: formattedEvents,
       },
       { status: 200 }
     );
