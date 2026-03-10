@@ -241,6 +241,9 @@ function OutreachCampaignPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState<string | null>(null);
 
+  // Prevent duplicate campaign-detail fetches (e.g. from Strict Mode or re-mounts)
+  const fetchingCampaignIdRef = useRef<string | null>(null);
+
   // Fetch campaigns and leads on mount
   useEffect(() => {
     fetchCampaigns();
@@ -435,6 +438,9 @@ function OutreachCampaignPage() {
   };
 
   const fetchCampaignDetails = async (campaignId: string) => {
+    // Skip if we're already fetching this campaign (avoids duplicate calls from Strict Mode / re-mounts)
+    if (fetchingCampaignIdRef.current === campaignId) return;
+    fetchingCampaignIdRef.current = campaignId;
     setIsLoading(true);
     try {
       const [detailsRes, prospectsRes, knowledgeRes, activityRes] =
@@ -461,6 +467,9 @@ function OutreachCampaignPage() {
       console.error("Failed to fetch campaign details:", error);
     } finally {
       setIsLoading(false);
+      if (fetchingCampaignIdRef.current === campaignId) {
+        fetchingCampaignIdRef.current = null;
+      }
     }
   };
 
@@ -479,9 +488,10 @@ function OutreachCampaignPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ [field]: value }),
       });
-
-      // Refresh details
-      fetchCampaignDetails(selectedCampaignId);
+      // Update local state only — no refetch
+      setCampaignDetails((prev) =>
+        prev ? { ...prev, [field]: value } : null
+      );
     } catch (error) {
       console.error("Failed to save campaign field:", error);
     }
@@ -515,8 +525,9 @@ function OutreachCampaignPage() {
         }
       );
 
-      if (res.ok) {
-        fetchCampaignDetails(selectedCampaignId);
+      const data = await res.json();
+      if (data.success && data.item) {
+        setKnowledgeItems((prev) => [...prev, data.item]);
         setAddKnowledgeDialog(false);
         setUrlInput("");
       }
@@ -535,7 +546,7 @@ function OutreachCampaignPage() {
           method: "DELETE",
         }
       );
-      fetchCampaignDetails(selectedCampaignId);
+      setKnowledgeItems((prev) => prev.filter((item) => item._id !== itemId));
     } catch (error) {
       console.error("Failed to delete knowledge:", error);
     }
@@ -613,9 +624,13 @@ function OutreachCampaignPage() {
         const successMsg = `Successfully imported ${createdCount} lead${createdCount !== 1 ? "s" : ""} and added to campaign.${failedCount > 0 ? ` ${failedCount} failed.` : ""}`;
         setUploadMessage(successMsg);
 
-        // Refresh campaign details and leads
+        // Refresh only prospects and leads list (no full campaign refetch)
         setTimeout(async () => {
-          await fetchCampaignDetails(selectedCampaignId);
+          const prospectRes = await fetch(
+            `/api/outreach-campaigns/${selectedCampaignId}/prospects`
+          );
+          const prospectData = await prospectRes.json();
+          if (prospectData.success) setProspects(prospectData.prospects);
           await fetchAllLeads();
           setAddProspectsDialog(false);
           setUploadMessage(null);
@@ -668,9 +683,12 @@ function OutreachCampaignPage() {
 
       const data = await res.json();
       if (data.success) {
-        // Refresh campaign details and prospects
-        await fetchCampaignDetails(selectedCampaignId);
-        // Reset state
+        // Refresh only prospects list (1 request instead of 4)
+        const prospectRes = await fetch(
+          `/api/outreach-campaigns/${selectedCampaignId}/prospects`
+        );
+        const prospectData = await prospectRes.json();
+        if (prospectData.success) setProspects(prospectData.prospects);
         setSelectedLeadIds([]);
         setShowLeadsSelection(false);
         setAddProspectsDialog(false);
